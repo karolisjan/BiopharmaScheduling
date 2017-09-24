@@ -395,7 +395,7 @@ class Fitness
 						if (inventory_profile[product][period].size() >= backlog[product][period - 1]) {
 							sold[product][period] += backlog[product][period - 1];
 							backlog[product][period] = 0;
-							for (int i = 0; i < sold[product][period]; ++i)
+							for (int i = 0; i < backlog[product][period]; ++i)
 								inventory_profile[product][period].pop();
 						}
 						else {
@@ -524,6 +524,7 @@ public:
 		CalculateObjectives(objectives, usp_schedule, dsp_schedule, inventory_profile, sold, dsp_waste, backlog);
 	
 		c.objective = objectives.profit;
+		c.constraint = objectives.backlog_cost;
 	}
 };
 

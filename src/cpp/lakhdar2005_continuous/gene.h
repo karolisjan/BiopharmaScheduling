@@ -31,7 +31,7 @@ namespace types
 
 		Gene make_new()
 		{
-			return Gene(num_products, num_usp_suites, p_product_mut, p_plus_batch_mut, p_minus_batch_mut);
+			return Gene(num_products, num_usp_suites, p_product_mut, p_usp_suite_mut, p_plus_batch_mut, p_minus_batch_mut);
 		}
 
 		inline void mutate()
@@ -41,7 +41,7 @@ namespace types
 			mutate_num_batches();
 		}
 
-		int product_num, num_batches, usp_suite_num, dsp_suite_num;
+		int product_num, num_batches, usp_suite_num;
 
 	private:
 		inline void mutate_product_num()
