@@ -85,28 +85,22 @@ namespace algorithms
 
 		void Update() override
 		{
-			assert(parents.size());
-
 			Select();
 			Reproduce();
 
 			#pragma omp parallel for
-			for (int i = 0; i < offspring.size(); ++i)
+			for (int i = 0; i < offspring.size(); ++i) 
 				fitness_functor(offspring[i]);
 
 			Replace();
 		}
 
-		// Returns top parent individual.
 		Individual Top()
 		{
-			assert(parents.size());
-
-			// No need to sort parents because of the merge in Replace().
+			fitness_functor(parents[0]);
 			return parents[0];
 		}
 
-		// Returns top parent individual.
 		Individual Top(Population solutions)
 		{
 			sort(solutions.begin(), solutions.end(),

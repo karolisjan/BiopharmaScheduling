@@ -4,6 +4,8 @@
 #include <vector>
 #include "batch.h"
 
+using namespace std;
+
 namespace types
 {
 	struct Campaign

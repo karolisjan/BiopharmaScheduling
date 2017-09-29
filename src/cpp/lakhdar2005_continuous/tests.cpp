@@ -22,13 +22,13 @@ void BaseCaseGlobalOptimumTest()
 	int num_periods = demand[0].size();
 	int num_usp_suites = 2, num_dsp_suites = 2;
 
-	vector<int> usp_storage_cost = { 5, 5, 5 };
-	vector<int> sales_price = { 20, 20, 20 };
-	vector<int> production_cost = { 2, 2, 2 };
-	vector<int> waste_disposal_cost = { 1, 1, 1 };
-	vector<int> dsp_storage_cost = { 1, 1, 1 };
-	vector<int> backlog_penalty = { 20, 20, 20 };
-	vector<int> changeover_cost = { 1, 1, 1 };
+	vector<double> usp_storage_cost = { 5, 5, 5 };
+	vector<double> sales_price = { 20, 20, 20 };
+	vector<double> production_cost = { 2, 2, 2 };
+	vector<double> waste_disposal_cost = { 1, 1, 1 };
+	vector<double> dsp_storage_cost = { 1, 1, 1 };
+	vector<double> backlog_penalty = { 20, 20, 20 };
+	vector<double> changeover_cost = { 1, 1, 1 };
 
 	vector<double> usp_days = { 20, 22, 12.5 };
 	vector<double> usp_lead_days = { 10, 10, 10 };
@@ -43,7 +43,8 @@ void BaseCaseGlobalOptimumTest()
 	Fitness fitness(
 		num_usp_suites,
 		num_dsp_suites,
-		demand, days_per_period,
+		demand,
+		days_per_period,
 		usp_storage_cost,
 		sales_price,
 		production_cost,
@@ -85,7 +86,15 @@ void BaseCaseGlobalOptimumTest()
 
 	fitness(i);
 
-	printf("%.2f profit\n", i.objective);
+	printf("%.2f profit", i.objective);
+
+	auto usp_schedule = fitness.CreateUSPSchedule(i);
+	auto dsp_schedule = fitness.CreateDSPSchedule(usp_schedule);
+
+	vector<vector<int>> inventory, sold, backlog, dsp_waste;
+	Fitness::Objectives objectives = fitness.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
+
+	printf(", (%.2f, %.2f)\n", objectives.profit, objectives.backlog_cost);
 }
 
 // Fitness function test with a continuous-time solution
@@ -106,13 +115,13 @@ void IncreasedDemandGlobalOptimumTest()
 	int num_periods = demand[0].size();
 	int num_usp_suites = 2, num_dsp_suites = 2;
 
-	vector<int> usp_storage_cost = { 5, 5, 5 };
-	vector<int> sales_price = { 20, 20, 20 };
-	vector<int> production_cost = { 2, 2, 2 };
-	vector<int> waste_disposal_cost = { 1, 1, 1 };
-	vector<int> dsp_storage_cost = { 1, 1, 1 };
-	vector<int> backlog_penalty = { 20, 20, 20 };
-	vector<int> changeover_cost = { 1, 1, 1 };
+	vector<double> usp_storage_cost = { 5, 5, 5 };
+	vector<double> sales_price = { 20, 20, 20 };
+	vector<double> production_cost = { 2, 2, 2 };
+	vector<double> waste_disposal_cost = { 1, 1, 1 };
+	vector<double> dsp_storage_cost = { 1, 1, 1 };
+	vector<double> backlog_penalty = { 20, 20, 20 };
+	vector<double> changeover_cost = { 1, 1, 1 };
 
 	vector<double> usp_days = { 20, 22, 12.5 };
 	vector<double> usp_lead_days = { 10, 10, 10 };
@@ -127,7 +136,8 @@ void IncreasedDemandGlobalOptimumTest()
 	Fitness fitness(
 		num_usp_suites,
 		num_dsp_suites,
-		demand, days_per_period,
+		demand,
+		days_per_period,
 		usp_storage_cost,
 		sales_price,
 		production_cost,
@@ -177,7 +187,15 @@ void IncreasedDemandGlobalOptimumTest()
 
 	fitness(i);
 
-	printf("%.2f profit\n", i.objective);
+	printf("%.2f profit", i.objective);
+
+	auto usp_schedule = fitness.CreateUSPSchedule(i);
+	auto dsp_schedule = fitness.CreateDSPSchedule(usp_schedule);
+
+	vector<vector<int>> inventory, sold, backlog, dsp_waste;
+	Fitness::Objectives objectives = fitness.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
+
+	printf(", (%.2f, %.2f)\n", objectives.profit, objectives.backlog_cost);
 }
 
 // Fitness function test with a continuous-time solution
@@ -198,13 +216,13 @@ void DoubledDemandProfileGlobalOptimumTest()
 	int num_periods = demand[0].size();
 	int num_usp_suites = 2, num_dsp_suites = 2;
 
-	vector<int> usp_storage_cost = { 5, 5, 5 };
-	vector<int> sales_price = { 20, 20, 20 };
-	vector<int> production_cost = { 2, 2, 2 };
-	vector<int> waste_disposal_cost = { 1, 1, 1 };
-	vector<int> dsp_storage_cost = { 1, 1, 1 };
-	vector<int> backlog_penalty = { 20, 20, 20 };
-	vector<int> changeover_cost = { 1, 1, 1 };
+	vector<double> usp_storage_cost = { 5, 5, 5 };
+	vector<double> sales_price = { 20, 20, 20 };
+	vector<double> production_cost = { 2, 2, 2 };
+	vector<double> waste_disposal_cost = { 1, 1, 1 };
+	vector<double> dsp_storage_cost = { 1, 1, 1 };
+	vector<double> backlog_penalty = { 20, 20, 20 };
+	vector<double> changeover_cost = { 1, 1, 1 };
 
 	vector<double> usp_days = { 20, 22, 12.5 };
 	vector<double> usp_lead_days = { 10, 10, 10 };
@@ -219,7 +237,8 @@ void DoubledDemandProfileGlobalOptimumTest()
 	Fitness fitness(
 		num_usp_suites,
 		num_dsp_suites,
-		demand, days_per_period,
+		demand,
+		days_per_period,
 		usp_storage_cost,
 		sales_price,
 		production_cost,
@@ -285,12 +304,20 @@ void DoubledDemandProfileGlobalOptimumTest()
 
 	fitness(i);
 
-	printf("%.2f profit\n", i.objective);
+	printf("%.2f profit", i.objective);
+
+	auto usp_schedule = fitness.CreateUSPSchedule(i);
+	auto dsp_schedule = fitness.CreateDSPSchedule(usp_schedule);
+
+	vector<vector<int>> inventory, sold, backlog, dsp_waste;
+	Fitness::Objectives objectives = fitness.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
+
+	printf(", (%.2f, %.2f)\n", objectives.profit, objectives.backlog_cost);
 }
 
 void BaseCaseTest()
 {
-	int runs = 10, gens = 1000, popsize = 100;
+	int runs = 10, gens = 200, popsize = 100;
 
 	int seed = 0;
 	double p_xo = 0.131266;
@@ -314,13 +341,13 @@ void BaseCaseTest()
 	int num_periods = demand[0].size();
 	int num_usp_suites = 2, num_dsp_suites = 2;
 
-	vector<int> usp_storage_cost = { 5, 5, 5 };
-	vector<int> sales_price = { 20, 20, 20 };
-	vector<int> production_cost = { 2, 2, 2 };
-	vector<int> waste_disposal_cost = { 1, 1, 1 };
-	vector<int> dsp_storage_cost = { 1, 1, 1 };
-	vector<int> backlog_penalty = { 20, 20, 20 };
-	vector<int> changeover_cost = { 1, 1, 1 };
+	vector<double> usp_storage_cost = { 5, 5, 5 };
+	vector<double> sales_price = { 20, 20, 20 };
+	vector<double> production_cost = { 2, 2, 2 };
+	vector<double> waste_disposal_cost = { 1, 1, 1 };
+	vector<double> dsp_storage_cost = { 1, 1, 1 };
+	vector<double> backlog_penalty = { 20, 20, 20 };
+	vector<double> changeover_cost = { 1, 1, 1 };
 
 	vector<double> usp_days = { 20, 22, 12.5 };
 	vector<double> usp_lead_days = { 10, 10, 10 };
@@ -335,7 +362,8 @@ void BaseCaseTest()
 	Fitness fitness(
 		num_usp_suites,
 		num_dsp_suites,
-		demand, days_per_period,
+		demand,
+		days_per_period,
 		usp_storage_cost,
 		sales_price,
 		production_cost,
@@ -351,7 +379,6 @@ void BaseCaseTest()
 		dsp_lead_days,
 		dsp_shelf_life,
 		dsp_storage_cap);
-
 
 	SingleObjectiveGA<SingleObjectiveIndividual, Fitness> simple_ga(
 		fitness,
@@ -377,6 +404,15 @@ void BaseCaseTest()
 			printf("\rRun %d, Gen: %d, Best: %.2f, Constraint: %.2f",
 				run + 1, gen + 1, simple_ga.Top().objective, simple_ga.Top().constraint);
 		}
+
+		auto& best = simple_ga.Top();
+		auto usp_schedule = fitness.CreateUSPSchedule(best);
+		auto dsp_schedule = fitness.CreateDSPSchedule(usp_schedule);
+
+		vector<vector<int>> inventory, sold, backlog, dsp_waste;
+		Fitness::Objectives objectives = fitness.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
+
+		printf(", (%.2f, %.2f)", objectives.profit, objectives.backlog_cost);
 
 		printf("\n");
 	}
@@ -408,13 +444,13 @@ void IncreasedDemandTest()
 	int num_periods = demand[0].size();
 	int num_usp_suites = 2, num_dsp_suites = 2;
 
-	vector<int> usp_storage_cost = { 5, 5, 5 };
-	vector<int> sales_price = { 20, 20, 20 };
-	vector<int> production_cost = { 2, 2, 2 };
-	vector<int> waste_disposal_cost = { 1, 1, 1 };
-	vector<int> dsp_storage_cost = { 1, 1, 1 };
-	vector<int> backlog_penalty = { 20, 20, 20 };
-	vector<int> changeover_cost = { 1, 1, 1 };
+	vector<double> usp_storage_cost = { 5, 5, 5 };
+	vector<double> sales_price = { 20, 20, 20 };
+	vector<double> production_cost = { 2, 2, 2 };
+	vector<double> waste_disposal_cost = { 1, 1, 1 };
+	vector<double> dsp_storage_cost = { 1, 1, 1 };
+	vector<double> backlog_penalty = { 20, 20, 20 };
+	vector<double> changeover_cost = { 1, 1, 1 };
 
 	vector<double> usp_days = { 20, 22, 12.5 };
 	vector<double> usp_lead_days = { 10, 10, 10 };
@@ -429,7 +465,8 @@ void IncreasedDemandTest()
 	Fitness fitness(
 		num_usp_suites,
 		num_dsp_suites,
-		demand, days_per_period,
+		demand,
+		days_per_period,
 		usp_storage_cost,
 		sales_price,
 		production_cost,
@@ -445,7 +482,6 @@ void IncreasedDemandTest()
 		dsp_lead_days,
 		dsp_shelf_life,
 		dsp_storage_cap);
-
 
 	SingleObjectiveGA<SingleObjectiveIndividual, Fitness> simple_ga(
 		fitness,
@@ -471,6 +507,15 @@ void IncreasedDemandTest()
 			printf("\rRun %d, Gen: %d, Best: %.2f, Constraint: %.2f",
 				run + 1, gen + 1, simple_ga.Top().objective, simple_ga.Top().constraint);
 		}
+
+		auto& best = simple_ga.Top();
+		auto usp_schedule = fitness.CreateUSPSchedule(best);
+		auto dsp_schedule = fitness.CreateDSPSchedule(usp_schedule);
+
+		vector<vector<int>> inventory, sold, backlog, dsp_waste;
+		Fitness::Objectives objectives = fitness.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
+
+		printf(", (%.2f, %.2f)", objectives.profit, objectives.backlog_cost);
 
 		printf("\n");
 	}
@@ -502,13 +547,13 @@ void DoubledDemandProfileTest()
 	int num_periods = demand[0].size();
 	int num_usp_suites = 2, num_dsp_suites = 2;
 
-	vector<int> usp_storage_cost = { 5, 5, 5 };
-	vector<int> sales_price = { 20, 20, 20 };
-	vector<int> production_cost = { 2, 2, 2 };
-	vector<int> waste_disposal_cost = { 1, 1, 1 };
-	vector<int> dsp_storage_cost = { 1, 1, 1 };
-	vector<int> backlog_penalty = { 20, 20, 20 };
-	vector<int> changeover_cost = { 1, 1, 1 };
+	vector<double> usp_storage_cost = { 5, 5, 5 };
+	vector<double> sales_price = { 20, 20, 20 };
+	vector<double> production_cost = { 2, 2, 2 };
+	vector<double> waste_disposal_cost = { 1, 1, 1 };
+	vector<double> dsp_storage_cost = { 1, 1, 1 };
+	vector<double> backlog_penalty = { 20, 20, 20 };
+	vector<double> changeover_cost = { 1, 1, 1 };
 
 	vector<double> usp_days = { 20, 22, 12.5 };
 	vector<double> usp_lead_days = { 10, 10, 10 };
@@ -523,7 +568,8 @@ void DoubledDemandProfileTest()
 	Fitness fitness(
 		num_usp_suites,
 		num_dsp_suites,
-		demand, days_per_period,
+		demand,
+		days_per_period,
 		usp_storage_cost,
 		sales_price,
 		production_cost,
@@ -539,7 +585,6 @@ void DoubledDemandProfileTest()
 		dsp_lead_days,
 		dsp_shelf_life,
 		dsp_storage_cap);
-
 
 	SingleObjectiveGA<SingleObjectiveIndividual, Fitness> simple_ga(
 		fitness,
@@ -566,10 +611,18 @@ void DoubledDemandProfileTest()
 				run + 1, gen + 1, simple_ga.Top().objective, simple_ga.Top().constraint);
 		}
 
+		auto& best = simple_ga.Top();
+		auto usp_schedule = fitness.CreateUSPSchedule(best);
+		auto dsp_schedule = fitness.CreateDSPSchedule(usp_schedule);
+
+		vector<vector<int>> inventory, sold, backlog, dsp_waste;
+		Fitness::Objectives objectives = fitness.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
+
+		printf(", (%.2f, %.2f)", objectives.profit, objectives.backlog_cost);
+
 		printf("\n");
 	}
 }
-
 
 int main()
 {
