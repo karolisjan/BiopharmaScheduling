@@ -1089,6 +1089,9 @@ static void __Pyx_AddTraceback(const char *funcname, int c_line,
 /* CIntToPy.proto */
 static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value);
 
+/* CIntToPy.proto */
+static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value);
+
 /* CppExceptionConversion.proto */
 #ifndef __Pyx_CppExn2PyErr
 #include <new>
@@ -1130,9 +1133,6 @@ static void __Pyx_CppExn2PyErr() {
   }
 }
 #endif
-
-/* CIntToPy.proto */
-static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value);
 
 /* CIntFromPy.proto */
 static CYTHON_INLINE int __Pyx_PyInt_As_int(PyObject *);
@@ -1244,6 +1244,7 @@ static const char __pyx_k_num_products[] = "num_products";
 static const char __pyx_k_usp_schedule[] = "usp_schedule";
 static const char __pyx_k_DSP_Suite_i_d[] = "DSP Suite i%d";
 static const char __pyx_k_Example1Model[] = "Example1Model";
+static const char __pyx_k_Run_d_Best_2f[] = "Run: %d, Best: %.2f";
 static const char __pyx_k_USP_Suite_i_d[] = "USP Suite i%d";
 static const char __pyx_k_dsp_lead_days[] = "dsp_lead_days";
 static const char __pyx_k_p_gene_swap_2[] = "_p_gene_swap";
@@ -1316,6 +1317,7 @@ static PyObject *__pyx_n_s_Example1Model_waste_profile;
 static PyObject *__pyx_n_s_Finish;
 static PyObject *__pyx_kp_s_Product_p_d;
 static PyObject *__pyx_n_s_Resource;
+static PyObject *__pyx_kp_s_Run_d_Best_2f;
 static PyObject *__pyx_n_s_Start;
 static PyObject *__pyx_n_s_Task;
 static PyObject *__pyx_kp_s_USP_Suite_i_d;
@@ -2080,7 +2082,7 @@ static PyObject *__pyx_pw_22lakhdar2005_continuous_13Example1Model_1fit(PyObject
 
 static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_fit(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, int __pyx_v_num_usp_suites, int __pyx_v_num_dsp_suites, std::vector<std::vector<int> >  __pyx_v_demand, std::vector<int>  __pyx_v_days_per_period, std::vector<double>  __pyx_v_usp_storage_cost, std::vector<double>  __pyx_v_sales_price, std::vector<double>  __pyx_v_production_cost, std::vector<double>  __pyx_v_waste_disposal_cost, std::vector<double>  __pyx_v_dsp_storage_cost, std::vector<double>  __pyx_v_backlog_penalty, std::vector<double>  __pyx_v_changeover_cost, std::vector<double>  __pyx_v_usp_days, std::vector<double>  __pyx_v_usp_lead_days, std::vector<double>  __pyx_v_usp_shelf_life, std::vector<double>  __pyx_v_usp_storage_cap, std::vector<double>  __pyx_v_dsp_days, std::vector<double>  __pyx_v_dsp_lead_days, std::vector<double>  __pyx_v_dsp_shelf_life, std::vector<double>  __pyx_v_dsp_storage_cap) {
   CYTHON_UNUSED int __pyx_v_gen;
-  CYTHON_UNUSED int __pyx_v_run;
+  int __pyx_v_run;
   int __pyx_v_num_products;
   int __pyx_v_num_periods;
   std::vector<struct types::SingleObjectiveIndividual>  __pyx_v_solutions;
@@ -2367,7 +2369,7 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_fit(CYTHON_UN
  *                     single_objective_ga.Update()
  *                     pbar.update()             # <<<<<<<<<<<<<<
  * 
- *                 solutions.push_back(single_objective_ga.Top())
+ *                 tqdm.write("Run: %d, Best: %.2f" % (run + 1, single_objective_ga.Top().objective));
  */
               __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_pbar, __pyx_n_s_update); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 206, __pyx_L7_error)
               __Pyx_GOTREF(__pyx_t_6);
@@ -2395,6 +2397,81 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_fit(CYTHON_UN
             /* "lakhdar2005_continuous.pyx":208
  *                     pbar.update()
  * 
+ *                 tqdm.write("Run: %d, Best: %.2f" % (run + 1, single_objective_ga.Top().objective));             # <<<<<<<<<<<<<<
+ *                 solutions.push_back(single_objective_ga.Top())
+ * 
+ */
+            __pyx_t_6 = __Pyx_GetModuleGlobalName(__pyx_n_s_tqdm); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 208, __pyx_L7_error)
+            __Pyx_GOTREF(__pyx_t_6);
+            __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_write); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 208, __pyx_L7_error)
+            __Pyx_GOTREF(__pyx_t_3);
+            __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+            __pyx_t_6 = __Pyx_PyInt_From_long((__pyx_v_run + 1)); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 208, __pyx_L7_error)
+            __Pyx_GOTREF(__pyx_t_6);
+            __pyx_t_5 = PyFloat_FromDouble(__pyx_v_single_objective_ga.Top().objective); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 208, __pyx_L7_error)
+            __Pyx_GOTREF(__pyx_t_5);
+            __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 208, __pyx_L7_error)
+            __Pyx_GOTREF(__pyx_t_4);
+            __Pyx_GIVEREF(__pyx_t_6);
+            PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_6);
+            __Pyx_GIVEREF(__pyx_t_5);
+            PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_t_5);
+            __pyx_t_6 = 0;
+            __pyx_t_5 = 0;
+            __pyx_t_5 = __Pyx_PyString_Format(__pyx_kp_s_Run_d_Best_2f, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 208, __pyx_L7_error)
+            __Pyx_GOTREF(__pyx_t_5);
+            __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+            __pyx_t_4 = NULL;
+            if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
+              __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+              if (likely(__pyx_t_4)) {
+                PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+                __Pyx_INCREF(__pyx_t_4);
+                __Pyx_INCREF(function);
+                __Pyx_DECREF_SET(__pyx_t_3, function);
+              }
+            }
+            if (!__pyx_t_4) {
+              __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 208, __pyx_L7_error)
+              __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+              __Pyx_GOTREF(__pyx_t_1);
+            } else {
+              #if CYTHON_FAST_PYCALL
+              if (PyFunction_Check(__pyx_t_3)) {
+                PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_5};
+                __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 208, __pyx_L7_error)
+                __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+                __Pyx_GOTREF(__pyx_t_1);
+                __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+              } else
+              #endif
+              #if CYTHON_FAST_PYCCALL
+              if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
+                PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_5};
+                __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 208, __pyx_L7_error)
+                __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+                __Pyx_GOTREF(__pyx_t_1);
+                __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+              } else
+              #endif
+              {
+                __pyx_t_6 = PyTuple_New(1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 208, __pyx_L7_error)
+                __Pyx_GOTREF(__pyx_t_6);
+                __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_4); __pyx_t_4 = NULL;
+                __Pyx_GIVEREF(__pyx_t_5);
+                PyTuple_SET_ITEM(__pyx_t_6, 0+1, __pyx_t_5);
+                __pyx_t_5 = 0;
+                __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_6, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 208, __pyx_L7_error)
+                __Pyx_GOTREF(__pyx_t_1);
+                __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+              }
+            }
+            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+            /* "lakhdar2005_continuous.pyx":209
+ * 
+ *                 tqdm.write("Run: %d, Best: %.2f" % (run + 1, single_objective_ga.Top().objective));
  *                 solutions.push_back(single_objective_ga.Top())             # <<<<<<<<<<<<<<
  * 
  *         cdef:
@@ -2403,7 +2480,7 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_fit(CYTHON_UN
               __pyx_v_solutions.push_back(__pyx_v_single_objective_ga.Top());
             } catch(...) {
               __Pyx_CppExn2PyErr();
-              __PYX_ERR(0, 208, __pyx_L7_error)
+              __PYX_ERR(0, 209, __pyx_L7_error)
             }
           }
 
@@ -2423,16 +2500,16 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_fit(CYTHON_UN
         __Pyx_PyThreadState_assign
         __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
         __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-        __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
         __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
+        __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
         __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
         /*except:*/ {
           __Pyx_AddTraceback("lakhdar2005_continuous.Example1Model.fit", __pyx_clineno, __pyx_lineno, __pyx_filename);
-          if (__Pyx_GetException(&__pyx_t_1, &__pyx_t_6, &__pyx_t_3) < 0) __PYX_ERR(0, 187, __pyx_L9_except_error)
+          if (__Pyx_GetException(&__pyx_t_1, &__pyx_t_3, &__pyx_t_6) < 0) __PYX_ERR(0, 187, __pyx_L9_except_error)
           __Pyx_GOTREF(__pyx_t_1);
-          __Pyx_GOTREF(__pyx_t_6);
           __Pyx_GOTREF(__pyx_t_3);
-          __pyx_t_5 = PyTuple_Pack(3, __pyx_t_1, __pyx_t_6, __pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 187, __pyx_L9_except_error)
+          __Pyx_GOTREF(__pyx_t_6);
+          __pyx_t_5 = PyTuple_Pack(3, __pyx_t_1, __pyx_t_3, __pyx_t_6); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 187, __pyx_L9_except_error)
           __Pyx_GOTREF(__pyx_t_5);
           __pyx_t_20 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_5, NULL);
           __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
@@ -2445,15 +2522,15 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_fit(CYTHON_UN
           __pyx_t_22 = ((!(__pyx_t_21 != 0)) != 0);
           if (__pyx_t_22) {
             __Pyx_GIVEREF(__pyx_t_1);
-            __Pyx_GIVEREF(__pyx_t_6);
-            __Pyx_XGIVEREF(__pyx_t_3);
-            __Pyx_ErrRestoreWithState(__pyx_t_1, __pyx_t_6, __pyx_t_3);
-            __pyx_t_1 = 0; __pyx_t_6 = 0; __pyx_t_3 = 0; 
+            __Pyx_GIVEREF(__pyx_t_3);
+            __Pyx_XGIVEREF(__pyx_t_6);
+            __Pyx_ErrRestoreWithState(__pyx_t_1, __pyx_t_3, __pyx_t_6);
+            __pyx_t_1 = 0; __pyx_t_3 = 0; __pyx_t_6 = 0; 
             __PYX_ERR(0, 187, __pyx_L9_except_error)
           }
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+          __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
           goto __pyx_L8_exception_handled;
         }
         __pyx_L9_except_error:;
@@ -2492,7 +2569,7 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_fit(CYTHON_UN
     __pyx_L20:;
   }
 
-  /* "lakhdar2005_continuous.pyx":211
+  /* "lakhdar2005_continuous.pyx":212
  * 
  *         cdef:
  *             int i, best = 0             # <<<<<<<<<<<<<<
@@ -2501,7 +2578,7 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_fit(CYTHON_UN
  */
   __pyx_v_best = 0;
 
-  /* "lakhdar2005_continuous.pyx":212
+  /* "lakhdar2005_continuous.pyx":213
  *         cdef:
  *             int i, best = 0
  *             double max_ = solutions[0].objective             # <<<<<<<<<<<<<<
@@ -2511,7 +2588,7 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_fit(CYTHON_UN
   __pyx_t_18 = (__pyx_v_solutions[0]).objective;
   __pyx_v_max_ = __pyx_t_18;
 
-  /* "lakhdar2005_continuous.pyx":214
+  /* "lakhdar2005_continuous.pyx":215
  *             double max_ = solutions[0].objective
  * 
  *         for i in range(1, solutions.size()):             # <<<<<<<<<<<<<<
@@ -2522,7 +2599,7 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_fit(CYTHON_UN
   for (__pyx_t_2 = 1; __pyx_t_2 < __pyx_t_23; __pyx_t_2+=1) {
     __pyx_v_i = __pyx_t_2;
 
-    /* "lakhdar2005_continuous.pyx":215
+    /* "lakhdar2005_continuous.pyx":216
  * 
  *         for i in range(1, solutions.size()):
  *             if solutions[i].objective > max_:             # <<<<<<<<<<<<<<
@@ -2532,7 +2609,7 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_fit(CYTHON_UN
     __pyx_t_22 = (((__pyx_v_solutions[__pyx_v_i]).objective > __pyx_v_max_) != 0);
     if (__pyx_t_22) {
 
-      /* "lakhdar2005_continuous.pyx":216
+      /* "lakhdar2005_continuous.pyx":217
  *         for i in range(1, solutions.size()):
  *             if solutions[i].objective > max_:
  *                 best = i             # <<<<<<<<<<<<<<
@@ -2541,7 +2618,7 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_fit(CYTHON_UN
  */
       __pyx_v_best = __pyx_v_i;
 
-      /* "lakhdar2005_continuous.pyx":217
+      /* "lakhdar2005_continuous.pyx":218
  *             if solutions[i].objective > max_:
  *                 best = i
  *                 max_ = solutions[i].objective             # <<<<<<<<<<<<<<
@@ -2551,7 +2628,7 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_fit(CYTHON_UN
       __pyx_t_18 = (__pyx_v_solutions[__pyx_v_i]).objective;
       __pyx_v_max_ = __pyx_t_18;
 
-      /* "lakhdar2005_continuous.pyx":215
+      /* "lakhdar2005_continuous.pyx":216
  * 
  *         for i in range(1, solutions.size()):
  *             if solutions[i].objective > max_:             # <<<<<<<<<<<<<<
@@ -2561,39 +2638,39 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_fit(CYTHON_UN
     }
   }
 
-  /* "lakhdar2005_continuous.pyx":219
+  /* "lakhdar2005_continuous.pyx":220
  *                 max_ = solutions[i].objective
  * 
  *         tqdm.write("Best solution found -> Profit: %.2f, Backlog penalty: %.2f"             # <<<<<<<<<<<<<<
  *             % (solutions[best].objective, solutions[best].constraint))
  * 
  */
-  __pyx_t_6 = __Pyx_GetModuleGlobalName(__pyx_n_s_tqdm); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 219, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_write); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 219, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_tqdm); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 220, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_write); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 220, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "lakhdar2005_continuous.pyx":220
+  /* "lakhdar2005_continuous.pyx":221
  * 
  *         tqdm.write("Best solution found -> Profit: %.2f, Backlog penalty: %.2f"
  *             % (solutions[best].objective, solutions[best].constraint))             # <<<<<<<<<<<<<<
  * 
  *         cdef:
  */
-  __pyx_t_6 = PyFloat_FromDouble((__pyx_v_solutions[__pyx_v_best]).objective); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 220, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_5 = PyFloat_FromDouble((__pyx_v_solutions[__pyx_v_best]).constraint); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 220, __pyx_L1_error)
+  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_solutions[__pyx_v_best]).objective); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 221, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_5 = PyFloat_FromDouble((__pyx_v_solutions[__pyx_v_best]).constraint); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 221, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 220, __pyx_L1_error)
+  __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 221, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __Pyx_GIVEREF(__pyx_t_6);
-  PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_6);
+  __Pyx_GIVEREF(__pyx_t_3);
+  PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_3);
   __Pyx_GIVEREF(__pyx_t_5);
   PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_t_5);
-  __pyx_t_6 = 0;
+  __pyx_t_3 = 0;
   __pyx_t_5 = 0;
-  __pyx_t_5 = __Pyx_PyString_Format(__pyx_kp_s_Best_solution_found_Profit_2f_Ba, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 220, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyString_Format(__pyx_kp_s_Best_solution_found_Profit_2f_Ba, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 221, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __pyx_t_4 = NULL;
@@ -2607,44 +2684,44 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_fit(CYTHON_UN
     }
   }
   if (!__pyx_t_4) {
-    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 219, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 220, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_GOTREF(__pyx_t_6);
   } else {
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_1)) {
       PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_5};
-      __pyx_t_3 = __Pyx_PyFunction_FastCall(__pyx_t_1, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 219, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyFunction_FastCall(__pyx_t_1, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 220, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __Pyx_GOTREF(__pyx_t_3);
+      __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     } else
     #endif
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_1)) {
       PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_5};
-      __pyx_t_3 = __Pyx_PyCFunction_FastCall(__pyx_t_1, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 219, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyCFunction_FastCall(__pyx_t_1, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 220, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __Pyx_GOTREF(__pyx_t_3);
+      __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     } else
     #endif
     {
-      __pyx_t_6 = PyTuple_New(1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 219, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_6);
-      __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_4); __pyx_t_4 = NULL;
-      __Pyx_GIVEREF(__pyx_t_5);
-      PyTuple_SET_ITEM(__pyx_t_6, 0+1, __pyx_t_5);
-      __pyx_t_5 = 0;
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_6, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 219, __pyx_L1_error)
+      __pyx_t_3 = PyTuple_New(1+1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 220, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_4); __pyx_t_4 = NULL;
+      __Pyx_GIVEREF(__pyx_t_5);
+      PyTuple_SET_ITEM(__pyx_t_3, 0+1, __pyx_t_5);
+      __pyx_t_5 = 0;
+      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_3, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 220, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_6);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     }
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-  /* "lakhdar2005_continuous.pyx":223
+  /* "lakhdar2005_continuous.pyx":224
  * 
  *         cdef:
  *             unordered_map[int, vector[Campaign]] usp_schedule = fitness_functor.CreateUSPSchedule(solutions[best])             # <<<<<<<<<<<<<<
@@ -2653,7 +2730,7 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_fit(CYTHON_UN
  */
   __pyx_v_usp_schedule = __pyx_v_fitness_functor.CreateUSPSchedule((__pyx_v_solutions[__pyx_v_best]));
 
-  /* "lakhdar2005_continuous.pyx":224
+  /* "lakhdar2005_continuous.pyx":225
  *         cdef:
  *             unordered_map[int, vector[Campaign]] usp_schedule = fitness_functor.CreateUSPSchedule(solutions[best])
  *             unordered_map[int, vector[Campaign]] dsp_schedule = fitness_functor.CreateDSPSchedule(usp_schedule)             # <<<<<<<<<<<<<<
@@ -2662,7 +2739,7 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_fit(CYTHON_UN
  */
   __pyx_v_dsp_schedule = __pyx_v_fitness_functor.CreateDSPSchedule(__pyx_v_usp_schedule);
 
-  /* "lakhdar2005_continuous.pyx":226
+  /* "lakhdar2005_continuous.pyx":227
  *             unordered_map[int, vector[Campaign]] dsp_schedule = fitness_functor.CreateDSPSchedule(usp_schedule)
  *             vector[vector[int]] inventory, sold, dsp_waste, backlog
  *             Fitness.Objectives objectives = fitness_functor.CalculateObjectives(             # <<<<<<<<<<<<<<
@@ -2671,19 +2748,19 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_fit(CYTHON_UN
  */
   __pyx_v_objectives = __pyx_v_fitness_functor.CalculateObjectives(__pyx_v_usp_schedule, __pyx_v_dsp_schedule, __pyx_v_inventory, __pyx_v_sold, __pyx_v_dsp_waste, __pyx_v_backlog);
 
-  /* "lakhdar2005_continuous.pyx":235
+  /* "lakhdar2005_continuous.pyx":236
  *             )
  * 
  *         self.__schedule = []             # <<<<<<<<<<<<<<
  *         for i in range(1, num_usp_suites + 1):
  *             for j in range(usp_schedule[i].size()):
  */
-  __pyx_t_3 = PyList_New(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 235, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_Example1Model__schedule, __pyx_t_3) < 0) __PYX_ERR(0, 235, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_t_6 = PyList_New(0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 236, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_6);
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_Example1Model__schedule, __pyx_t_6) < 0) __PYX_ERR(0, 236, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-  /* "lakhdar2005_continuous.pyx":236
+  /* "lakhdar2005_continuous.pyx":237
  * 
  *         self.__schedule = []
  *         for i in range(1, num_usp_suites + 1):             # <<<<<<<<<<<<<<
@@ -2694,7 +2771,7 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_fit(CYTHON_UN
   for (__pyx_t_2 = 1; __pyx_t_2 < __pyx_t_11; __pyx_t_2+=1) {
     __pyx_v_i = __pyx_t_2;
 
-    /* "lakhdar2005_continuous.pyx":237
+    /* "lakhdar2005_continuous.pyx":238
  *         self.__schedule = []
  *         for i in range(1, num_usp_suites + 1):
  *             for j in range(usp_schedule[i].size()):             # <<<<<<<<<<<<<<
@@ -2705,98 +2782,98 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_fit(CYTHON_UN
     for (__pyx_t_25 = 0; __pyx_t_25 < __pyx_t_24; __pyx_t_25+=1) {
       __pyx_v_j = __pyx_t_25;
 
-      /* "lakhdar2005_continuous.pyx":238
+      /* "lakhdar2005_continuous.pyx":239
  *         for i in range(1, num_usp_suites + 1):
  *             for j in range(usp_schedule[i].size()):
  *                 self.__schedule.append(             # <<<<<<<<<<<<<<
  *                     dict(
  *                         Task='USP Suite i%d' % i,
  */
-      __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_Example1Model__schedule); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 238, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
+      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_Example1Model__schedule); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 239, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_6);
 
-      /* "lakhdar2005_continuous.pyx":240
+      /* "lakhdar2005_continuous.pyx":241
  *                 self.__schedule.append(
  *                     dict(
  *                         Task='USP Suite i%d' % i,             # <<<<<<<<<<<<<<
  *                         Resource='Product p%d' % usp_schedule[i][j].product,
  *                         Batches=usp_schedule[i][j].batches,
  */
-      __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 240, __pyx_L1_error)
+      __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 241, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_6 = __Pyx_PyInt_From_int(__pyx_v_i); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 240, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_6);
-      __pyx_t_5 = __Pyx_PyString_Format(__pyx_kp_s_USP_Suite_i_d, __pyx_t_6); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 240, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_i); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 241, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __pyx_t_5 = __Pyx_PyString_Format(__pyx_kp_s_USP_Suite_i_d, __pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 241, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-      if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_Task, __pyx_t_5) < 0) __PYX_ERR(0, 240, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_Task, __pyx_t_5) < 0) __PYX_ERR(0, 241, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-      /* "lakhdar2005_continuous.pyx":241
+      /* "lakhdar2005_continuous.pyx":242
  *                     dict(
  *                         Task='USP Suite i%d' % i,
  *                         Resource='Product p%d' % usp_schedule[i][j].product,             # <<<<<<<<<<<<<<
  *                         Batches=usp_schedule[i][j].batches,
  *                         Start=usp_schedule[i][j].start,
  */
-      __pyx_t_5 = __Pyx_PyInt_From_int(((__pyx_v_usp_schedule[__pyx_v_i])[__pyx_v_j]).product); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 241, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyInt_From_int(((__pyx_v_usp_schedule[__pyx_v_i])[__pyx_v_j]).product); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 242, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_6 = __Pyx_PyString_Format(__pyx_kp_s_Product_p_d, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 241, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_6);
+      __pyx_t_3 = __Pyx_PyString_Format(__pyx_kp_s_Product_p_d, __pyx_t_5); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 242, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_Resource, __pyx_t_6) < 0) __PYX_ERR(0, 240, __pyx_L1_error)
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_Resource, __pyx_t_3) < 0) __PYX_ERR(0, 241, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-      /* "lakhdar2005_continuous.pyx":242
+      /* "lakhdar2005_continuous.pyx":243
  *                         Task='USP Suite i%d' % i,
  *                         Resource='Product p%d' % usp_schedule[i][j].product,
  *                         Batches=usp_schedule[i][j].batches,             # <<<<<<<<<<<<<<
  *                         Start=usp_schedule[i][j].start,
  *                         Finish=usp_schedule[i][j].end
  */
-      __pyx_t_6 = __Pyx_PyInt_From_int(((__pyx_v_usp_schedule[__pyx_v_i])[__pyx_v_j]).batches); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 242, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_6);
-      if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_Batches, __pyx_t_6) < 0) __PYX_ERR(0, 240, __pyx_L1_error)
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __pyx_t_3 = __Pyx_PyInt_From_int(((__pyx_v_usp_schedule[__pyx_v_i])[__pyx_v_j]).batches); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 243, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_Batches, __pyx_t_3) < 0) __PYX_ERR(0, 241, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-      /* "lakhdar2005_continuous.pyx":243
+      /* "lakhdar2005_continuous.pyx":244
  *                         Resource='Product p%d' % usp_schedule[i][j].product,
  *                         Batches=usp_schedule[i][j].batches,
  *                         Start=usp_schedule[i][j].start,             # <<<<<<<<<<<<<<
  *                         Finish=usp_schedule[i][j].end
  *                     ))
  */
-      __pyx_t_6 = PyFloat_FromDouble(((__pyx_v_usp_schedule[__pyx_v_i])[__pyx_v_j]).start); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 243, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_6);
-      if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_Start, __pyx_t_6) < 0) __PYX_ERR(0, 240, __pyx_L1_error)
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __pyx_t_3 = PyFloat_FromDouble(((__pyx_v_usp_schedule[__pyx_v_i])[__pyx_v_j]).start); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 244, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_Start, __pyx_t_3) < 0) __PYX_ERR(0, 241, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-      /* "lakhdar2005_continuous.pyx":244
+      /* "lakhdar2005_continuous.pyx":245
  *                         Batches=usp_schedule[i][j].batches,
  *                         Start=usp_schedule[i][j].start,
  *                         Finish=usp_schedule[i][j].end             # <<<<<<<<<<<<<<
  *                     ))
  * 
  */
-      __pyx_t_6 = PyFloat_FromDouble(((__pyx_v_usp_schedule[__pyx_v_i])[__pyx_v_j]).end); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 244, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_6);
-      if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_Finish, __pyx_t_6) < 0) __PYX_ERR(0, 240, __pyx_L1_error)
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __pyx_t_3 = PyFloat_FromDouble(((__pyx_v_usp_schedule[__pyx_v_i])[__pyx_v_j]).end); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 245, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_Finish, __pyx_t_3) < 0) __PYX_ERR(0, 241, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-      /* "lakhdar2005_continuous.pyx":238
+      /* "lakhdar2005_continuous.pyx":239
  *         for i in range(1, num_usp_suites + 1):
  *             for j in range(usp_schedule[i].size()):
  *                 self.__schedule.append(             # <<<<<<<<<<<<<<
  *                     dict(
  *                         Task='USP Suite i%d' % i,
  */
-      __pyx_t_26 = __Pyx_PyObject_Append(__pyx_t_3, __pyx_t_1); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 238, __pyx_L1_error)
-      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __pyx_t_26 = __Pyx_PyObject_Append(__pyx_t_6, __pyx_t_1); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 239, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     }
   }
 
-  /* "lakhdar2005_continuous.pyx":247
+  /* "lakhdar2005_continuous.pyx":248
  *                     ))
  * 
  *         for i in range(num_usp_suites + 1, num_usp_suites + num_dsp_suites + 1):             # <<<<<<<<<<<<<<
@@ -2807,7 +2884,7 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_fit(CYTHON_UN
   for (__pyx_t_2 = (__pyx_v_num_usp_suites + 1); __pyx_t_2 < __pyx_t_11; __pyx_t_2+=1) {
     __pyx_v_i = __pyx_t_2;
 
-    /* "lakhdar2005_continuous.pyx":248
+    /* "lakhdar2005_continuous.pyx":249
  * 
  *         for i in range(num_usp_suites + 1, num_usp_suites + num_dsp_suites + 1):
  *             for j in range(dsp_schedule[i].size()):             # <<<<<<<<<<<<<<
@@ -2818,300 +2895,300 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_fit(CYTHON_UN
     for (__pyx_t_25 = 0; __pyx_t_25 < __pyx_t_24; __pyx_t_25+=1) {
       __pyx_v_j = __pyx_t_25;
 
-      /* "lakhdar2005_continuous.pyx":249
+      /* "lakhdar2005_continuous.pyx":250
  *         for i in range(num_usp_suites + 1, num_usp_suites + num_dsp_suites + 1):
  *             for j in range(dsp_schedule[i].size()):
  *                 self.__schedule.append(             # <<<<<<<<<<<<<<
  *                     dict(
  *                         Task='DSP Suite i%d' % (i - num_usp_suites),
  */
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_Example1Model__schedule); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 249, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_Example1Model__schedule); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 250, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
 
-      /* "lakhdar2005_continuous.pyx":251
+      /* "lakhdar2005_continuous.pyx":252
  *                 self.__schedule.append(
  *                     dict(
  *                         Task='DSP Suite i%d' % (i - num_usp_suites),             # <<<<<<<<<<<<<<
  *                         Resource='Product p%d' % dsp_schedule[i][j].product,
  *                         Batches=dsp_schedule[i][j].batches,
  */
-      __pyx_t_3 = PyDict_New(); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 251, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_6 = __Pyx_PyInt_From_int((__pyx_v_i - __pyx_v_num_usp_suites)); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 251, __pyx_L1_error)
+      __pyx_t_6 = PyDict_New(); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 252, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
-      __pyx_t_5 = __Pyx_PyString_Format(__pyx_kp_s_DSP_Suite_i_d, __pyx_t_6); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 251, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyInt_From_int((__pyx_v_i - __pyx_v_num_usp_suites)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 252, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __pyx_t_5 = __Pyx_PyString_Format(__pyx_kp_s_DSP_Suite_i_d, __pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 252, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-      if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_Task, __pyx_t_5) < 0) __PYX_ERR(0, 251, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_Task, __pyx_t_5) < 0) __PYX_ERR(0, 252, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-      /* "lakhdar2005_continuous.pyx":252
+      /* "lakhdar2005_continuous.pyx":253
  *                     dict(
  *                         Task='DSP Suite i%d' % (i - num_usp_suites),
  *                         Resource='Product p%d' % dsp_schedule[i][j].product,             # <<<<<<<<<<<<<<
  *                         Batches=dsp_schedule[i][j].batches,
  *                         Start=dsp_schedule[i][j].start,
  */
-      __pyx_t_5 = __Pyx_PyInt_From_int(((__pyx_v_dsp_schedule[__pyx_v_i])[__pyx_v_j]).product); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 252, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyInt_From_int(((__pyx_v_dsp_schedule[__pyx_v_i])[__pyx_v_j]).product); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 253, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_6 = __Pyx_PyString_Format(__pyx_kp_s_Product_p_d, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 252, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_6);
+      __pyx_t_3 = __Pyx_PyString_Format(__pyx_kp_s_Product_p_d, __pyx_t_5); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 253, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_Resource, __pyx_t_6) < 0) __PYX_ERR(0, 251, __pyx_L1_error)
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_Resource, __pyx_t_3) < 0) __PYX_ERR(0, 252, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-      /* "lakhdar2005_continuous.pyx":253
+      /* "lakhdar2005_continuous.pyx":254
  *                         Task='DSP Suite i%d' % (i - num_usp_suites),
  *                         Resource='Product p%d' % dsp_schedule[i][j].product,
  *                         Batches=dsp_schedule[i][j].batches,             # <<<<<<<<<<<<<<
  *                         Start=dsp_schedule[i][j].start,
  *                         Finish=dsp_schedule[i][j].end
  */
-      __pyx_t_6 = __Pyx_PyInt_From_int(((__pyx_v_dsp_schedule[__pyx_v_i])[__pyx_v_j]).batches); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 253, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_6);
-      if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_Batches, __pyx_t_6) < 0) __PYX_ERR(0, 251, __pyx_L1_error)
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __pyx_t_3 = __Pyx_PyInt_From_int(((__pyx_v_dsp_schedule[__pyx_v_i])[__pyx_v_j]).batches); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 254, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_Batches, __pyx_t_3) < 0) __PYX_ERR(0, 252, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-      /* "lakhdar2005_continuous.pyx":254
+      /* "lakhdar2005_continuous.pyx":255
  *                         Resource='Product p%d' % dsp_schedule[i][j].product,
  *                         Batches=dsp_schedule[i][j].batches,
  *                         Start=dsp_schedule[i][j].start,             # <<<<<<<<<<<<<<
  *                         Finish=dsp_schedule[i][j].end
  *                     ))
  */
-      __pyx_t_6 = PyFloat_FromDouble(((__pyx_v_dsp_schedule[__pyx_v_i])[__pyx_v_j]).start); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 254, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_6);
-      if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_Start, __pyx_t_6) < 0) __PYX_ERR(0, 251, __pyx_L1_error)
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __pyx_t_3 = PyFloat_FromDouble(((__pyx_v_dsp_schedule[__pyx_v_i])[__pyx_v_j]).start); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 255, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_Start, __pyx_t_3) < 0) __PYX_ERR(0, 252, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-      /* "lakhdar2005_continuous.pyx":255
+      /* "lakhdar2005_continuous.pyx":256
  *                         Batches=dsp_schedule[i][j].batches,
  *                         Start=dsp_schedule[i][j].start,
  *                         Finish=dsp_schedule[i][j].end             # <<<<<<<<<<<<<<
  *                     ))
  * 
  */
-      __pyx_t_6 = PyFloat_FromDouble(((__pyx_v_dsp_schedule[__pyx_v_i])[__pyx_v_j]).end); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 255, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_6);
-      if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_Finish, __pyx_t_6) < 0) __PYX_ERR(0, 251, __pyx_L1_error)
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __pyx_t_3 = PyFloat_FromDouble(((__pyx_v_dsp_schedule[__pyx_v_i])[__pyx_v_j]).end); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 256, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_Finish, __pyx_t_3) < 0) __PYX_ERR(0, 252, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-      /* "lakhdar2005_continuous.pyx":249
+      /* "lakhdar2005_continuous.pyx":250
  *         for i in range(num_usp_suites + 1, num_usp_suites + num_dsp_suites + 1):
  *             for j in range(dsp_schedule[i].size()):
  *                 self.__schedule.append(             # <<<<<<<<<<<<<<
  *                     dict(
  *                         Task='DSP Suite i%d' % (i - num_usp_suites),
  */
-      __pyx_t_26 = __Pyx_PyObject_Append(__pyx_t_1, __pyx_t_3); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 249, __pyx_L1_error)
+      __pyx_t_26 = __Pyx_PyObject_Append(__pyx_t_1, __pyx_t_6); if (unlikely(__pyx_t_26 == -1)) __PYX_ERR(0, 250, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     }
   }
 
-  /* "lakhdar2005_continuous.pyx":259
+  /* "lakhdar2005_continuous.pyx":260
  * 
  *         self.__objectives = dict(
  *             profit=objectives.profit,             # <<<<<<<<<<<<<<
  *             sales=objectives.sales,
  *             backlog_cost=objectives.backlog_cost,
  */
-  __pyx_t_3 = PyDict_New(); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 259, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_objectives.profit); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 259, __pyx_L1_error)
+  __pyx_t_6 = PyDict_New(); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 260, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_6);
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_objectives.profit); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 260, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_profit, __pyx_t_1) < 0) __PYX_ERR(0, 259, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_profit, __pyx_t_1) < 0) __PYX_ERR(0, 260, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "lakhdar2005_continuous.pyx":260
+  /* "lakhdar2005_continuous.pyx":261
  *         self.__objectives = dict(
  *             profit=objectives.profit,
  *             sales=objectives.sales,             # <<<<<<<<<<<<<<
  *             backlog_cost=objectives.backlog_cost,
  *             changeover_cost=objectives.changeover_cost,
  */
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_objectives.sales); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 260, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_objectives.sales); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 261, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_sales, __pyx_t_1) < 0) __PYX_ERR(0, 259, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_sales, __pyx_t_1) < 0) __PYX_ERR(0, 260, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "lakhdar2005_continuous.pyx":261
+  /* "lakhdar2005_continuous.pyx":262
  *             profit=objectives.profit,
  *             sales=objectives.sales,
  *             backlog_cost=objectives.backlog_cost,             # <<<<<<<<<<<<<<
  *             changeover_cost=objectives.changeover_cost,
  *             production_cost=objectives.production_cost,
  */
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_objectives.backlog_cost); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 261, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_objectives.backlog_cost); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 262, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_backlog_cost, __pyx_t_1) < 0) __PYX_ERR(0, 259, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_backlog_cost, __pyx_t_1) < 0) __PYX_ERR(0, 260, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "lakhdar2005_continuous.pyx":262
+  /* "lakhdar2005_continuous.pyx":263
  *             sales=objectives.sales,
  *             backlog_cost=objectives.backlog_cost,
  *             changeover_cost=objectives.changeover_cost,             # <<<<<<<<<<<<<<
  *             production_cost=objectives.production_cost,
  *             dsp_storage_cost=objectives.dsp_storage_cost,
  */
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_objectives.changeover_cost); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 262, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_objectives.changeover_cost); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 263, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_changeover_cost, __pyx_t_1) < 0) __PYX_ERR(0, 259, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_changeover_cost, __pyx_t_1) < 0) __PYX_ERR(0, 260, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "lakhdar2005_continuous.pyx":263
+  /* "lakhdar2005_continuous.pyx":264
  *             backlog_cost=objectives.backlog_cost,
  *             changeover_cost=objectives.changeover_cost,
  *             production_cost=objectives.production_cost,             # <<<<<<<<<<<<<<
  *             dsp_storage_cost=objectives.dsp_storage_cost,
  *             dsp_waste_cost=objectives.dsp_waste_cost
  */
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_objectives.production_cost); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 263, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_objectives.production_cost); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 264, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_production_cost, __pyx_t_1) < 0) __PYX_ERR(0, 259, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_production_cost, __pyx_t_1) < 0) __PYX_ERR(0, 260, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "lakhdar2005_continuous.pyx":264
+  /* "lakhdar2005_continuous.pyx":265
  *             changeover_cost=objectives.changeover_cost,
  *             production_cost=objectives.production_cost,
  *             dsp_storage_cost=objectives.dsp_storage_cost,             # <<<<<<<<<<<<<<
  *             dsp_waste_cost=objectives.dsp_waste_cost
  *             )
  */
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_objectives.dsp_storage_cost); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 264, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_objectives.dsp_storage_cost); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 265, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_dsp_storage_cost, __pyx_t_1) < 0) __PYX_ERR(0, 259, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_dsp_storage_cost, __pyx_t_1) < 0) __PYX_ERR(0, 260, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "lakhdar2005_continuous.pyx":265
+  /* "lakhdar2005_continuous.pyx":266
  *             production_cost=objectives.production_cost,
  *             dsp_storage_cost=objectives.dsp_storage_cost,
  *             dsp_waste_cost=objectives.dsp_waste_cost             # <<<<<<<<<<<<<<
  *             )
  * 
  */
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_objectives.dsp_waste_cost); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 265, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_objectives.dsp_waste_cost); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 266, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_dsp_waste_cost, __pyx_t_1) < 0) __PYX_ERR(0, 259, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_dsp_waste_cost, __pyx_t_1) < 0) __PYX_ERR(0, 260, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "lakhdar2005_continuous.pyx":258
+  /* "lakhdar2005_continuous.pyx":259
  *                     ))
  * 
  *         self.__objectives = dict(             # <<<<<<<<<<<<<<
  *             profit=objectives.profit,
  *             sales=objectives.sales,
  */
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_Example1Model__objectives, __pyx_t_3) < 0) __PYX_ERR(0, 258, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_Example1Model__objectives, __pyx_t_6) < 0) __PYX_ERR(0, 259, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-  /* "lakhdar2005_continuous.pyx":268
+  /* "lakhdar2005_continuous.pyx":269
  *             )
  * 
  *         self.__inventory_profile = np.array([[inventory[i][j] for j in range(num_periods)] for i in range(num_products)])             # <<<<<<<<<<<<<<
  *         self.__sales_profile = np.array([[sold[i][j] for j in range(num_periods)] for i in range(num_products)])
  *         self.__backlog_profile = np.array([[backlog[i][j] for j in range(num_periods)] for i in range(num_products)])
  */
-  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 268, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 269, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_array); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 268, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_6);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_array); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 269, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 268, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 269, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_2 = __pyx_v_num_products;
   for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_2; __pyx_t_12+=1) {
     __pyx_v_i = __pyx_t_12;
-    __pyx_t_5 = PyList_New(0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 268, __pyx_L1_error)
+    __pyx_t_5 = PyList_New(0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 269, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __pyx_t_27 = __pyx_v_num_periods;
     for (__pyx_t_24 = 0; __pyx_t_24 < __pyx_t_27; __pyx_t_24+=1) {
       __pyx_v_j = __pyx_t_24;
-      __pyx_t_4 = __Pyx_PyInt_From_int(((__pyx_v_inventory[__pyx_v_i])[__pyx_v_j])); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 268, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_PyInt_From_int(((__pyx_v_inventory[__pyx_v_i])[__pyx_v_j])); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 269, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      if (unlikely(__Pyx_ListComp_Append(__pyx_t_5, (PyObject*)__pyx_t_4))) __PYX_ERR(0, 268, __pyx_L1_error)
+      if (unlikely(__Pyx_ListComp_Append(__pyx_t_5, (PyObject*)__pyx_t_4))) __PYX_ERR(0, 269, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     }
-    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_5))) __PYX_ERR(0, 268, __pyx_L1_error)
+    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_5))) __PYX_ERR(0, 269, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   }
   __pyx_t_5 = NULL;
-  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_6))) {
-    __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_6);
+  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_3);
     if (likely(__pyx_t_5)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_6);
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
       __Pyx_INCREF(__pyx_t_5);
       __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_6, function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
     }
   }
   if (!__pyx_t_5) {
-    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 268, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 269, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_GOTREF(__pyx_t_6);
   } else {
     #if CYTHON_FAST_PYCALL
-    if (PyFunction_Check(__pyx_t_6)) {
+    if (PyFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[2] = {__pyx_t_5, __pyx_t_1};
-      __pyx_t_3 = __Pyx_PyFunction_FastCall(__pyx_t_6, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 268, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 269, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __Pyx_GOTREF(__pyx_t_3);
+      __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     } else
     #endif
     #if CYTHON_FAST_PYCCALL
-    if (__Pyx_PyFastCFunction_Check(__pyx_t_6)) {
+    if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[2] = {__pyx_t_5, __pyx_t_1};
-      __pyx_t_3 = __Pyx_PyCFunction_FastCall(__pyx_t_6, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 268, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 269, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __Pyx_GOTREF(__pyx_t_3);
+      __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     } else
     #endif
     {
-      __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 268, __pyx_L1_error)
+      __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 269, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_5); __pyx_t_5 = NULL;
       __Pyx_GIVEREF(__pyx_t_1);
       PyTuple_SET_ITEM(__pyx_t_4, 0+1, __pyx_t_1);
       __pyx_t_1 = 0;
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 268, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
+      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_4, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 269, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     }
   }
-  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_Example1Model__inventory_profil, __pyx_t_3) < 0) __PYX_ERR(0, 268, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_Example1Model__inventory_profil, __pyx_t_6) < 0) __PYX_ERR(0, 269, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-  /* "lakhdar2005_continuous.pyx":269
+  /* "lakhdar2005_continuous.pyx":270
  * 
  *         self.__inventory_profile = np.array([[inventory[i][j] for j in range(num_periods)] for i in range(num_products)])
  *         self.__sales_profile = np.array([[sold[i][j] for j in range(num_periods)] for i in range(num_products)])             # <<<<<<<<<<<<<<
  *         self.__backlog_profile = np.array([[backlog[i][j] for j in range(num_periods)] for i in range(num_products)])
  *         self.__waste_profile = np.array([[dsp_waste[i][j] for j in range(num_periods)] for i in range(num_products)])
  */
-  __pyx_t_6 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 269, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_array); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 269, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 270, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_array); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 270, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __pyx_t_6 = PyList_New(0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 269, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_6);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_t_3 = PyList_New(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 270, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_2 = __pyx_v_num_products;
   for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_2; __pyx_t_12+=1) {
     __pyx_v_i = __pyx_t_12;
-    __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 269, __pyx_L1_error)
+    __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 270, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __pyx_t_27 = __pyx_v_num_periods;
     for (__pyx_t_24 = 0; __pyx_t_24 < __pyx_t_27; __pyx_t_24+=1) {
       __pyx_v_j = __pyx_t_24;
-      __pyx_t_5 = __Pyx_PyInt_From_int(((__pyx_v_sold[__pyx_v_i])[__pyx_v_j])); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 269, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyInt_From_int(((__pyx_v_sold[__pyx_v_i])[__pyx_v_j])); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 270, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_5))) __PYX_ERR(0, 269, __pyx_L1_error)
+      if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_5))) __PYX_ERR(0, 270, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     }
-    if (unlikely(__Pyx_ListComp_Append(__pyx_t_6, (PyObject*)__pyx_t_1))) __PYX_ERR(0, 269, __pyx_L1_error)
+    if (unlikely(__Pyx_ListComp_Append(__pyx_t_3, (PyObject*)__pyx_t_1))) __PYX_ERR(0, 270, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
   __pyx_t_1 = NULL;
@@ -3125,151 +3202,151 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_fit(CYTHON_UN
     }
   }
   if (!__pyx_t_1) {
-    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_6); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 269, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_6 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_3); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 270, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __Pyx_GOTREF(__pyx_t_6);
   } else {
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_4)) {
-      PyObject *__pyx_temp[2] = {__pyx_t_1, __pyx_t_6};
-      __pyx_t_3 = __Pyx_PyFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 269, __pyx_L1_error)
+      PyObject *__pyx_temp[2] = {__pyx_t_1, __pyx_t_3};
+      __pyx_t_6 = __Pyx_PyFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 270, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __Pyx_GOTREF(__pyx_t_3);
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __Pyx_GOTREF(__pyx_t_6);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     } else
     #endif
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_4)) {
-      PyObject *__pyx_temp[2] = {__pyx_t_1, __pyx_t_6};
-      __pyx_t_3 = __Pyx_PyCFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 269, __pyx_L1_error)
+      PyObject *__pyx_temp[2] = {__pyx_t_1, __pyx_t_3};
+      __pyx_t_6 = __Pyx_PyCFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 270, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __Pyx_GOTREF(__pyx_t_3);
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __Pyx_GOTREF(__pyx_t_6);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     } else
     #endif
     {
-      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 269, __pyx_L1_error)
+      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 270, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_GIVEREF(__pyx_t_1); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_1); __pyx_t_1 = NULL;
-      __Pyx_GIVEREF(__pyx_t_6);
-      PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_t_6);
-      __pyx_t_6 = 0;
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_5, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 269, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
+      __Pyx_GIVEREF(__pyx_t_3);
+      PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_t_3);
+      __pyx_t_3 = 0;
+      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_5, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 270, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     }
   }
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_Example1Model__sales_profile, __pyx_t_3) < 0) __PYX_ERR(0, 269, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_Example1Model__sales_profile, __pyx_t_6) < 0) __PYX_ERR(0, 270, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-  /* "lakhdar2005_continuous.pyx":270
+  /* "lakhdar2005_continuous.pyx":271
  *         self.__inventory_profile = np.array([[inventory[i][j] for j in range(num_periods)] for i in range(num_products)])
  *         self.__sales_profile = np.array([[sold[i][j] for j in range(num_periods)] for i in range(num_products)])
  *         self.__backlog_profile = np.array([[backlog[i][j] for j in range(num_periods)] for i in range(num_products)])             # <<<<<<<<<<<<<<
  *         self.__waste_profile = np.array([[dsp_waste[i][j] for j in range(num_periods)] for i in range(num_products)])
  * 
  */
-  __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 270, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 271, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_array); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 270, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_array); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 271, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 270, __pyx_L1_error)
+  __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 271, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_2 = __pyx_v_num_products;
   for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_2; __pyx_t_12+=1) {
     __pyx_v_i = __pyx_t_12;
-    __pyx_t_6 = PyList_New(0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 270, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_6);
+    __pyx_t_3 = PyList_New(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 271, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_27 = __pyx_v_num_periods;
     for (__pyx_t_24 = 0; __pyx_t_24 < __pyx_t_27; __pyx_t_24+=1) {
       __pyx_v_j = __pyx_t_24;
-      __pyx_t_1 = __Pyx_PyInt_From_int(((__pyx_v_backlog[__pyx_v_i])[__pyx_v_j])); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 270, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyInt_From_int(((__pyx_v_backlog[__pyx_v_i])[__pyx_v_j])); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 271, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      if (unlikely(__Pyx_ListComp_Append(__pyx_t_6, (PyObject*)__pyx_t_1))) __PYX_ERR(0, 270, __pyx_L1_error)
+      if (unlikely(__Pyx_ListComp_Append(__pyx_t_3, (PyObject*)__pyx_t_1))) __PYX_ERR(0, 271, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     }
-    if (unlikely(__Pyx_ListComp_Append(__pyx_t_4, (PyObject*)__pyx_t_6))) __PYX_ERR(0, 270, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+    if (unlikely(__Pyx_ListComp_Append(__pyx_t_4, (PyObject*)__pyx_t_3))) __PYX_ERR(0, 271, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   }
-  __pyx_t_6 = NULL;
+  __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_5))) {
-    __pyx_t_6 = PyMethod_GET_SELF(__pyx_t_5);
-    if (likely(__pyx_t_6)) {
+    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_5);
+    if (likely(__pyx_t_3)) {
       PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_5);
-      __Pyx_INCREF(__pyx_t_6);
+      __Pyx_INCREF(__pyx_t_3);
       __Pyx_INCREF(function);
       __Pyx_DECREF_SET(__pyx_t_5, function);
     }
   }
-  if (!__pyx_t_6) {
-    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_t_4); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 270, __pyx_L1_error)
+  if (!__pyx_t_3) {
+    __pyx_t_6 = __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_t_4); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 271, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_GOTREF(__pyx_t_6);
   } else {
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_5)) {
-      PyObject *__pyx_temp[2] = {__pyx_t_6, __pyx_t_4};
-      __pyx_t_3 = __Pyx_PyFunction_FastCall(__pyx_t_5, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 270, __pyx_L1_error)
-      __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-      __Pyx_GOTREF(__pyx_t_3);
+      PyObject *__pyx_temp[2] = {__pyx_t_3, __pyx_t_4};
+      __pyx_t_6 = __Pyx_PyFunction_FastCall(__pyx_t_5, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 271, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     } else
     #endif
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_5)) {
-      PyObject *__pyx_temp[2] = {__pyx_t_6, __pyx_t_4};
-      __pyx_t_3 = __Pyx_PyCFunction_FastCall(__pyx_t_5, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 270, __pyx_L1_error)
-      __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-      __Pyx_GOTREF(__pyx_t_3);
+      PyObject *__pyx_temp[2] = {__pyx_t_3, __pyx_t_4};
+      __pyx_t_6 = __Pyx_PyCFunction_FastCall(__pyx_t_5, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 271, __pyx_L1_error)
+      __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     } else
     #endif
     {
-      __pyx_t_1 = PyTuple_New(1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 270, __pyx_L1_error)
+      __pyx_t_1 = PyTuple_New(1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 271, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_6); __pyx_t_6 = NULL;
+      __Pyx_GIVEREF(__pyx_t_3); PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_3); __pyx_t_3 = NULL;
       __Pyx_GIVEREF(__pyx_t_4);
       PyTuple_SET_ITEM(__pyx_t_1, 0+1, __pyx_t_4);
       __pyx_t_4 = 0;
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_1, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 270, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
+      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_1, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 271, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     }
   }
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_Example1Model__backlog_profile, __pyx_t_3) < 0) __PYX_ERR(0, 270, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_Example1Model__backlog_profile, __pyx_t_6) < 0) __PYX_ERR(0, 271, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-  /* "lakhdar2005_continuous.pyx":271
+  /* "lakhdar2005_continuous.pyx":272
  *         self.__sales_profile = np.array([[sold[i][j] for j in range(num_periods)] for i in range(num_products)])
  *         self.__backlog_profile = np.array([[backlog[i][j] for j in range(num_periods)] for i in range(num_products)])
  *         self.__waste_profile = np.array([[dsp_waste[i][j] for j in range(num_periods)] for i in range(num_products)])             # <<<<<<<<<<<<<<
  * 
  *         return self
  */
-  __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 271, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 272, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_array); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 271, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_array); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 272, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_5 = PyList_New(0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 271, __pyx_L1_error)
+  __pyx_t_5 = PyList_New(0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 272, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_t_2 = __pyx_v_num_products;
   for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_2; __pyx_t_12+=1) {
     __pyx_v_i = __pyx_t_12;
-    __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 271, __pyx_L1_error)
+    __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 272, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_27 = __pyx_v_num_periods;
     for (__pyx_t_24 = 0; __pyx_t_24 < __pyx_t_27; __pyx_t_24+=1) {
       __pyx_v_j = __pyx_t_24;
-      __pyx_t_6 = __Pyx_PyInt_From_int(((__pyx_v_dsp_waste[__pyx_v_i])[__pyx_v_j])); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 271, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_6);
-      if (unlikely(__Pyx_ListComp_Append(__pyx_t_4, (PyObject*)__pyx_t_6))) __PYX_ERR(0, 271, __pyx_L1_error)
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __pyx_t_3 = __Pyx_PyInt_From_int(((__pyx_v_dsp_waste[__pyx_v_i])[__pyx_v_j])); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 272, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      if (unlikely(__Pyx_ListComp_Append(__pyx_t_4, (PyObject*)__pyx_t_3))) __PYX_ERR(0, 272, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     }
-    if (unlikely(__Pyx_ListComp_Append(__pyx_t_5, (PyObject*)__pyx_t_4))) __PYX_ERR(0, 271, __pyx_L1_error)
+    if (unlikely(__Pyx_ListComp_Append(__pyx_t_5, (PyObject*)__pyx_t_4))) __PYX_ERR(0, 272, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   }
   __pyx_t_4 = NULL;
@@ -3283,45 +3360,45 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_fit(CYTHON_UN
     }
   }
   if (!__pyx_t_4) {
-    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 271, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 272, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_GOTREF(__pyx_t_6);
   } else {
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_1)) {
       PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_5};
-      __pyx_t_3 = __Pyx_PyFunction_FastCall(__pyx_t_1, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 271, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyFunction_FastCall(__pyx_t_1, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 272, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __Pyx_GOTREF(__pyx_t_3);
+      __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     } else
     #endif
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_1)) {
       PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_5};
-      __pyx_t_3 = __Pyx_PyCFunction_FastCall(__pyx_t_1, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 271, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyCFunction_FastCall(__pyx_t_1, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 272, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __Pyx_GOTREF(__pyx_t_3);
+      __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     } else
     #endif
     {
-      __pyx_t_6 = PyTuple_New(1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 271, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_6);
-      __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_4); __pyx_t_4 = NULL;
-      __Pyx_GIVEREF(__pyx_t_5);
-      PyTuple_SET_ITEM(__pyx_t_6, 0+1, __pyx_t_5);
-      __pyx_t_5 = 0;
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_6, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 271, __pyx_L1_error)
+      __pyx_t_3 = PyTuple_New(1+1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 272, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_4); __pyx_t_4 = NULL;
+      __Pyx_GIVEREF(__pyx_t_5);
+      PyTuple_SET_ITEM(__pyx_t_3, 0+1, __pyx_t_5);
+      __pyx_t_5 = 0;
+      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_3, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 272, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_6);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     }
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_Example1Model__waste_profile, __pyx_t_3) < 0) __PYX_ERR(0, 271, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_Example1Model__waste_profile, __pyx_t_6) < 0) __PYX_ERR(0, 272, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-  /* "lakhdar2005_continuous.pyx":273
+  /* "lakhdar2005_continuous.pyx":274
  *         self.__waste_profile = np.array([[dsp_waste[i][j] for j in range(num_periods)] for i in range(num_products)])
  * 
  *         return self             # <<<<<<<<<<<<<<
@@ -3357,7 +3434,7 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_fit(CYTHON_UN
   return __pyx_r;
 }
 
-/* "lakhdar2005_continuous.pyx":276
+/* "lakhdar2005_continuous.pyx":277
  * 
  *     @property
  *     def schedule(self):             # <<<<<<<<<<<<<<
@@ -3390,19 +3467,19 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_2schedule(CYT
   PyObject *__pyx_t_5 = NULL;
   __Pyx_RefNannySetupContext("schedule", 0);
 
-  /* "lakhdar2005_continuous.pyx":277
+  /* "lakhdar2005_continuous.pyx":278
  *     @property
  *     def schedule(self):
  *         df = pd.DataFrame(self.__schedule)             # <<<<<<<<<<<<<<
  *         df.index = df['Task']
  *         del df['Task']
  */
-  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_pd); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 277, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_pd); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 278, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_DataFrame); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 277, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_DataFrame); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 278, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_Example1Model__schedule); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 277, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_Example1Model__schedule); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 278, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_4 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -3415,14 +3492,14 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_2schedule(CYT
     }
   }
   if (!__pyx_t_4) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 277, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 278, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_GOTREF(__pyx_t_1);
   } else {
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
-      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 277, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 278, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -3431,20 +3508,20 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_2schedule(CYT
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
       PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_t_2};
-      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 277, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 278, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     } else
     #endif
     {
-      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 277, __pyx_L1_error)
+      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 278, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
       __Pyx_GIVEREF(__pyx_t_2);
       PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_t_2);
       __pyx_t_2 = 0;
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 277, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 278, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     }
@@ -3453,28 +3530,28 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_2schedule(CYT
   __pyx_v_df = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "lakhdar2005_continuous.pyx":278
+  /* "lakhdar2005_continuous.pyx":279
  *     def schedule(self):
  *         df = pd.DataFrame(self.__schedule)
  *         df.index = df['Task']             # <<<<<<<<<<<<<<
  *         del df['Task']
  *         return df[['Resource', 'Batches', 'Start', 'Finish']]
  */
-  __pyx_t_1 = PyObject_GetItem(__pyx_v_df, __pyx_n_s_Task); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 278, __pyx_L1_error)
+  __pyx_t_1 = PyObject_GetItem(__pyx_v_df, __pyx_n_s_Task); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 279, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_df, __pyx_n_s_index, __pyx_t_1) < 0) __PYX_ERR(0, 278, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_df, __pyx_n_s_index, __pyx_t_1) < 0) __PYX_ERR(0, 279, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "lakhdar2005_continuous.pyx":279
+  /* "lakhdar2005_continuous.pyx":280
  *         df = pd.DataFrame(self.__schedule)
  *         df.index = df['Task']
  *         del df['Task']             # <<<<<<<<<<<<<<
  *         return df[['Resource', 'Batches', 'Start', 'Finish']]
  * 
  */
-  if (unlikely(PyObject_DelItem(__pyx_v_df, __pyx_n_s_Task) < 0)) __PYX_ERR(0, 279, __pyx_L1_error)
+  if (unlikely(PyObject_DelItem(__pyx_v_df, __pyx_n_s_Task) < 0)) __PYX_ERR(0, 280, __pyx_L1_error)
 
-  /* "lakhdar2005_continuous.pyx":280
+  /* "lakhdar2005_continuous.pyx":281
  *         df.index = df['Task']
  *         del df['Task']
  *         return df[['Resource', 'Batches', 'Start', 'Finish']]             # <<<<<<<<<<<<<<
@@ -3482,7 +3559,7 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_2schedule(CYT
  *     @property
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyList_New(4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 280, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 281, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_INCREF(__pyx_n_s_Resource);
   __Pyx_GIVEREF(__pyx_n_s_Resource);
@@ -3496,14 +3573,14 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_2schedule(CYT
   __Pyx_INCREF(__pyx_n_s_Finish);
   __Pyx_GIVEREF(__pyx_n_s_Finish);
   PyList_SET_ITEM(__pyx_t_1, 3, __pyx_n_s_Finish);
-  __pyx_t_3 = PyObject_GetItem(__pyx_v_df, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 280, __pyx_L1_error)
+  __pyx_t_3 = PyObject_GetItem(__pyx_v_df, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 281, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_r = __pyx_t_3;
   __pyx_t_3 = 0;
   goto __pyx_L0;
 
-  /* "lakhdar2005_continuous.pyx":276
+  /* "lakhdar2005_continuous.pyx":277
  * 
  *     @property
  *     def schedule(self):             # <<<<<<<<<<<<<<
@@ -3527,7 +3604,7 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_2schedule(CYT
   return __pyx_r;
 }
 
-/* "lakhdar2005_continuous.pyx":283
+/* "lakhdar2005_continuous.pyx":284
  * 
  *     @property
  *     def objectives(self):             # <<<<<<<<<<<<<<
@@ -3555,7 +3632,7 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_4objectives(C
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("objectives", 0);
 
-  /* "lakhdar2005_continuous.pyx":284
+  /* "lakhdar2005_continuous.pyx":285
  *     @property
  *     def objectives(self):
  *         return self.__objectives             # <<<<<<<<<<<<<<
@@ -3563,13 +3640,13 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_4objectives(C
  *     @property
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_Example1Model__objectives); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 284, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_Example1Model__objectives); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 285, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "lakhdar2005_continuous.pyx":283
+  /* "lakhdar2005_continuous.pyx":284
  * 
  *     @property
  *     def objectives(self):             # <<<<<<<<<<<<<<
@@ -3588,7 +3665,7 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_4objectives(C
   return __pyx_r;
 }
 
-/* "lakhdar2005_continuous.pyx":287
+/* "lakhdar2005_continuous.pyx":288
  * 
  *     @property
  *     def inventory_profile(self):             # <<<<<<<<<<<<<<
@@ -3616,7 +3693,7 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_6inventory_pr
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("inventory_profile", 0);
 
-  /* "lakhdar2005_continuous.pyx":288
+  /* "lakhdar2005_continuous.pyx":289
  *     @property
  *     def inventory_profile(self):
  *         return self.__inventory_profile             # <<<<<<<<<<<<<<
@@ -3624,13 +3701,13 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_6inventory_pr
  *     @property
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_Example1Model__inventory_profil); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 288, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_Example1Model__inventory_profil); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 289, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "lakhdar2005_continuous.pyx":287
+  /* "lakhdar2005_continuous.pyx":288
  * 
  *     @property
  *     def inventory_profile(self):             # <<<<<<<<<<<<<<
@@ -3649,7 +3726,7 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_6inventory_pr
   return __pyx_r;
 }
 
-/* "lakhdar2005_continuous.pyx":291
+/* "lakhdar2005_continuous.pyx":292
  * 
  *     @property
  *     def sales_profile(self):             # <<<<<<<<<<<<<<
@@ -3677,7 +3754,7 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_8sales_profil
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("sales_profile", 0);
 
-  /* "lakhdar2005_continuous.pyx":292
+  /* "lakhdar2005_continuous.pyx":293
  *     @property
  *     def sales_profile(self):
  *         return self.__sales_profile             # <<<<<<<<<<<<<<
@@ -3685,13 +3762,13 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_8sales_profil
  *     @property
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_Example1Model__sales_profile); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 292, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_Example1Model__sales_profile); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 293, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "lakhdar2005_continuous.pyx":291
+  /* "lakhdar2005_continuous.pyx":292
  * 
  *     @property
  *     def sales_profile(self):             # <<<<<<<<<<<<<<
@@ -3710,7 +3787,7 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_8sales_profil
   return __pyx_r;
 }
 
-/* "lakhdar2005_continuous.pyx":295
+/* "lakhdar2005_continuous.pyx":296
  * 
  *     @property
  *     def backlog_profile(self):             # <<<<<<<<<<<<<<
@@ -3738,7 +3815,7 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_10backlog_pro
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("backlog_profile", 0);
 
-  /* "lakhdar2005_continuous.pyx":296
+  /* "lakhdar2005_continuous.pyx":297
  *     @property
  *     def backlog_profile(self):
  *         return self.__backlog_profile             # <<<<<<<<<<<<<<
@@ -3746,13 +3823,13 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_10backlog_pro
  *     @property
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_Example1Model__backlog_profile); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 296, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_Example1Model__backlog_profile); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 297, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "lakhdar2005_continuous.pyx":295
+  /* "lakhdar2005_continuous.pyx":296
  * 
  *     @property
  *     def backlog_profile(self):             # <<<<<<<<<<<<<<
@@ -3771,7 +3848,7 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_10backlog_pro
   return __pyx_r;
 }
 
-/* "lakhdar2005_continuous.pyx":299
+/* "lakhdar2005_continuous.pyx":300
  * 
  *     @property
  *     def waste_profile(self):             # <<<<<<<<<<<<<<
@@ -3799,7 +3876,7 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_12waste_profi
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("waste_profile", 0);
 
-  /* "lakhdar2005_continuous.pyx":300
+  /* "lakhdar2005_continuous.pyx":301
  *     @property
  *     def waste_profile(self):
  *         return self.__waste_profile             # <<<<<<<<<<<<<<
@@ -3807,13 +3884,13 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_12waste_profi
  * 
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_Example1Model__waste_profile); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 300, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_Example1Model__waste_profile); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 301, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "lakhdar2005_continuous.pyx":299
+  /* "lakhdar2005_continuous.pyx":300
  * 
  *     @property
  *     def waste_profile(self):             # <<<<<<<<<<<<<<
@@ -4219,6 +4296,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_Finish, __pyx_k_Finish, sizeof(__pyx_k_Finish), 0, 0, 1, 1},
   {&__pyx_kp_s_Product_p_d, __pyx_k_Product_p_d, sizeof(__pyx_k_Product_p_d), 0, 0, 1, 0},
   {&__pyx_n_s_Resource, __pyx_k_Resource, sizeof(__pyx_k_Resource), 0, 0, 1, 1},
+  {&__pyx_kp_s_Run_d_Best_2f, __pyx_k_Run_d_Best_2f, sizeof(__pyx_k_Run_d_Best_2f), 0, 0, 1, 0},
   {&__pyx_n_s_Start, __pyx_k_Start, sizeof(__pyx_k_Start), 0, 0, 1, 1},
   {&__pyx_n_s_Task, __pyx_k_Task, sizeof(__pyx_k_Task), 0, 0, 1, 1},
   {&__pyx_kp_s_USP_Suite_i_d, __pyx_k_USP_Suite_i_d, sizeof(__pyx_k_USP_Suite_i_d), 0, 0, 1, 0},
@@ -4322,7 +4400,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_property = __Pyx_GetBuiltinName(__pyx_n_s_property); if (!__pyx_builtin_property) __PYX_ERR(0, 275, __pyx_L1_error)
+  __pyx_builtin_property = __Pyx_GetBuiltinName(__pyx_n_s_property); if (!__pyx_builtin_property) __PYX_ERR(0, 276, __pyx_L1_error)
   __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 188, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
@@ -4368,77 +4446,77 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__4);
   __pyx_codeobj__5 = (PyObject*)__Pyx_PyCode_New(20, 0, 39, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__4, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_pyx_lakhdar2005_continuous_p, __pyx_n_s_fit, 123, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__5)) __PYX_ERR(0, 123, __pyx_L1_error)
 
-  /* "lakhdar2005_continuous.pyx":276
+  /* "lakhdar2005_continuous.pyx":277
  * 
  *     @property
  *     def schedule(self):             # <<<<<<<<<<<<<<
  *         df = pd.DataFrame(self.__schedule)
  *         df.index = df['Task']
  */
-  __pyx_tuple__6 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_df); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(0, 276, __pyx_L1_error)
+  __pyx_tuple__6 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_df); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(0, 277, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__6);
   __Pyx_GIVEREF(__pyx_tuple__6);
-  __pyx_codeobj__7 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__6, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_pyx_lakhdar2005_continuous_p, __pyx_n_s_schedule, 276, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__7)) __PYX_ERR(0, 276, __pyx_L1_error)
+  __pyx_codeobj__7 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__6, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_pyx_lakhdar2005_continuous_p, __pyx_n_s_schedule, 277, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__7)) __PYX_ERR(0, 277, __pyx_L1_error)
 
-  /* "lakhdar2005_continuous.pyx":283
+  /* "lakhdar2005_continuous.pyx":284
  * 
  *     @property
  *     def objectives(self):             # <<<<<<<<<<<<<<
  *         return self.__objectives
  * 
  */
-  __pyx_tuple__8 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__8)) __PYX_ERR(0, 283, __pyx_L1_error)
+  __pyx_tuple__8 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__8)) __PYX_ERR(0, 284, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__8);
   __Pyx_GIVEREF(__pyx_tuple__8);
-  __pyx_codeobj__9 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__8, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_pyx_lakhdar2005_continuous_p, __pyx_n_s_objectives, 283, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__9)) __PYX_ERR(0, 283, __pyx_L1_error)
+  __pyx_codeobj__9 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__8, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_pyx_lakhdar2005_continuous_p, __pyx_n_s_objectives, 284, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__9)) __PYX_ERR(0, 284, __pyx_L1_error)
 
-  /* "lakhdar2005_continuous.pyx":287
+  /* "lakhdar2005_continuous.pyx":288
  * 
  *     @property
  *     def inventory_profile(self):             # <<<<<<<<<<<<<<
  *         return self.__inventory_profile
  * 
  */
-  __pyx_tuple__10 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 287, __pyx_L1_error)
+  __pyx_tuple__10 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 288, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__10);
   __Pyx_GIVEREF(__pyx_tuple__10);
-  __pyx_codeobj__11 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__10, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_pyx_lakhdar2005_continuous_p, __pyx_n_s_inventory_profile, 287, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__11)) __PYX_ERR(0, 287, __pyx_L1_error)
+  __pyx_codeobj__11 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__10, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_pyx_lakhdar2005_continuous_p, __pyx_n_s_inventory_profile, 288, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__11)) __PYX_ERR(0, 288, __pyx_L1_error)
 
-  /* "lakhdar2005_continuous.pyx":291
+  /* "lakhdar2005_continuous.pyx":292
  * 
  *     @property
  *     def sales_profile(self):             # <<<<<<<<<<<<<<
  *         return self.__sales_profile
  * 
  */
-  __pyx_tuple__12 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(0, 291, __pyx_L1_error)
+  __pyx_tuple__12 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(0, 292, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__12);
   __Pyx_GIVEREF(__pyx_tuple__12);
-  __pyx_codeobj__13 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__12, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_pyx_lakhdar2005_continuous_p, __pyx_n_s_sales_profile, 291, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__13)) __PYX_ERR(0, 291, __pyx_L1_error)
+  __pyx_codeobj__13 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__12, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_pyx_lakhdar2005_continuous_p, __pyx_n_s_sales_profile, 292, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__13)) __PYX_ERR(0, 292, __pyx_L1_error)
 
-  /* "lakhdar2005_continuous.pyx":295
+  /* "lakhdar2005_continuous.pyx":296
  * 
  *     @property
  *     def backlog_profile(self):             # <<<<<<<<<<<<<<
  *         return self.__backlog_profile
  * 
  */
-  __pyx_tuple__14 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(0, 295, __pyx_L1_error)
+  __pyx_tuple__14 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(0, 296, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__14);
   __Pyx_GIVEREF(__pyx_tuple__14);
-  __pyx_codeobj__15 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__14, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_pyx_lakhdar2005_continuous_p, __pyx_n_s_backlog_profile, 295, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__15)) __PYX_ERR(0, 295, __pyx_L1_error)
+  __pyx_codeobj__15 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__14, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_pyx_lakhdar2005_continuous_p, __pyx_n_s_backlog_profile, 296, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__15)) __PYX_ERR(0, 296, __pyx_L1_error)
 
-  /* "lakhdar2005_continuous.pyx":299
+  /* "lakhdar2005_continuous.pyx":300
  * 
  *     @property
  *     def waste_profile(self):             # <<<<<<<<<<<<<<
  *         return self.__waste_profile
  * 
  */
-  __pyx_tuple__16 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__16)) __PYX_ERR(0, 299, __pyx_L1_error)
+  __pyx_tuple__16 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__16)) __PYX_ERR(0, 300, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__16);
   __Pyx_GIVEREF(__pyx_tuple__16);
-  __pyx_codeobj__17 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__16, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_pyx_lakhdar2005_continuous_p, __pyx_n_s_waste_profile, 299, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__17)) __PYX_ERR(0, 299, __pyx_L1_error)
+  __pyx_codeobj__17 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__16, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_pyx_lakhdar2005_continuous_p, __pyx_n_s_waste_profile, 300, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__17)) __PYX_ERR(0, 300, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -4799,172 +4877,172 @@ PyMODINIT_FUNC PyInit_lakhdar2005_continuous(void)
   if (PyObject_SetItem(__pyx_t_12, __pyx_n_s_fit, __pyx_t_10) < 0) __PYX_ERR(0, 123, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
 
-  /* "lakhdar2005_continuous.pyx":276
+  /* "lakhdar2005_continuous.pyx":277
  * 
  *     @property
  *     def schedule(self):             # <<<<<<<<<<<<<<
  *         df = pd.DataFrame(self.__schedule)
  *         df.index = df['Task']
  */
-  __pyx_t_10 = __Pyx_CyFunction_NewEx(&__pyx_mdef_22lakhdar2005_continuous_13Example1Model_3schedule, 0, __pyx_n_s_Example1Model_schedule, NULL, __pyx_n_s_lakhdar2005_continuous, __pyx_d, ((PyObject *)__pyx_codeobj__7)); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 276, __pyx_L1_error)
+  __pyx_t_10 = __Pyx_CyFunction_NewEx(&__pyx_mdef_22lakhdar2005_continuous_13Example1Model_3schedule, 0, __pyx_n_s_Example1Model_schedule, NULL, __pyx_n_s_lakhdar2005_continuous, __pyx_d, ((PyObject *)__pyx_codeobj__7)); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 277, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_10);
 
-  /* "lakhdar2005_continuous.pyx":275
+  /* "lakhdar2005_continuous.pyx":276
  *         return self
  * 
  *     @property             # <<<<<<<<<<<<<<
  *     def schedule(self):
  *         df = pd.DataFrame(self.__schedule)
  */
-  __pyx_t_9 = PyTuple_New(1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 275, __pyx_L1_error)
+  __pyx_t_9 = PyTuple_New(1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 276, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_9);
   __Pyx_GIVEREF(__pyx_t_10);
   PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_10);
   __pyx_t_10 = 0;
-  __pyx_t_10 = __Pyx_PyObject_Call(__pyx_builtin_property, __pyx_t_9, NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 275, __pyx_L1_error)
+  __pyx_t_10 = __Pyx_PyObject_Call(__pyx_builtin_property, __pyx_t_9, NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 276, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_10);
   __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-  if (PyObject_SetItem(__pyx_t_12, __pyx_n_s_schedule, __pyx_t_10) < 0) __PYX_ERR(0, 276, __pyx_L1_error)
+  if (PyObject_SetItem(__pyx_t_12, __pyx_n_s_schedule, __pyx_t_10) < 0) __PYX_ERR(0, 277, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
 
-  /* "lakhdar2005_continuous.pyx":283
+  /* "lakhdar2005_continuous.pyx":284
  * 
  *     @property
  *     def objectives(self):             # <<<<<<<<<<<<<<
  *         return self.__objectives
  * 
  */
-  __pyx_t_10 = __Pyx_CyFunction_NewEx(&__pyx_mdef_22lakhdar2005_continuous_13Example1Model_5objectives, 0, __pyx_n_s_Example1Model_objectives, NULL, __pyx_n_s_lakhdar2005_continuous, __pyx_d, ((PyObject *)__pyx_codeobj__9)); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 283, __pyx_L1_error)
+  __pyx_t_10 = __Pyx_CyFunction_NewEx(&__pyx_mdef_22lakhdar2005_continuous_13Example1Model_5objectives, 0, __pyx_n_s_Example1Model_objectives, NULL, __pyx_n_s_lakhdar2005_continuous, __pyx_d, ((PyObject *)__pyx_codeobj__9)); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 284, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_10);
 
-  /* "lakhdar2005_continuous.pyx":282
+  /* "lakhdar2005_continuous.pyx":283
  *         return df[['Resource', 'Batches', 'Start', 'Finish']]
  * 
  *     @property             # <<<<<<<<<<<<<<
  *     def objectives(self):
  *         return self.__objectives
  */
-  __pyx_t_9 = PyTuple_New(1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 282, __pyx_L1_error)
+  __pyx_t_9 = PyTuple_New(1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 283, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_9);
   __Pyx_GIVEREF(__pyx_t_10);
   PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_10);
   __pyx_t_10 = 0;
-  __pyx_t_10 = __Pyx_PyObject_Call(__pyx_builtin_property, __pyx_t_9, NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 282, __pyx_L1_error)
+  __pyx_t_10 = __Pyx_PyObject_Call(__pyx_builtin_property, __pyx_t_9, NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 283, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_10);
   __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-  if (PyObject_SetItem(__pyx_t_12, __pyx_n_s_objectives, __pyx_t_10) < 0) __PYX_ERR(0, 283, __pyx_L1_error)
+  if (PyObject_SetItem(__pyx_t_12, __pyx_n_s_objectives, __pyx_t_10) < 0) __PYX_ERR(0, 284, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
 
-  /* "lakhdar2005_continuous.pyx":287
+  /* "lakhdar2005_continuous.pyx":288
  * 
  *     @property
  *     def inventory_profile(self):             # <<<<<<<<<<<<<<
  *         return self.__inventory_profile
  * 
  */
-  __pyx_t_10 = __Pyx_CyFunction_NewEx(&__pyx_mdef_22lakhdar2005_continuous_13Example1Model_7inventory_profile, 0, __pyx_n_s_Example1Model_inventory_profile, NULL, __pyx_n_s_lakhdar2005_continuous, __pyx_d, ((PyObject *)__pyx_codeobj__11)); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 287, __pyx_L1_error)
+  __pyx_t_10 = __Pyx_CyFunction_NewEx(&__pyx_mdef_22lakhdar2005_continuous_13Example1Model_7inventory_profile, 0, __pyx_n_s_Example1Model_inventory_profile, NULL, __pyx_n_s_lakhdar2005_continuous, __pyx_d, ((PyObject *)__pyx_codeobj__11)); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 288, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_10);
 
-  /* "lakhdar2005_continuous.pyx":286
+  /* "lakhdar2005_continuous.pyx":287
  *         return self.__objectives
  * 
  *     @property             # <<<<<<<<<<<<<<
  *     def inventory_profile(self):
  *         return self.__inventory_profile
  */
-  __pyx_t_9 = PyTuple_New(1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 286, __pyx_L1_error)
+  __pyx_t_9 = PyTuple_New(1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 287, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_9);
   __Pyx_GIVEREF(__pyx_t_10);
   PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_10);
   __pyx_t_10 = 0;
-  __pyx_t_10 = __Pyx_PyObject_Call(__pyx_builtin_property, __pyx_t_9, NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 286, __pyx_L1_error)
+  __pyx_t_10 = __Pyx_PyObject_Call(__pyx_builtin_property, __pyx_t_9, NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 287, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_10);
   __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-  if (PyObject_SetItem(__pyx_t_12, __pyx_n_s_inventory_profile, __pyx_t_10) < 0) __PYX_ERR(0, 287, __pyx_L1_error)
+  if (PyObject_SetItem(__pyx_t_12, __pyx_n_s_inventory_profile, __pyx_t_10) < 0) __PYX_ERR(0, 288, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
 
-  /* "lakhdar2005_continuous.pyx":291
+  /* "lakhdar2005_continuous.pyx":292
  * 
  *     @property
  *     def sales_profile(self):             # <<<<<<<<<<<<<<
  *         return self.__sales_profile
  * 
  */
-  __pyx_t_10 = __Pyx_CyFunction_NewEx(&__pyx_mdef_22lakhdar2005_continuous_13Example1Model_9sales_profile, 0, __pyx_n_s_Example1Model_sales_profile, NULL, __pyx_n_s_lakhdar2005_continuous, __pyx_d, ((PyObject *)__pyx_codeobj__13)); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 291, __pyx_L1_error)
+  __pyx_t_10 = __Pyx_CyFunction_NewEx(&__pyx_mdef_22lakhdar2005_continuous_13Example1Model_9sales_profile, 0, __pyx_n_s_Example1Model_sales_profile, NULL, __pyx_n_s_lakhdar2005_continuous, __pyx_d, ((PyObject *)__pyx_codeobj__13)); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 292, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_10);
 
-  /* "lakhdar2005_continuous.pyx":290
+  /* "lakhdar2005_continuous.pyx":291
  *         return self.__inventory_profile
  * 
  *     @property             # <<<<<<<<<<<<<<
  *     def sales_profile(self):
  *         return self.__sales_profile
  */
-  __pyx_t_9 = PyTuple_New(1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 290, __pyx_L1_error)
+  __pyx_t_9 = PyTuple_New(1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 291, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_9);
   __Pyx_GIVEREF(__pyx_t_10);
   PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_10);
   __pyx_t_10 = 0;
-  __pyx_t_10 = __Pyx_PyObject_Call(__pyx_builtin_property, __pyx_t_9, NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 290, __pyx_L1_error)
+  __pyx_t_10 = __Pyx_PyObject_Call(__pyx_builtin_property, __pyx_t_9, NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 291, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_10);
   __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-  if (PyObject_SetItem(__pyx_t_12, __pyx_n_s_sales_profile, __pyx_t_10) < 0) __PYX_ERR(0, 291, __pyx_L1_error)
+  if (PyObject_SetItem(__pyx_t_12, __pyx_n_s_sales_profile, __pyx_t_10) < 0) __PYX_ERR(0, 292, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
 
-  /* "lakhdar2005_continuous.pyx":295
+  /* "lakhdar2005_continuous.pyx":296
  * 
  *     @property
  *     def backlog_profile(self):             # <<<<<<<<<<<<<<
  *         return self.__backlog_profile
  * 
  */
-  __pyx_t_10 = __Pyx_CyFunction_NewEx(&__pyx_mdef_22lakhdar2005_continuous_13Example1Model_11backlog_profile, 0, __pyx_n_s_Example1Model_backlog_profile, NULL, __pyx_n_s_lakhdar2005_continuous, __pyx_d, ((PyObject *)__pyx_codeobj__15)); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 295, __pyx_L1_error)
+  __pyx_t_10 = __Pyx_CyFunction_NewEx(&__pyx_mdef_22lakhdar2005_continuous_13Example1Model_11backlog_profile, 0, __pyx_n_s_Example1Model_backlog_profile, NULL, __pyx_n_s_lakhdar2005_continuous, __pyx_d, ((PyObject *)__pyx_codeobj__15)); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 296, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_10);
 
-  /* "lakhdar2005_continuous.pyx":294
+  /* "lakhdar2005_continuous.pyx":295
  *         return self.__sales_profile
  * 
  *     @property             # <<<<<<<<<<<<<<
  *     def backlog_profile(self):
  *         return self.__backlog_profile
  */
-  __pyx_t_9 = PyTuple_New(1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 294, __pyx_L1_error)
+  __pyx_t_9 = PyTuple_New(1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 295, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_9);
   __Pyx_GIVEREF(__pyx_t_10);
   PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_10);
   __pyx_t_10 = 0;
-  __pyx_t_10 = __Pyx_PyObject_Call(__pyx_builtin_property, __pyx_t_9, NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 294, __pyx_L1_error)
+  __pyx_t_10 = __Pyx_PyObject_Call(__pyx_builtin_property, __pyx_t_9, NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 295, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_10);
   __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-  if (PyObject_SetItem(__pyx_t_12, __pyx_n_s_backlog_profile, __pyx_t_10) < 0) __PYX_ERR(0, 295, __pyx_L1_error)
+  if (PyObject_SetItem(__pyx_t_12, __pyx_n_s_backlog_profile, __pyx_t_10) < 0) __PYX_ERR(0, 296, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
 
-  /* "lakhdar2005_continuous.pyx":299
+  /* "lakhdar2005_continuous.pyx":300
  * 
  *     @property
  *     def waste_profile(self):             # <<<<<<<<<<<<<<
  *         return self.__waste_profile
  * 
  */
-  __pyx_t_10 = __Pyx_CyFunction_NewEx(&__pyx_mdef_22lakhdar2005_continuous_13Example1Model_13waste_profile, 0, __pyx_n_s_Example1Model_waste_profile, NULL, __pyx_n_s_lakhdar2005_continuous, __pyx_d, ((PyObject *)__pyx_codeobj__17)); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 299, __pyx_L1_error)
+  __pyx_t_10 = __Pyx_CyFunction_NewEx(&__pyx_mdef_22lakhdar2005_continuous_13Example1Model_13waste_profile, 0, __pyx_n_s_Example1Model_waste_profile, NULL, __pyx_n_s_lakhdar2005_continuous, __pyx_d, ((PyObject *)__pyx_codeobj__17)); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 300, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_10);
 
-  /* "lakhdar2005_continuous.pyx":298
+  /* "lakhdar2005_continuous.pyx":299
  *         return self.__backlog_profile
  * 
  *     @property             # <<<<<<<<<<<<<<
  *     def waste_profile(self):
  *         return self.__waste_profile
  */
-  __pyx_t_9 = PyTuple_New(1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 298, __pyx_L1_error)
+  __pyx_t_9 = PyTuple_New(1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 299, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_9);
   __Pyx_GIVEREF(__pyx_t_10);
   PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_10);
   __pyx_t_10 = 0;
-  __pyx_t_10 = __Pyx_PyObject_Call(__pyx_builtin_property, __pyx_t_9, NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 298, __pyx_L1_error)
+  __pyx_t_10 = __Pyx_PyObject_Call(__pyx_builtin_property, __pyx_t_9, NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 299, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_10);
   __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-  if (PyObject_SetItem(__pyx_t_12, __pyx_n_s_waste_profile, __pyx_t_10) < 0) __PYX_ERR(0, 299, __pyx_L1_error)
+  if (PyObject_SetItem(__pyx_t_12, __pyx_n_s_waste_profile, __pyx_t_10) < 0) __PYX_ERR(0, 300, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
 
   /* "lakhdar2005_continuous.pyx":122

@@ -568,8 +568,10 @@ void DoubledDemandProfileTest()
 	Fitness fitness(
 		num_usp_suites,
 		num_dsp_suites,
+
 		demand,
 		days_per_period,
+
 		usp_storage_cost,
 		sales_price,
 		production_cost,
@@ -577,10 +579,12 @@ void DoubledDemandProfileTest()
 		dsp_storage_cost,
 		backlog_penalty,
 		changeover_cost,
+
 		usp_days,
 		usp_lead_days,
 		usp_shelf_life,
 		usp_storage_cap,
+
 		dsp_days,
 		dsp_lead_days,
 		dsp_shelf_life,

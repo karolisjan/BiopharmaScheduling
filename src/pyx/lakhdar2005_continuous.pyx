@@ -205,6 +205,7 @@ class Example1Model(Base):
                     single_objective_ga.Update()
                     pbar.update()
                     
+                tqdm.write("Run: %d, Best: %.2f" % (run + 1, single_objective_ga.Top().objective));
                 solutions.push_back(single_objective_ga.Top())
                 
         cdef:
