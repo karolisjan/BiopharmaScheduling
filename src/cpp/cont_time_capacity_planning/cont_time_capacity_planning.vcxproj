@@ -146,7 +146,7 @@
     <ClInclude Include="batch.h" />
     <ClInclude Include="campaign.h" />
     <ClInclude Include="dynamic_individual.h" />
-    <ClInclude Include="fitness.h" />
+    <ClInclude Include="scheduling_models.h" />
     <ClInclude Include="gene.h" />
     <ClInclude Include="single_objective_ga.h" />
     <ClInclude Include="single_objective_individual.h" />

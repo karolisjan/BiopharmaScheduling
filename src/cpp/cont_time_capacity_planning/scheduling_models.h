@@ -17,7 +17,7 @@
 using namespace std;
 using namespace types;
 
-class Fitness
+class Lakhdar2005Ex1Model
 {
 	int num_products, num_periods, horizon;
 	int num_usp_suites, num_dsp_suites;
@@ -246,9 +246,9 @@ class Fitness
 	}
 
 public:
-	Fitness() {}
+	Lakhdar2005Ex1Model() {}
 
-	Fitness(
+	Lakhdar2005Ex1Model(
 		int num_usp_suites,
 		int num_dsp_suites,
 

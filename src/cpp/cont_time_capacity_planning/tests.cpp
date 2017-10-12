@@ -1,13 +1,17 @@
 #include "single_objective_ga.h"
-#include "fitness.h"
+#include "scheduling_models.h"
 
 using namespace types;
 using namespace algorithms;
 
+//------------------------------------------------------------------
+//				Lakhdar2005 Example 1 Scheduling Model
+//------------------------------------------------------------------
+
 // Fitness function test with a known continous-time 
 // base case solution.
 // The calculated profit should be 517.
-void BaseCaseGlobalOptimumTest()
+void Lakhdar2005Ex1_BaseCaseGlobalOptimumTest()
 {
 	vector<vector<int>> demand =
 	{
@@ -40,7 +44,7 @@ void BaseCaseGlobalOptimumTest()
 	vector<double> dsp_shelf_life = { 180, 180, 180 };
 	vector<double> dsp_storage_cap = { 40, 40, 40 };
 
-	Fitness fitness(
+	Lakhdar2005Ex1Model lakhdar2005ex1_model(
 		num_usp_suites,
 		num_dsp_suites,
 		demand,
@@ -84,15 +88,15 @@ void BaseCaseGlobalOptimumTest()
 	i.genes[4].product_num = 3;
 	i.genes[4].num_batches = 5;
 
-	fitness(i);
+	lakhdar2005ex1_model(i);
 
 	printf("%.2f profit", i.objective);
 
-	auto usp_schedule = fitness.CreateUSPSchedule(i);
-	auto dsp_schedule = fitness.CreateDSPSchedule(usp_schedule);
+	auto usp_schedule = lakhdar2005ex1_model.CreateUSPSchedule(i);
+	auto dsp_schedule = lakhdar2005ex1_model.CreateDSPSchedule(usp_schedule);
 
 	vector<vector<int>> inventory, sold, backlog, dsp_waste;
-	Fitness::Objectives objectives = fitness.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
+	Lakhdar2005Ex1Model::Objectives objectives = lakhdar2005ex1_model.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
 
 	printf(", (%.2f, %.2f)\n", objectives.profit, objectives.backlog_cost);
 }
@@ -100,7 +104,7 @@ void BaseCaseGlobalOptimumTest()
 // Fitness function test with a continuous-time solution
 // to the problem of increased demand for product 1.
 // The calculated profit should be 562.
-void IncreasedDemandGlobalOptimumTest()
+void Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest()
 {
 	vector<vector<int>> demand =
 	{
@@ -133,7 +137,7 @@ void IncreasedDemandGlobalOptimumTest()
 	vector<double> dsp_shelf_life = { 180, 180, 180 };
 	vector<double> dsp_storage_cap = { 40, 40, 40 };
 
-	Fitness fitness(
+	Lakhdar2005Ex1Model lakhdar2005ex1_model(
 		num_usp_suites,
 		num_dsp_suites,
 		demand,
@@ -185,15 +189,15 @@ void IncreasedDemandGlobalOptimumTest()
 	i.genes[6].product_num = 1;
 	i.genes[6].num_batches = 3;
 
-	fitness(i);
+	lakhdar2005ex1_model(i);
 
 	printf("%.2f profit", i.objective);
 
-	auto usp_schedule = fitness.CreateUSPSchedule(i);
-	auto dsp_schedule = fitness.CreateDSPSchedule(usp_schedule);
+	auto usp_schedule = lakhdar2005ex1_model.CreateUSPSchedule(i);
+	auto dsp_schedule = lakhdar2005ex1_model.CreateDSPSchedule(usp_schedule);
 
 	vector<vector<int>> inventory, sold, backlog, dsp_waste;
-	Fitness::Objectives objectives = fitness.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
+	Lakhdar2005Ex1Model::Objectives objectives = lakhdar2005ex1_model.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
 
 	printf(", (%.2f, %.2f)\n", objectives.profit, objectives.backlog_cost);
 }
@@ -201,7 +205,7 @@ void IncreasedDemandGlobalOptimumTest()
 // Fitness function test with a continuous-time solution
 // to the problem of doubled demand profile, i.e. 2 years.
 // The calculated profit should be 1007.
-void DoubledDemandProfileGlobalOptimumTest()
+void Lakhdar2005Ex1_DoubledDemandProfileGlobalOptimumTest()
 {
 	vector<vector<int>> demand =
 	{
@@ -234,7 +238,7 @@ void DoubledDemandProfileGlobalOptimumTest()
 	vector<double> dsp_shelf_life = { 180, 180, 180 };
 	vector<double> dsp_storage_cap = { 40, 40, 40 };
 
-	Fitness fitness(
+	Lakhdar2005Ex1Model lakhdar2005ex1_model(
 		num_usp_suites,
 		num_dsp_suites,
 		demand,
@@ -302,20 +306,20 @@ void DoubledDemandProfileGlobalOptimumTest()
 	i.genes[10].product_num = 1;
 	i.genes[10].num_batches = 6;
 
-	fitness(i);
+	lakhdar2005ex1_model(i);
 
 	printf("%.2f profit", i.objective);
 
-	auto usp_schedule = fitness.CreateUSPSchedule(i);
-	auto dsp_schedule = fitness.CreateDSPSchedule(usp_schedule);
+	auto usp_schedule = lakhdar2005ex1_model.CreateUSPSchedule(i);
+	auto dsp_schedule = lakhdar2005ex1_model.CreateDSPSchedule(usp_schedule);
 
 	vector<vector<int>> inventory, sold, backlog, dsp_waste;
-	Fitness::Objectives objectives = fitness.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
+	Lakhdar2005Ex1Model::Objectives objectives = lakhdar2005ex1_model.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
 
 	printf(", (%.2f, %.2f)\n", objectives.profit, objectives.backlog_cost);
 }
 
-void BaseCaseTest()
+void Lakhdar2005Ex1_BaseCaseTest()
 {
 	int runs = 10, gens = 200, popsize = 100;
 
@@ -359,7 +363,7 @@ void BaseCaseTest()
 	vector<double> dsp_shelf_life = { 180, 180, 180 };
 	vector<double> dsp_storage_cap = { 40, 40, 40 };
 
-	Fitness fitness(
+	Lakhdar2005Ex1Model lakhdar2005ex1_model(
 		num_usp_suites,
 		num_dsp_suites,
 		demand,
@@ -380,8 +384,8 @@ void BaseCaseTest()
 		dsp_shelf_life,
 		dsp_storage_cap);
 
-	SingleObjectiveGA<SingleObjectiveIndividual, Fitness> simple_ga(
-		fitness,
+	SingleObjectiveGA<SingleObjectiveIndividual, Lakhdar2005Ex1Model> simple_ga(
+		lakhdar2005ex1_model,
 		seed
 	);
 
@@ -406,11 +410,11 @@ void BaseCaseTest()
 		}
 
 		auto& best = simple_ga.Top();
-		auto usp_schedule = fitness.CreateUSPSchedule(best);
-		auto dsp_schedule = fitness.CreateDSPSchedule(usp_schedule);
+		auto usp_schedule = lakhdar2005ex1_model.CreateUSPSchedule(best);
+		auto dsp_schedule = lakhdar2005ex1_model.CreateDSPSchedule(usp_schedule);
 
 		vector<vector<int>> inventory, sold, backlog, dsp_waste;
-		Fitness::Objectives objectives = fitness.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
+		Lakhdar2005Ex1Model::Objectives objectives = lakhdar2005ex1_model.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
 
 		printf(", (%.2f, %.2f)", objectives.profit, objectives.backlog_cost);
 
@@ -418,7 +422,7 @@ void BaseCaseTest()
 	}
 }
 
-void IncreasedDemandTest()
+void Lakhdar2005Ex1_IncreasedDemandTest()
 {
 	int runs = 10, gens = 1000, popsize = 100;
 
@@ -462,7 +466,7 @@ void IncreasedDemandTest()
 	vector<double> dsp_shelf_life = { 180, 180, 180 };
 	vector<double> dsp_storage_cap = { 40, 40, 40 };
 
-	Fitness fitness(
+	Lakhdar2005Ex1Model lakhdar2005ex1_model(
 		num_usp_suites,
 		num_dsp_suites,
 		demand,
@@ -483,8 +487,8 @@ void IncreasedDemandTest()
 		dsp_shelf_life,
 		dsp_storage_cap);
 
-	SingleObjectiveGA<SingleObjectiveIndividual, Fitness> simple_ga(
-		fitness,
+	SingleObjectiveGA<SingleObjectiveIndividual, Lakhdar2005Ex1Model> simple_ga(
+		lakhdar2005ex1_model,
 		seed
 	);
 
@@ -509,11 +513,11 @@ void IncreasedDemandTest()
 		}
 
 		auto& best = simple_ga.Top();
-		auto usp_schedule = fitness.CreateUSPSchedule(best);
-		auto dsp_schedule = fitness.CreateDSPSchedule(usp_schedule);
+		auto usp_schedule = lakhdar2005ex1_model.CreateUSPSchedule(best);
+		auto dsp_schedule = lakhdar2005ex1_model.CreateDSPSchedule(usp_schedule);
 
 		vector<vector<int>> inventory, sold, backlog, dsp_waste;
-		Fitness::Objectives objectives = fitness.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
+		Lakhdar2005Ex1Model::Objectives objectives = lakhdar2005ex1_model.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
 
 		printf(", (%.2f, %.2f)", objectives.profit, objectives.backlog_cost);
 
@@ -521,7 +525,7 @@ void IncreasedDemandTest()
 	}
 }
 
-void DoubledDemandProfileTest()
+void Lakhdar2005Ex1_DoubledDemandProfileTest()
 {
 	int runs = 10, gens = 1000, popsize = 100;
 
@@ -565,7 +569,7 @@ void DoubledDemandProfileTest()
 	vector<double> dsp_shelf_life = { 180, 180, 180 };
 	vector<double> dsp_storage_cap = { 40, 40, 40 };
 
-	Fitness fitness(
+	Lakhdar2005Ex1Model lakhdar2005ex1_model(
 		num_usp_suites,
 		num_dsp_suites,
 
@@ -590,8 +594,8 @@ void DoubledDemandProfileTest()
 		dsp_shelf_life,
 		dsp_storage_cap);
 
-	SingleObjectiveGA<SingleObjectiveIndividual, Fitness> simple_ga(
-		fitness,
+	SingleObjectiveGA<SingleObjectiveIndividual, Lakhdar2005Ex1Model> simple_ga(
+		lakhdar2005ex1_model,
 		seed
 	);
 
@@ -616,11 +620,11 @@ void DoubledDemandProfileTest()
 		}
 
 		auto& best = simple_ga.Top();
-		auto usp_schedule = fitness.CreateUSPSchedule(best);
-		auto dsp_schedule = fitness.CreateDSPSchedule(usp_schedule);
+		auto usp_schedule = lakhdar2005ex1_model.CreateUSPSchedule(best);
+		auto dsp_schedule = lakhdar2005ex1_model.CreateDSPSchedule(usp_schedule);
 
 		vector<vector<int>> inventory, sold, backlog, dsp_waste;
-		Fitness::Objectives objectives = fitness.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
+		Lakhdar2005Ex1Model::Objectives objectives = lakhdar2005ex1_model.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
 
 		printf(", (%.2f, %.2f)", objectives.profit, objectives.backlog_cost);
 
@@ -628,25 +632,31 @@ void DoubledDemandProfileTest()
 	}
 }
 
+//------------------------------------------------------------------
+//				Lakhdar2005 Example 1 Scheduling Model
+//------------------------------------------------------------------
+
 int main()
 {
+	printf("Lakhdar2005 Example 1 Scheduling Model tests...\n");
+
 	printf("A base case solution test: ");
-	BaseCaseGlobalOptimumTest();
+	Lakhdar2005Ex1_BaseCaseGlobalOptimumTest();
 
 	printf("Increased demand for product 1 solution test: ");
-	IncreasedDemandGlobalOptimumTest();
+	Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest();
 
 	printf("Doubled demand profile solution test: ");
-	DoubledDemandProfileGlobalOptimumTest();
+	Lakhdar2005Ex1_DoubledDemandProfileGlobalOptimumTest();
 
 	printf("\nGA solution for the base case:\n");
-	BaseCaseTest();
+	Lakhdar2005Ex1_BaseCaseTest();
 
 	printf("\nGA solution for the case of increased demand of product 1:\n");
-	IncreasedDemandTest();
+	Lakhdar2005Ex1_IncreasedDemandTest();
 
 	printf("\nGA solution for the case of doubled demand profile:\n");
-	DoubledDemandProfileTest();
+	Lakhdar2005Ex1_DoubledDemandProfileTest();
 
 	printf("\nDone!\n");
 	cin.get();
