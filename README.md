@@ -1,2 +1,5 @@
-# Continuous-Time-Capacity-Planning
-Continuous-time heuristic model for medium-term capacity planning of a multi-suite, multi-product biopharmaceutical facility
+# Continuous-Time Capacity Planning & Scheduling Models
+Continuous-time heuristic models for medium-term capacity planning of multi-product biopharmaceutical manufacture.
+
+## C++ code layout
+![C++ code layout](src/cpp/ClassDiagram.bmp)
