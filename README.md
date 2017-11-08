@@ -16,7 +16,7 @@ pip install -r requirements.txt
 python setup.py build_ext --inplace 
 ```
 
-[Plotly](https://plot.ly/) account (free) might be needed to enable plotting.
+[Plotly](https://plot.ly/) account (free) might be needed to enable plotting (see this [link](https://plot.ly/python/getting-started/)).
 
 ## How to run
 
