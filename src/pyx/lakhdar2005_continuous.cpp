@@ -4,10 +4,10 @@
 {
     "distutils": {
         "depends": [
-            "src\\cpp\\lakhdar2005_continuous\\campaign.h",
-            "src\\cpp\\lakhdar2005_continuous\\fitness.h",
-            "src\\cpp\\lakhdar2005_continuous\\single_objective_ga.h",
-            "src\\cpp\\lakhdar2005_continuous\\single_objective_individual.h"
+            "src\\cpp\\cont_time_capacity_planning\\campaign.h",
+            "src\\cpp\\cont_time_capacity_planning\\scheduling_models.h",
+            "src\\cpp\\cont_time_capacity_planning\\single_objective_ga.h",
+            "src\\cpp\\cont_time_capacity_planning\\single_objective_individual.h"
         ],
         "extra_compile_args": [
             "/std:c++14",
@@ -517,10 +517,10 @@ static CYTHON_INLINE float __PYX_NAN() {
 #include <algorithm>
 #include <utility>
 #include <unordered_map>
-#include "../cpp/lakhdar2005_continuous/single_objective_ga.h"
-#include "../cpp/lakhdar2005_continuous/single_objective_individual.h"
-#include "../cpp/lakhdar2005_continuous/campaign.h"
-#include "../cpp/lakhdar2005_continuous/fitness.h"
+#include "../cpp/cont_time_capacity_planning/single_objective_ga.h"
+#include "../cpp/cont_time_capacity_planning/single_objective_individual.h"
+#include "../cpp/cont_time_capacity_planning/campaign.h"
+#include "../cpp/cont_time_capacity_planning/scheduling_models.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif /* _OPENMP */
@@ -2086,8 +2086,8 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_fit(CYTHON_UN
   int __pyx_v_num_products;
   int __pyx_v_num_periods;
   std::vector<struct types::SingleObjectiveIndividual>  __pyx_v_solutions;
-  Fitness __pyx_v_fitness_functor;
-  algorithms::SingleObjectiveGA<struct types::SingleObjectiveIndividual,Fitness>  __pyx_v_single_objective_ga;
+  Lakhdar2005Ex1Model __pyx_v_fitness_functor;
+  algorithms::SingleObjectiveGA<struct types::SingleObjectiveIndividual,Lakhdar2005Ex1Model>  __pyx_v_single_objective_ga;
   PyObject *__pyx_v_pbar = NULL;
   int __pyx_v_i;
   int __pyx_v_best;
@@ -2098,7 +2098,7 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_fit(CYTHON_UN
   std::vector<std::vector<int> >  __pyx_v_sold;
   std::vector<std::vector<int> >  __pyx_v_dsp_waste;
   std::vector<std::vector<int> >  __pyx_v_backlog;
-  Fitness::Objectives __pyx_v_objectives;
+  Lakhdar2005Ex1Model::Objectives __pyx_v_objectives;
   std::vector<struct types::Campaign> ::size_type __pyx_v_j;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
@@ -2144,14 +2144,14 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_fit(CYTHON_UN
   /* "lakhdar2005_continuous.pyx":155
  *             vector[SingleObjectiveIndividual] solutions
  * 
- *             Fitness fitness_functor = Fitness(             # <<<<<<<<<<<<<<
+ *             Lakhdar2005Ex1Model fitness_functor = Lakhdar2005Ex1Model(             # <<<<<<<<<<<<<<
  *                 num_usp_suites,
  *                 num_dsp_suites,
  */
-  __pyx_v_fitness_functor = Fitness(__pyx_v_num_usp_suites, __pyx_v_num_dsp_suites, __pyx_v_demand, __pyx_v_days_per_period, __pyx_v_usp_storage_cost, __pyx_v_sales_price, __pyx_v_production_cost, __pyx_v_waste_disposal_cost, __pyx_v_dsp_storage_cost, __pyx_v_backlog_penalty, __pyx_v_changeover_cost, __pyx_v_usp_days, __pyx_v_usp_lead_days, __pyx_v_usp_shelf_life, __pyx_v_usp_storage_cap, __pyx_v_dsp_days, __pyx_v_dsp_lead_days, __pyx_v_dsp_shelf_life, __pyx_v_dsp_storage_cap);
+  __pyx_v_fitness_functor = Lakhdar2005Ex1Model(__pyx_v_num_usp_suites, __pyx_v_num_dsp_suites, __pyx_v_demand, __pyx_v_days_per_period, __pyx_v_usp_storage_cost, __pyx_v_sales_price, __pyx_v_production_cost, __pyx_v_waste_disposal_cost, __pyx_v_dsp_storage_cost, __pyx_v_backlog_penalty, __pyx_v_changeover_cost, __pyx_v_usp_days, __pyx_v_usp_lead_days, __pyx_v_usp_shelf_life, __pyx_v_usp_storage_cap, __pyx_v_dsp_days, __pyx_v_dsp_lead_days, __pyx_v_dsp_shelf_life, __pyx_v_dsp_storage_cap);
 
   /* "lakhdar2005_continuous.pyx":184
- *                 SingleObjectiveGA[SingleObjectiveIndividual, Fitness](
+ *                 SingleObjectiveGA[SingleObjectiveIndividual, Lakhdar2005Ex1Model](
  *                     fitness_functor,
  *                     self._seed             # <<<<<<<<<<<<<<
  *             )
@@ -2164,12 +2164,12 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_fit(CYTHON_UN
 
   /* "lakhdar2005_continuous.pyx":182
  * 
- *             SingleObjectiveGA[SingleObjectiveIndividual, Fitness] single_objective_ga = \
- *                 SingleObjectiveGA[SingleObjectiveIndividual, Fitness](             # <<<<<<<<<<<<<<
+ *             SingleObjectiveGA[SingleObjectiveIndividual, Lakhdar2005Ex1Model] single_objective_ga = \
+ *                 SingleObjectiveGA[SingleObjectiveIndividual, Lakhdar2005Ex1Model](             # <<<<<<<<<<<<<<
  *                     fitness_functor,
  *                     self._seed
  */
-  __pyx_v_single_objective_ga = algorithms::SingleObjectiveGA<struct types::SingleObjectiveIndividual,Fitness> (__pyx_v_fitness_functor, __pyx_t_2);
+  __pyx_v_single_objective_ga = algorithms::SingleObjectiveGA<struct types::SingleObjectiveIndividual,Lakhdar2005Ex1Model> (__pyx_v_fitness_functor, __pyx_t_2);
 
   /* "lakhdar2005_continuous.pyx":187
  *             )
@@ -2735,14 +2735,14 @@ static PyObject *__pyx_pf_22lakhdar2005_continuous_13Example1Model_fit(CYTHON_UN
  *             unordered_map[int, vector[Campaign]] usp_schedule = fitness_functor.CreateUSPSchedule(solutions[best])
  *             unordered_map[int, vector[Campaign]] dsp_schedule = fitness_functor.CreateDSPSchedule(usp_schedule)             # <<<<<<<<<<<<<<
  *             vector[vector[int]] inventory, sold, dsp_waste, backlog
- *             Fitness.Objectives objectives = fitness_functor.CalculateObjectives(
+ *             Lakhdar2005Ex1Model.Objectives objectives = fitness_functor.CalculateObjectives(
  */
   __pyx_v_dsp_schedule = __pyx_v_fitness_functor.CreateDSPSchedule(__pyx_v_usp_schedule);
 
   /* "lakhdar2005_continuous.pyx":227
  *             unordered_map[int, vector[Campaign]] dsp_schedule = fitness_functor.CreateDSPSchedule(usp_schedule)
  *             vector[vector[int]] inventory, sold, dsp_waste, backlog
- *             Fitness.Objectives objectives = fitness_functor.CalculateObjectives(             # <<<<<<<<<<<<<<
+ *             Lakhdar2005Ex1Model.Objectives objectives = fitness_functor.CalculateObjectives(             # <<<<<<<<<<<<<<
  *                 usp_schedule,
  *                 dsp_schedule,
  */
