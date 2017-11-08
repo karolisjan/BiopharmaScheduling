@@ -1,0 +1,4 @@
+cython==0.26
+jupyter==4.3.0
+plotly==2.0.15
+qgrid
