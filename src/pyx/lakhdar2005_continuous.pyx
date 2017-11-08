@@ -7,7 +7,7 @@ from libcpp.algorithm cimport sort
 from libcpp.unordered_map cimport unordered_map
 
 
-cdef extern from "../cpp/lakhdar2005_continuous/single_objective_ga.h" namespace "algorithms" nogil:
+cdef extern from "../cpp/cont_time_capacity_planning/single_objective_ga.h" namespace "algorithms" nogil:
     cdef cppclass SingleObjectiveGA[Individual, FitnessFunctor]:
         SingleObjectiveGA()
         SingleObjectiveGA(FitnessFunctor fitness, int seed)
@@ -29,21 +29,21 @@ cdef extern from "../cpp/lakhdar2005_continuous/single_objective_ga.h" namespace
         Individual Top(vector[Individual])
         
         
-cdef extern from "../cpp/lakhdar2005_continuous/single_objective_individual.h" namespace "types":
+cdef extern from "../cpp/cont_time_capacity_planning/single_objective_individual.h" namespace "types":
     cdef struct SingleObjectiveIndividual:
         SingleObjectiveIndividual()
         double objective, constraint
         
         
-cdef extern from "../cpp/lakhdar2005_continuous/campaign.h" namespace "types":
+cdef extern from "../cpp/cont_time_capacity_planning/campaign.h" namespace "types":
     cdef struct Campaign:
         Campaign()
         int suite, product, batches
         double start, end
         
         
-cdef extern from "../cpp/lakhdar2005_continuous/fitness.h" nogil:
-    cdef cppclass Fitness:
+cdef extern from "../cpp/cont_time_capacity_planning/scheduling_models.h" nogil:
+    cdef cppclass Lakhdar2005Ex1Model:
         struct Objectives:
             Objectives()
             double profit
@@ -55,8 +55,8 @@ cdef extern from "../cpp/lakhdar2005_continuous/fitness.h" nogil:
             double dsp_storage_cost
             double usp_waste_cost
             double dsp_waste_cost
-        Fitness()
-        Fitness(
+        Lakhdar2005Ex1Model()
+        Lakhdar2005Ex1Model(
             int num_usp_suites,
             int num_dsp_suites,
             
@@ -152,7 +152,7 @@ class Example1Model(Base):
             
             vector[SingleObjectiveIndividual] solutions
 
-            Fitness fitness_functor = Fitness(
+            Lakhdar2005Ex1Model fitness_functor = Lakhdar2005Ex1Model(
                 num_usp_suites,
                 num_dsp_suites,
                 
@@ -178,8 +178,8 @@ class Example1Model(Base):
                 dsp_storage_cap
             )
 
-            SingleObjectiveGA[SingleObjectiveIndividual, Fitness] single_objective_ga = \
-                SingleObjectiveGA[SingleObjectiveIndividual, Fitness](
+            SingleObjectiveGA[SingleObjectiveIndividual, Lakhdar2005Ex1Model] single_objective_ga = \
+                SingleObjectiveGA[SingleObjectiveIndividual, Lakhdar2005Ex1Model](
                     fitness_functor,
                     self._seed
             )
@@ -224,7 +224,7 @@ class Example1Model(Base):
             unordered_map[int, vector[Campaign]] usp_schedule = fitness_functor.CreateUSPSchedule(solutions[best])
             unordered_map[int, vector[Campaign]] dsp_schedule = fitness_functor.CreateDSPSchedule(usp_schedule)
             vector[vector[int]] inventory, sold, dsp_waste, backlog
-            Fitness.Objectives objectives = fitness_functor.CalculateObjectives(
+            Lakhdar2005Ex1Model.Objectives objectives = fitness_functor.CalculateObjectives(
                 usp_schedule,
                 dsp_schedule,
                 inventory,

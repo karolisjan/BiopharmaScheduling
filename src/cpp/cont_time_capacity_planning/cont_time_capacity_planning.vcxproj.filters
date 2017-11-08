@@ -15,6 +15,21 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="base_ga.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="batch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="campaign.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dynamic_individual.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="single_objective_ga.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -24,22 +39,7 @@
     <ClInclude Include="utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="fitness.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="dynamic_individual.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="gene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="base_ga.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="campaign.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="batch.h">
+    <ClInclude Include="scheduling_models.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
