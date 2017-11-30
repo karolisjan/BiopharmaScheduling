@@ -288,4 +288,3 @@ __pycache__/
 *.xsd.cs
 
 .ipynb_checkpoints
-*.pyd
