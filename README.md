@@ -3,9 +3,11 @@ Application used in the conference paper titled "Continuous-time heuristic model
 
 ## Requirements 
 
+*Tested on Windows*
+
 - Python 3.5
 - Cython 0.26
-- C++ compiler with C++14 and OpenMP support
+- Visual Studio 2015 (Visual Studio 2017 should be fine too)
 
 ## How to install
 
