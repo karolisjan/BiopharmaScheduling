@@ -31,7 +31,14 @@ namespace types
 
 		Gene make_new()
 		{
-			return Gene(num_products, p_product_mut, p_plus_batch_mut, p_minus_batch_mut);
+			return Gene(
+				num_products, 
+				num_usp_suites, 
+				p_product_mut, 
+				p_usp_suite_mut, 
+				p_plus_batch_mut, 
+				p_minus_batch_mut
+			);
 		}
 
 		inline void mutate()
