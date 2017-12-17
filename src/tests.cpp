@@ -1,8 +1,6 @@
 #include "single_objective_ga.h"
-#include "scheduling_models.h"
+#include "fitness.h"
 
-using namespace types;
-using namespace algorithms;
 
 //------------------------------------------------------------------
 //				Lakhdar2005 Example 1 Scheduling Model
@@ -13,38 +11,38 @@ using namespace algorithms;
 // The calculated profit should be 517.
 void Lakhdar2005Ex1_BaseCaseGlobalOptimumTest()
 {
-	vector<vector<int>> demand =
+	std::vector<std::vector<int>> demand =
 	{
 		{ 0, 0, 0, 6, 0, 6 },
 		{ 0, 0, 6, 0, 0, 0 },
 		{ 0, 8, 0, 0, 8, 0 }
 	};
 
-	vector<int> days_per_period = { 60, 60, 60, 60, 60, 60 };
+	std::vector<int> days_per_period = { 60, 60, 60, 60, 60, 60 };
 
 	int num_products = demand.size();
 	int num_periods = demand[0].size();
 	int num_usp_suites = 2, num_dsp_suites = 2;
 
-	vector<double> usp_storage_cost = { 5, 5, 5 };
-	vector<double> sales_price = { 20, 20, 20 };
-	vector<double> production_cost = { 2, 2, 2 };
-	vector<double> waste_disposal_cost = { 1, 1, 1 };
-	vector<double> dsp_storage_cost = { 1, 1, 1 };
-	vector<double> backlog_penalty = { 20, 20, 20 };
-	vector<double> changeover_cost = { 1, 1, 1 };
+	std::vector<double> usp_storage_cost = { 5, 5, 5 };
+	std::vector<double> sales_price = { 20, 20, 20 };
+	std::vector<double> production_cost = { 2, 2, 2 };
+	std::vector<double> waste_disposal_cost = { 1, 1, 1 };
+	std::vector<double> dsp_storage_cost = { 1, 1, 1 };
+	std::vector<double> backlog_penalty = { 20, 20, 20 };
+	std::vector<double> changeover_cost = { 1, 1, 1 };
 
-	vector<double> usp_days = { 20, 22, 12.5 };
-	vector<double> usp_lead_days = { 10, 10, 10 };
-	vector<double> usp_shelf_life = { 60, 60, 60 };
-	vector<double> usp_storage_cap = { 10, 10, 10 };
+	std::vector<double> usp_days = { 20, 22, 12.5 };
+	std::vector<double> usp_lead_days = { 10, 10, 10 };
+	std::vector<double> usp_shelf_life = { 60, 60, 60 };
+	std::vector<double> usp_storage_cap = { 10, 10, 10 };
 
-	vector<double> dsp_days = { 10, 10, 10 };
-	vector<double> dsp_lead_days = { 10, 10, 12.5 };
-	vector<double> dsp_shelf_life = { 180, 180, 180 };
-	vector<double> dsp_storage_cap = { 40, 40, 40 };
+	std::vector<double> dsp_days = { 10, 10, 10 };
+	std::vector<double> dsp_lead_days = { 10, 10, 12.5 };
+	std::vector<double> dsp_shelf_life = { 180, 180, 180 };
+	std::vector<double> dsp_storage_cap = { 40, 40, 40 };
 
-	Lakhdar2005Ex1Model lakhdar2005ex1_model(
+	deterministic::Lakhdar2005Ex1Model lakhdar2005ex1_model(
 		num_usp_suites,
 		num_dsp_suites,
 		demand,
@@ -65,7 +63,7 @@ void Lakhdar2005Ex1_BaseCaseGlobalOptimumTest()
 		dsp_shelf_life,
 		dsp_storage_cap);
 
-	SingleObjectiveIndividual i;
+	types::SingleObjectiveIndividual i;
 	i.genes.resize(5);
 
 	i.genes[0].usp_suite_num = 1;
@@ -95,8 +93,8 @@ void Lakhdar2005Ex1_BaseCaseGlobalOptimumTest()
 	auto usp_schedule = lakhdar2005ex1_model.CreateUSPSchedule(i);
 	auto dsp_schedule = lakhdar2005ex1_model.CreateDSPSchedule(usp_schedule);
 
-	vector<vector<int>> inventory, sold, backlog, dsp_waste;
-	Lakhdar2005Ex1Model::Objectives objectives = lakhdar2005ex1_model.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
+	std::vector<std::vector<int>> inventory, sold, backlog, dsp_waste;
+	deterministic::Lakhdar2005Ex1Model::Objectives objectives = lakhdar2005ex1_model.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
 
 	printf(", (%.2f, %.2f)\n", objectives.profit, objectives.backlog_cost);
 }
@@ -106,38 +104,38 @@ void Lakhdar2005Ex1_BaseCaseGlobalOptimumTest()
 // The calculated profit should be 562.
 void Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest()
 {
-	vector<vector<int>> demand =
+	std::vector<std::vector<int>> demand =
 	{
 		{ 0, 0, 0, 6, 0, 9 },
 		{ 0, 0, 6, 0, 0, 0 },
 		{ 0, 8, 0, 0, 8, 0 }
 	};
 
-	vector<int> days_per_period = { 60, 60, 60, 60, 60, 60 };
+	std::vector<int> days_per_period = { 60, 60, 60, 60, 60, 60 };
 
 	int num_products = demand.size();
 	int num_periods = demand[0].size();
 	int num_usp_suites = 2, num_dsp_suites = 2;
 
-	vector<double> usp_storage_cost = { 5, 5, 5 };
-	vector<double> sales_price = { 20, 20, 20 };
-	vector<double> production_cost = { 2, 2, 2 };
-	vector<double> waste_disposal_cost = { 1, 1, 1 };
-	vector<double> dsp_storage_cost = { 1, 1, 1 };
-	vector<double> backlog_penalty = { 20, 20, 20 };
-	vector<double> changeover_cost = { 1, 1, 1 };
+	std::vector<double> usp_storage_cost = { 5, 5, 5 };
+	std::vector<double> sales_price = { 20, 20, 20 };
+	std::vector<double> production_cost = { 2, 2, 2 };
+	std::vector<double> waste_disposal_cost = { 1, 1, 1 };
+	std::vector<double> dsp_storage_cost = { 1, 1, 1 };
+	std::vector<double> backlog_penalty = { 20, 20, 20 };
+	std::vector<double> changeover_cost = { 1, 1, 1 };
 
-	vector<double> usp_days = { 20, 22, 12.5 };
-	vector<double> usp_lead_days = { 10, 10, 10 };
-	vector<double> usp_shelf_life = { 60, 60, 60 };
-	vector<double> usp_storage_cap = { 10, 10, 10 };
+	std::vector<double> usp_days = { 20, 22, 12.5 };
+	std::vector<double> usp_lead_days = { 10, 10, 10 };
+	std::vector<double> usp_shelf_life = { 60, 60, 60 };
+	std::vector<double> usp_storage_cap = { 10, 10, 10 };
 
-	vector<double> dsp_days = { 10, 10, 10 };
-	vector<double> dsp_lead_days = { 10, 10, 12.5 };
-	vector<double> dsp_shelf_life = { 180, 180, 180 };
-	vector<double> dsp_storage_cap = { 40, 40, 40 };
+	std::vector<double> dsp_days = { 10, 10, 10 };
+	std::vector<double> dsp_lead_days = { 10, 10, 12.5 };
+	std::vector<double> dsp_shelf_life = { 180, 180, 180 };
+	std::vector<double> dsp_storage_cap = { 40, 40, 40 };
 
-	Lakhdar2005Ex1Model lakhdar2005ex1_model(
+	deterministic::Lakhdar2005Ex1Model lakhdar2005ex1_model(
 		num_usp_suites,
 		num_dsp_suites,
 		demand,
@@ -158,7 +156,7 @@ void Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest()
 		dsp_shelf_life,
 		dsp_storage_cap);
 
-	SingleObjectiveIndividual i;
+	types::SingleObjectiveIndividual i;
 	i.genes.resize(7);
 
 	i.genes[0].usp_suite_num = 1;
@@ -196,8 +194,8 @@ void Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest()
 	auto usp_schedule = lakhdar2005ex1_model.CreateUSPSchedule(i);
 	auto dsp_schedule = lakhdar2005ex1_model.CreateDSPSchedule(usp_schedule);
 
-	vector<vector<int>> inventory, sold, backlog, dsp_waste;
-	Lakhdar2005Ex1Model::Objectives objectives = lakhdar2005ex1_model.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
+	std::vector<std::vector<int>> inventory, sold, backlog, dsp_waste;
+	deterministic::Lakhdar2005Ex1Model::Objectives objectives = lakhdar2005ex1_model.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
 
 	printf(", (%.2f, %.2f)\n", objectives.profit, objectives.backlog_cost);
 }
@@ -207,38 +205,38 @@ void Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest()
 // The calculated profit should be 1007.
 void Lakhdar2005Ex1_DoubledDemandProfileGlobalOptimumTest()
 {
-	vector<vector<int>> demand =
+	std::vector<std::vector<int>> demand =
 	{
 		{ 0, 0, 0, 6, 0, 6, 0, 0, 0, 6, 0, 6 },
 		{ 0, 0, 6, 0, 0, 0, 0, 0, 6, 0, 0, 0 },
 		{ 0, 8, 0, 0, 8, 0, 0, 8, 0, 0, 8, 0 }
 	};
 
-	vector<int> days_per_period = { 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60 };
+	std::vector<int> days_per_period = { 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60 };
 
 	int num_products = demand.size();
 	int num_periods = demand[0].size();
 	int num_usp_suites = 2, num_dsp_suites = 2;
 
-	vector<double> usp_storage_cost = { 5, 5, 5 };
-	vector<double> sales_price = { 20, 20, 20 };
-	vector<double> production_cost = { 2, 2, 2 };
-	vector<double> waste_disposal_cost = { 1, 1, 1 };
-	vector<double> dsp_storage_cost = { 1, 1, 1 };
-	vector<double> backlog_penalty = { 20, 20, 20 };
-	vector<double> changeover_cost = { 1, 1, 1 };
+	std::vector<double> usp_storage_cost = { 5, 5, 5 };
+	std::vector<double> sales_price = { 20, 20, 20 };
+	std::vector<double> production_cost = { 2, 2, 2 };
+	std::vector<double> waste_disposal_cost = { 1, 1, 1 };
+	std::vector<double> dsp_storage_cost = { 1, 1, 1 };
+	std::vector<double> backlog_penalty = { 20, 20, 20 };
+	std::vector<double> changeover_cost = { 1, 1, 1 };
 
-	vector<double> usp_days = { 20, 22, 12.5 };
-	vector<double> usp_lead_days = { 10, 10, 10 };
-	vector<double> usp_shelf_life = { 60, 60, 60 };
-	vector<double> usp_storage_cap = { 10, 10, 10 };
+	std::vector<double> usp_days = { 20, 22, 12.5 };
+	std::vector<double> usp_lead_days = { 10, 10, 10 };
+	std::vector<double> usp_shelf_life = { 60, 60, 60 };
+	std::vector<double> usp_storage_cap = { 10, 10, 10 };
 
-	vector<double> dsp_days = { 10, 10, 10 };
-	vector<double> dsp_lead_days = { 10, 10, 12.5 };
-	vector<double> dsp_shelf_life = { 180, 180, 180 };
-	vector<double> dsp_storage_cap = { 40, 40, 40 };
+	std::vector<double> dsp_days = { 10, 10, 10 };
+	std::vector<double> dsp_lead_days = { 10, 10, 12.5 };
+	std::vector<double> dsp_shelf_life = { 180, 180, 180 };
+	std::vector<double> dsp_storage_cap = { 40, 40, 40 };
 
-	Lakhdar2005Ex1Model lakhdar2005ex1_model(
+	deterministic::Lakhdar2005Ex1Model lakhdar2005ex1_model(
 		num_usp_suites,
 		num_dsp_suites,
 		demand,
@@ -259,7 +257,7 @@ void Lakhdar2005Ex1_DoubledDemandProfileGlobalOptimumTest()
 		dsp_shelf_life,
 		dsp_storage_cap);
 
-	SingleObjectiveIndividual i;
+	types::SingleObjectiveIndividual i;
 	i.genes.resize(11);
 
 	i.genes[0].usp_suite_num = 1;
@@ -313,8 +311,8 @@ void Lakhdar2005Ex1_DoubledDemandProfileGlobalOptimumTest()
 	auto usp_schedule = lakhdar2005ex1_model.CreateUSPSchedule(i);
 	auto dsp_schedule = lakhdar2005ex1_model.CreateDSPSchedule(usp_schedule);
 
-	vector<vector<int>> inventory, sold, backlog, dsp_waste;
-	Lakhdar2005Ex1Model::Objectives objectives = lakhdar2005ex1_model.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
+	std::vector<std::vector<int>> inventory, sold, backlog, dsp_waste;
+	deterministic::Lakhdar2005Ex1Model::Objectives objectives = lakhdar2005ex1_model.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
 
 	printf(", (%.2f, %.2f)\n", objectives.profit, objectives.backlog_cost);
 }
@@ -332,38 +330,38 @@ void Lakhdar2005Ex1_BaseCaseTest()
 	double p_minus_batch_mut = 0.131266;
 	double p_gene_swap = 0.131266;
 
-	vector<vector<int>> demand =
+	std::vector<std::vector<int>> demand =
 	{
 		{ 0, 0, 0, 6, 0, 6 },
 		{ 0, 0, 6, 0, 0, 0 },
 		{ 0, 8, 0, 0, 8, 0 }
 	};
 
-	vector<int> days_per_period = { 60, 60, 60, 60, 60, 60 };
+	std::vector<int> days_per_period = { 60, 60, 60, 60, 60, 60 };
 
 	int num_products = demand.size();
 	int num_periods = demand[0].size();
 	int num_usp_suites = 2, num_dsp_suites = 2;
 
-	vector<double> usp_storage_cost = { 5, 5, 5 };
-	vector<double> sales_price = { 20, 20, 20 };
-	vector<double> production_cost = { 2, 2, 2 };
-	vector<double> waste_disposal_cost = { 1, 1, 1 };
-	vector<double> dsp_storage_cost = { 1, 1, 1 };
-	vector<double> backlog_penalty = { 20, 20, 20 };
-	vector<double> changeover_cost = { 1, 1, 1 };
+	std::vector<double> usp_storage_cost = { 5, 5, 5 };
+	std::vector<double> sales_price = { 20, 20, 20 };
+	std::vector<double> production_cost = { 2, 2, 2 };
+	std::vector<double> waste_disposal_cost = { 1, 1, 1 };
+	std::vector<double> dsp_storage_cost = { 1, 1, 1 };
+	std::vector<double> backlog_penalty = { 20, 20, 20 };
+	std::vector<double> changeover_cost = { 1, 1, 1 };
 
-	vector<double> usp_days = { 20, 22, 12.5 };
-	vector<double> usp_lead_days = { 10, 10, 10 };
-	vector<double> usp_shelf_life = { 60, 60, 60 };
-	vector<double> usp_storage_cap = { 10, 10, 10 };
+	std::vector<double> usp_days = { 20, 22, 12.5 };
+	std::vector<double> usp_lead_days = { 10, 10, 10 };
+	std::vector<double> usp_shelf_life = { 60, 60, 60 };
+	std::vector<double> usp_storage_cap = { 10, 10, 10 };
 
-	vector<double> dsp_days = { 10, 10, 10 };
-	vector<double> dsp_lead_days = { 10, 10, 12.5 };
-	vector<double> dsp_shelf_life = { 180, 180, 180 };
-	vector<double> dsp_storage_cap = { 40, 40, 40 };
+	std::vector<double> dsp_days = { 10, 10, 10 };
+	std::vector<double> dsp_lead_days = { 10, 10, 12.5 };
+	std::vector<double> dsp_shelf_life = { 180, 180, 180 };
+	std::vector<double> dsp_storage_cap = { 40, 40, 40 };
 
-	Lakhdar2005Ex1Model lakhdar2005ex1_model(
+	deterministic::Lakhdar2005Ex1Model lakhdar2005ex1_model(
 		num_usp_suites,
 		num_dsp_suites,
 		demand,
@@ -384,7 +382,7 @@ void Lakhdar2005Ex1_BaseCaseTest()
 		dsp_shelf_life,
 		dsp_storage_cap);
 
-	SingleObjectiveGA<SingleObjectiveIndividual, Lakhdar2005Ex1Model> simple_ga(
+	algorithms::SingleObjectiveGA<types::SingleObjectiveIndividual, deterministic::Lakhdar2005Ex1Model> simple_ga(
 		lakhdar2005ex1_model,
 		seed
 	);
@@ -409,12 +407,12 @@ void Lakhdar2005Ex1_BaseCaseTest()
 				run + 1, gen + 1, simple_ga.Top().objective, simple_ga.Top().constraint);
 		}
 
-		auto& best = simple_ga.Top();
+		auto best = simple_ga.Top();
 		auto usp_schedule = lakhdar2005ex1_model.CreateUSPSchedule(best);
 		auto dsp_schedule = lakhdar2005ex1_model.CreateDSPSchedule(usp_schedule);
 
-		vector<vector<int>> inventory, sold, backlog, dsp_waste;
-		Lakhdar2005Ex1Model::Objectives objectives = lakhdar2005ex1_model.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
+		std::vector<std::vector<int>> inventory, sold, backlog, dsp_waste;
+		deterministic::Lakhdar2005Ex1Model::Objectives objectives = lakhdar2005ex1_model.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
 
 		printf(", (%.2f, %.2f)", objectives.profit, objectives.backlog_cost);
 
@@ -435,38 +433,38 @@ void Lakhdar2005Ex1_IncreasedDemandTest()
 	double p_minus_batch_mut = 0.131266;
 	double p_gene_swap = 0.131266;
 
-	vector<vector<int>> demand =
+	std::vector<std::vector<int>> demand =
 	{
 		{ 0, 0, 0, 6, 0, 9 },
 		{ 0, 0, 6, 0, 0, 0 },
 		{ 0, 8, 0, 0, 8, 0 }
 	};
 
-	vector<int> days_per_period = { 60, 60, 60, 60, 60, 60 };
+	std::vector<int> days_per_period = { 60, 60, 60, 60, 60, 60 };
 
 	int num_products = demand.size();
 	int num_periods = demand[0].size();
 	int num_usp_suites = 2, num_dsp_suites = 2;
 
-	vector<double> usp_storage_cost = { 5, 5, 5 };
-	vector<double> sales_price = { 20, 20, 20 };
-	vector<double> production_cost = { 2, 2, 2 };
-	vector<double> waste_disposal_cost = { 1, 1, 1 };
-	vector<double> dsp_storage_cost = { 1, 1, 1 };
-	vector<double> backlog_penalty = { 20, 20, 20 };
-	vector<double> changeover_cost = { 1, 1, 1 };
+	std::vector<double> usp_storage_cost = { 5, 5, 5 };
+	std::vector<double> sales_price = { 20, 20, 20 };
+	std::vector<double> production_cost = { 2, 2, 2 };
+	std::vector<double> waste_disposal_cost = { 1, 1, 1 };
+	std::vector<double> dsp_storage_cost = { 1, 1, 1 };
+	std::vector<double> backlog_penalty = { 20, 20, 20 };
+	std::vector<double> changeover_cost = { 1, 1, 1 };
 
-	vector<double> usp_days = { 20, 22, 12.5 };
-	vector<double> usp_lead_days = { 10, 10, 10 };
-	vector<double> usp_shelf_life = { 60, 60, 60 };
-	vector<double> usp_storage_cap = { 10, 10, 10 };
+	std::vector<double> usp_days = { 20, 22, 12.5 };
+	std::vector<double> usp_lead_days = { 10, 10, 10 };
+	std::vector<double> usp_shelf_life = { 60, 60, 60 };
+	std::vector<double> usp_storage_cap = { 10, 10, 10 };
 
-	vector<double> dsp_days = { 10, 10, 10 };
-	vector<double> dsp_lead_days = { 10, 10, 12.5 };
-	vector<double> dsp_shelf_life = { 180, 180, 180 };
-	vector<double> dsp_storage_cap = { 40, 40, 40 };
+	std::vector<double> dsp_days = { 10, 10, 10 };
+	std::vector<double> dsp_lead_days = { 10, 10, 12.5 };
+	std::vector<double> dsp_shelf_life = { 180, 180, 180 };
+	std::vector<double> dsp_storage_cap = { 40, 40, 40 };
 
-	Lakhdar2005Ex1Model lakhdar2005ex1_model(
+	deterministic::Lakhdar2005Ex1Model lakhdar2005ex1_model(
 		num_usp_suites,
 		num_dsp_suites,
 		demand,
@@ -487,7 +485,7 @@ void Lakhdar2005Ex1_IncreasedDemandTest()
 		dsp_shelf_life,
 		dsp_storage_cap);
 
-	SingleObjectiveGA<SingleObjectiveIndividual, Lakhdar2005Ex1Model> simple_ga(
+	algorithms::SingleObjectiveGA<types::SingleObjectiveIndividual, deterministic::Lakhdar2005Ex1Model> simple_ga(
 		lakhdar2005ex1_model,
 		seed
 	);
@@ -512,12 +510,12 @@ void Lakhdar2005Ex1_IncreasedDemandTest()
 				run + 1, gen + 1, simple_ga.Top().objective, simple_ga.Top().constraint);
 		}
 
-		auto& best = simple_ga.Top();
+		auto best = simple_ga.Top();
 		auto usp_schedule = lakhdar2005ex1_model.CreateUSPSchedule(best);
 		auto dsp_schedule = lakhdar2005ex1_model.CreateDSPSchedule(usp_schedule);
 
-		vector<vector<int>> inventory, sold, backlog, dsp_waste;
-		Lakhdar2005Ex1Model::Objectives objectives = lakhdar2005ex1_model.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
+		std::vector<std::vector<int>> inventory, sold, backlog, dsp_waste;
+		deterministic::Lakhdar2005Ex1Model::Objectives objectives = lakhdar2005ex1_model.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
 
 		printf(", (%.2f, %.2f)", objectives.profit, objectives.backlog_cost);
 
@@ -538,38 +536,38 @@ void Lakhdar2005Ex1_DoubledDemandProfileTest()
 	double p_minus_batch_mut = 0.131266;
 	double p_gene_swap = 0.131266;
 
-	vector<vector<int>> demand =
+	std::vector<std::vector<int>> demand =
 	{
 		{ 0, 0, 0, 6, 0, 6, 0, 0, 0, 6, 0, 6 },
 		{ 0, 0, 6, 0, 0, 0, 0, 0, 6, 0, 0, 0 },
 		{ 0, 8, 0, 0, 8, 0, 0, 8, 0, 0, 8, 0 }
 	};
 
-	vector<int> days_per_period = { 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60 };
+	std::vector<int> days_per_period = { 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60 };
 
 	int num_products = demand.size();
 	int num_periods = demand[0].size();
 	int num_usp_suites = 2, num_dsp_suites = 2;
 
-	vector<double> usp_storage_cost = { 5, 5, 5 };
-	vector<double> sales_price = { 20, 20, 20 };
-	vector<double> production_cost = { 2, 2, 2 };
-	vector<double> waste_disposal_cost = { 1, 1, 1 };
-	vector<double> dsp_storage_cost = { 1, 1, 1 };
-	vector<double> backlog_penalty = { 20, 20, 20 };
-	vector<double> changeover_cost = { 1, 1, 1 };
+	std::vector<double> usp_storage_cost = { 5, 5, 5 };
+	std::vector<double> sales_price = { 20, 20, 20 };
+	std::vector<double> production_cost = { 2, 2, 2 };
+	std::vector<double> waste_disposal_cost = { 1, 1, 1 };
+	std::vector<double> dsp_storage_cost = { 1, 1, 1 };
+	std::vector<double> backlog_penalty = { 20, 20, 20 };
+	std::vector<double> changeover_cost = { 1, 1, 1 };
 
-	vector<double> usp_days = { 20, 22, 12.5 };
-	vector<double> usp_lead_days = { 10, 10, 10 };
-	vector<double> usp_shelf_life = { 60, 60, 60 };
-	vector<double> usp_storage_cap = { 10, 10, 10 };
+	std::vector<double> usp_days = { 20, 22, 12.5 };
+	std::vector<double> usp_lead_days = { 10, 10, 10 };
+	std::vector<double> usp_shelf_life = { 60, 60, 60 };
+	std::vector<double> usp_storage_cap = { 10, 10, 10 };
 
-	vector<double> dsp_days = { 10, 10, 10 };
-	vector<double> dsp_lead_days = { 10, 10, 12.5 };
-	vector<double> dsp_shelf_life = { 180, 180, 180 };
-	vector<double> dsp_storage_cap = { 40, 40, 40 };
+	std::vector<double> dsp_days = { 10, 10, 10 };
+	std::vector<double> dsp_lead_days = { 10, 10, 12.5 };
+	std::vector<double> dsp_shelf_life = { 180, 180, 180 };
+	std::vector<double> dsp_storage_cap = { 40, 40, 40 };
 
-	Lakhdar2005Ex1Model lakhdar2005ex1_model(
+	deterministic::Lakhdar2005Ex1Model lakhdar2005ex1_model(
 		num_usp_suites,
 		num_dsp_suites,
 
@@ -594,7 +592,7 @@ void Lakhdar2005Ex1_DoubledDemandProfileTest()
 		dsp_shelf_life,
 		dsp_storage_cap);
 
-	SingleObjectiveGA<SingleObjectiveIndividual, Lakhdar2005Ex1Model> simple_ga(
+	algorithms::SingleObjectiveGA<types::SingleObjectiveIndividual, deterministic::Lakhdar2005Ex1Model> simple_ga(
 		lakhdar2005ex1_model,
 		seed
 	);
@@ -619,12 +617,12 @@ void Lakhdar2005Ex1_DoubledDemandProfileTest()
 				run + 1, gen + 1, simple_ga.Top().objective, simple_ga.Top().constraint);
 		}
 
-		auto& best = simple_ga.Top();
+		auto best = simple_ga.Top();
 		auto usp_schedule = lakhdar2005ex1_model.CreateUSPSchedule(best);
 		auto dsp_schedule = lakhdar2005ex1_model.CreateDSPSchedule(usp_schedule);
 
-		vector<vector<int>> inventory, sold, backlog, dsp_waste;
-		Lakhdar2005Ex1Model::Objectives objectives = lakhdar2005ex1_model.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
+		std::vector<std::vector<int>> inventory, sold, backlog, dsp_waste;
+		deterministic::Lakhdar2005Ex1Model::Objectives objectives = lakhdar2005ex1_model.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
 
 		printf(", (%.2f, %.2f)", objectives.profit, objectives.backlog_cost);
 
@@ -659,7 +657,7 @@ int main()
 	Lakhdar2005Ex1_DoubledDemandProfileTest();
 
 	printf("\nDone!\n");
-	cin.get();
+	std::cin.get();
 
 	return 0;
 }

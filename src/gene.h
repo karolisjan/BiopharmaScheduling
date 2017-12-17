@@ -25,13 +25,13 @@ namespace types
 			p_minus_batch_mut(p_minus_batch_mut),
 			num_batches(1)
 		{
-			product_num = random_int(1, num_products + 1);
-			usp_suite_num = random_int(1, num_usp_suites + 1);
+			product_num = utils::random_int(1, num_products + 1);
+			usp_suite_num = utils::random_int(1, num_usp_suites + 1);
 		}
 
 		Gene make_new()
 		{
-			return Gene(num_products, num_usp_suites, p_product_mut, p_usp_suite_mut, p_plus_batch_mut, p_minus_batch_mut);
+			return Gene(num_products, p_product_mut, p_plus_batch_mut, p_minus_batch_mut);
 		}
 
 		inline void mutate()
@@ -46,44 +46,38 @@ namespace types
 	private:
 		inline void mutate_product_num()
 		{
-			if (random() >= p_product_mut)
+			if (utils::random() >= p_product_mut)
 				return;
 
 			int random_product_num;
-			do { random_product_num = random_int(1, num_products + 1); }
+			do { random_product_num = utils::random_int(1, num_products + 1); }
 			while (product_num == random_product_num);
 			product_num = random_product_num;
 		}
 
 		inline void mutate_usp_suite_num()
 		{
-			if (random() >= p_usp_suite_mut)
+			if (utils::random() >= p_usp_suite_mut)
 				return;
 
 			int random_usp_suite_num;
-			do { random_usp_suite_num = random_int(1, num_usp_suites + 1); } 
-			while (usp_suite_num == random_usp_suite_num);
+			do { random_usp_suite_num = utils::random_int(1, num_usp_suites + 1); } while (usp_suite_num == random_usp_suite_num);
 			usp_suite_num = random_usp_suite_num;
 		}
 
 		inline void mutate_num_batches()
 		{
-			if (random() < p_plus_batch_mut)
+			if (utils::random() < p_plus_batch_mut)
 				num_batches += 1;
 
-			if (random() < p_minus_batch_mut) {
+			if (utils::random() < p_minus_batch_mut) {
 				if (num_batches > 1)
 					num_batches -= 1;
 			}
 		}
 
-		int num_products,
-			num_usp_suites;
-
-		double p_product_mut,
-			p_usp_suite_mut,
-			p_plus_batch_mut,
-			p_minus_batch_mut;
+		int num_products, num_usp_suites;
+		double p_product_mut, p_usp_suite_mut, p_plus_batch_mut, p_minus_batch_mut;
 	};
 }
 

@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <vector>
 
-namespace 
+namespace utils
 {
     inline int random_int(int min, int max)
     {

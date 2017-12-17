@@ -26,6 +26,22 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\base_ga.h" />
+    <ClInclude Include="..\..\batch.h" />
+    <ClInclude Include="..\..\campaign.h" />
+    <ClInclude Include="..\..\dynamic_individual.h" />
+    <ClInclude Include="..\..\fitness.h" />
+    <ClInclude Include="..\..\gene.h" />
+    <ClInclude Include="..\..\nsgaii.h" />
+    <ClInclude Include="..\..\nsga_individual.h" />
+    <ClInclude Include="..\..\single_objective_ga.h" />
+    <ClInclude Include="..\..\single_objective_individual.h" />
+    <ClInclude Include="..\..\utils.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\tests.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{091f01fb-1ae7-45b3-a785-96188624e940}</ProjectGuid>
     <Keyword>Linux</Keyword>
@@ -60,12 +76,11 @@
   <ImportGroup Label="Shared" />
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
-  <ItemGroup>
-    <ClCompile Include="main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-  </ItemGroup>
-  <ItemDefinitionGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <CppLanguageStandard>c++1y</CppLanguageStandard>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
 </Project>

@@ -1,16 +1,27 @@
 #ifndef  __SINGLE_OBJECTIVE_GA_H__
 #define __SINGLE_OBJECTIVE_GA_H__
 
+#include <omp.h>
+#include <numeric>
+
 #include "base_ga.h"
 #include "utils.h"
-
-using namespace std;
 
 namespace algorithms
 {
 	template<class Individual, class FitnessFunctor>
 	class SingleObjectiveGA : public BaseGA<Individual, FitnessFunctor>
 	{
+		using BaseGA<Individual, FitnessFunctor>::BaseGA;
+		using BaseGA<Individual, FitnessFunctor>::Select;
+		using BaseGA<Individual, FitnessFunctor>::Reproduce;
+		using BaseGA<Individual, FitnessFunctor>::fitness_functor;
+		using BaseGA<Individual, FitnessFunctor>::indices;
+		using BaseGA<Individual, FitnessFunctor>::parents;
+		using BaseGA<Individual, FitnessFunctor>::offspring;
+
+		typedef typename BaseGA<Individual, FitnessFunctor>::Population Population;
+
 		// Updates the parents with the best individuals from the offspring population.
 		void Replace()
 		{
@@ -25,9 +36,9 @@ namespace algorithms
 				return false;
 			};
 
-			sort(offspring.begin(), offspring.end(), on_objective_and_constraint);
+			std::sort(offspring.begin(), offspring.end(), on_objective_and_constraint);
 			Population combo(parents.size() + offspring.size());
-			merge(parents.begin(), parents.end(), offspring.begin(), offspring.end(), combo.begin(), on_objective_and_constraint);
+			std::merge(parents.begin(), parents.end(), offspring.begin(), offspring.end(), combo.begin(), on_objective_and_constraint);
 			parents = Population(combo.begin(), combo.begin() + parents.size());
 		}
 
@@ -43,14 +54,12 @@ namespace algorithms
 			if (p.objective < q.objective)
 				return q;
 
-			if (random() < 0.50)
+			if (utils::random() < 0.50)
 				return p;
 			return q;
 		}
 
 	public:
-		using BaseGA::BaseGA;
-
 		// Creates new parent population.
 		template<class... IndividualParams>
 		void Init(
@@ -59,7 +68,7 @@ namespace algorithms
 		)
 		{
 			indices.resize(popsize);
-			iota(indices.begin(), indices.end(), 0);
+			std::iota(indices.begin(), indices.end(), 0);
 
 			parents.clear();
 			while (popsize-- > 0)
@@ -70,7 +79,7 @@ namespace algorithms
 
 			// Sorts in an descending order of objective 
 			// and ascending order of constraint values
-			sort(parents.begin(), parents.end(),
+			std::sort(parents.begin(), parents.end(),
 				[](Individual& c1, Individual& c2)
 			{
 				if (c1.constraint && c2.constraint)
@@ -88,22 +97,24 @@ namespace algorithms
 			Select();
 			Reproduce();
 
-			#pragma omp parallel for
-			for (int i = 0; i < offspring.size(); ++i) 
+			#pragma omp parallel for 
+			for (int i = 0; i < offspring.size(); ++i)
 				fitness_functor(offspring[i]);
 
 			Replace();
 		}
 
+		// Returns top parent individual.
 		Individual Top()
 		{
-			fitness_functor(parents[0]);
+			// No need to sort parents because of the merge in Replace().
 			return parents[0];
 		}
 
+		// Returns top parent individual.
 		Individual Top(Population solutions)
 		{
-			sort(solutions.begin(), solutions.end(),
+			std::sort(solutions.begin(), solutions.end(),
 				[](Individual& c1, Individual& c2)
 			{
 				if (c1.constraint && c2.constraint)

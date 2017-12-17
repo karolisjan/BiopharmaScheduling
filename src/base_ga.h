@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <numeric>
 
-using namespace std;
+#include "utils.h"
 
 namespace algorithms
 {
@@ -22,10 +22,10 @@ namespace algorithms
 	class BaseGA
 	{
 	protected:
-		typedef vector<Individual> Population;
+		typedef std::vector<Individual> Population;
 		FitnessFunctor fitness_functor;
 		Population parents, offspring;
-		vector<int> indices;
+		std::vector<int> indices;
 
 		virtual Individual Tournament(Individual& p, Individual& q) = 0;
 
@@ -33,12 +33,12 @@ namespace algorithms
 		{
 			offspring.clear();
 
-			shuffle(indices);
+			utils::shuffle(indices);
 			for (size_t p = 0; p != parents.size(); p += 2)
 				offspring.push_back(
 					Tournament(parents[indices[p]], parents[indices[p + 1]]));
 
-			shuffle(indices);
+			utils::shuffle(indices);
 			for (size_t p = 0; p != parents.size(); p += 2)
 				offspring.push_back(
 					Tournament(parents[indices[p]], parents[indices[p + 1]]));

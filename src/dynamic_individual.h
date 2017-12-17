@@ -4,13 +4,10 @@
 #include <utility>
 #include <functional>
 #include <cstdlib>
-#include <tuple>
 #include <vector>
 #include <algorithm>
 
 #include "utils.h"
-
-using namespace std;
 
 namespace types
 {
@@ -37,7 +34,7 @@ namespace types
 
 		void cross(DynamicIndividual& other) 
 		{
-			if (random() >= p_xo)
+			if (utils::random() >= p_xo)
 				return;
 
 			size_t i, shortest = (genes.size() < other.genes.size()) ? genes.size() : other.genes.size();
@@ -46,10 +43,10 @@ namespace types
 				return;
 
 			for (i = 0; i != shortest; ++i) {
-				if (random() >= 0.50)
+				if (utils::random() >= 0.50)
 					continue;
 					
-				swap(genes[i], other.genes[i]);
+				std::swap(genes[i], other.genes[i]);
 			}
 		}
 
@@ -62,7 +59,7 @@ namespace types
 			swap_genes();
 		}
 
-		vector<Gene> genes;
+		std::vector<Gene> genes;
 
 	private:
 		inline void add_gene()
@@ -72,17 +69,17 @@ namespace types
 
 		inline void swap_genes()
 		{
-			if (random() >= p_gene_swap)
+			if (utils::random() >= p_gene_swap)
 				return;
 
 			size_t g1, g2;
 
 			do {
-				g1 = random_int(0, genes.size());
-				g2 = random_int(0, genes.size());
+				g1 = utils::random_int(0, genes.size());
+				g2 = utils::random_int(0, genes.size());
 			} while (g1 == g2);
 
-			swap(genes[g1], genes[g2]);
+			std::swap(genes[g1], genes[g2]);
 		}
 
 		double p_xo, p_gene_swap;
