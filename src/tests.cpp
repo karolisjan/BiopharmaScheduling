@@ -630,6 +630,12 @@ void Lakhdar2005Ex1_DoubledDemandProfileTest()
 	}
 }
 
+// Eli Lilly problem solutio using continuous time model based on Lakhdar et al. (2005)
+void EliLillyTest()
+{
+
+}
+
 //------------------------------------------------------------------
 //				Lakhdar2005 Example 1 Scheduling Model
 //------------------------------------------------------------------

@@ -1,13 +1,12 @@
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
 
 from libcpp.vector cimport vector
 from libcpp.algorithm cimport sort
 from libcpp.unordered_map cimport unordered_map
 
 
-cdef extern from "../cpp/cont_time_capacity_planning/single_objective_ga.h" namespace "algorithms" nogil:
+cdef extern from "single_objective_ga.h" namespace "algorithms" nogil:
     cdef cppclass SingleObjectiveGA[Individual, FitnessFunctor]:
         SingleObjectiveGA()
         SingleObjectiveGA(FitnessFunctor fitness, int seed)
@@ -29,20 +28,20 @@ cdef extern from "../cpp/cont_time_capacity_planning/single_objective_ga.h" name
         Individual Top(vector[Individual])
         
         
-cdef extern from "../cpp/cont_time_capacity_planning/single_objective_individual.h" namespace "types":
+cdef extern from "single_objective_individual.h" namespace "types":
     cdef struct SingleObjectiveIndividual:
         SingleObjectiveIndividual()
         double objective, constraint
         
         
-cdef extern from "../cpp/cont_time_capacity_planning/campaign.h" namespace "types":
+cdef extern from "campaign.h" namespace "types":
     cdef struct Campaign:
         Campaign()
         int suite, product, batches
         double start, end
         
         
-cdef extern from "../cpp/cont_time_capacity_planning/scheduling_models.h" nogil:
+cdef extern from "fitness.h" nogil:
     cdef cppclass Lakhdar2005Ex1Model:
         struct Objectives:
             Objectives()
@@ -184,29 +183,26 @@ class Example1Model(Base):
                     self._seed
             )
 
-        with tqdm(total=self._num_runs * self._num_gens) as pbar:
-            for run in range(self._num_runs):
-                single_objective_ga.Init(
-                    self._popsize,
+        for run in range(self._num_runs):
+            single_objective_ga.Init(
+                self._popsize,
 
-                    self._p_xo,
-                    self._p_gene_swap,
-                    
-                    num_products,
-                    num_usp_suites,
-                    
-                    self._p_product_mut,
-                    self._p_usp_suite_mut,
-                    self._p_plus_batch_mut,
-                    self._p_minus_batch_mut,                    
-                )
+                self._p_xo,
+                self._p_gene_swap,
                 
-                for gen in range(self._num_gens):
-                    single_objective_ga.Update()
-                    pbar.update()
-                    
-                tqdm.write("Run: %d, Best: %.2f" % (run + 1, single_objective_ga.Top().objective));
-                solutions.push_back(single_objective_ga.Top())
+                num_products,
+                num_usp_suites,
+                
+                self._p_product_mut,
+                self._p_usp_suite_mut,
+                self._p_plus_batch_mut,
+                self._p_minus_batch_mut,                    
+            )
+            
+            for gen in range(self._num_gens):
+                single_objective_ga.Update()
+                
+            solutions.push_back(single_objective_ga.Top())
                 
         cdef:
             int i, best = 0
