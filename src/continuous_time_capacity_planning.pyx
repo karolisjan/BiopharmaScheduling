@@ -41,7 +41,7 @@ cdef extern from "campaign.h" namespace "types":
         double start, end
         
         
-cdef extern from "fitness.h" nogil:
+cdef extern from "fitness.h" namespace "deterministic" nogil:
     cdef cppclass Lakhdar2005Ex1Model:
         struct Objectives:
             Objectives()
@@ -213,8 +213,8 @@ class Example1Model(Base):
                 best = i
                 max_ = solutions[i].objective
                 
-        tqdm.write("Best solution found -> Profit: %.2f, Backlog penalty: %.2f" 
-            % (solutions[best].objective, solutions[best].constraint))
+        # tqdm.write("Best solution found -> Profit: %.2f, Backlog penalty: %.2f" 
+        #    % (solutions[best].objective, solutions[best].constraint))
 
         cdef:
             unordered_map[int, vector[Campaign]] usp_schedule = fitness_functor.CreateUSPSchedule(solutions[best])
