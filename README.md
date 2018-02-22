@@ -1,5 +1,5 @@
 # Continuous-Time Capacity Planning 
-Application used in the conference paper titled "Continuous-time heuristic models for medium-term capacity planning of multi-product biopharmaceutical manufacture" ([link](https://books.google.co.uk/books?id=3xtYDgAAQBAJ&lpg=PA1303&ots=nOhGWbjnCg&dq=Continuous-Time%20Heuristic%20Model%20for%20Medium-Term%20Capacity%20Planning%20of%20a%20Multi-Suite%2C%20Multi-Product%20Biopharmaceutical%20Facility&pg=PA1303#v=onepage&q&f=true)).
+Application used in the conference paper titled ["Continuous-time heuristic models for medium-term capacity planning of multi-product biopharmaceutical manufacture"](https://www.sciencedirect.com/science/article/pii/B9780444639653502191).
 
 ## Requirements 
 
