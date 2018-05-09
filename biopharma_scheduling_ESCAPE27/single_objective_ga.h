@@ -1,3 +1,8 @@
+#if defined(__posix) || defined(__unix) || defined(__linux) || defined(__APPLE__)
+    #pragma GCC diagnostic ignored "-Wreorder"
+	#pragma GCC diagnostic ignored "-Wsign-compare"
+#endif 
+
 #ifndef  __SINGLE_OBJECTIVE_GA_H__
 #define __SINGLE_OBJECTIVE_GA_H__
 

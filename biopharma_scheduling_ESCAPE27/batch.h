@@ -1,3 +1,8 @@
+#if defined(__posix) || defined(__unix) || defined(__linux) || defined(__APPLE__)
+    #pragma GCC diagnostic ignored "-Wreorder"
+	#pragma GCC diagnostic ignored "-Wsign-compare"
+#endif 
+
 #ifndef __BATCH_H__
 #define __BATCH_H__
 
