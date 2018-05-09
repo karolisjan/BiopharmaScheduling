@@ -292,3 +292,7 @@ __pycache__/
 src/tests.out
 build
 temp-plot.html
+.json
+*.egg-info
+*.so
+dist
