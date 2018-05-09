@@ -6,7 +6,6 @@
 #ifndef  __NSGAII_H__
 #define __NSGAII_H__
 
-#include <omp.h>
 #include <numeric>
 
 #include "base_ga.h"
