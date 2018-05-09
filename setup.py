@@ -40,7 +40,7 @@ if __name__ == "__main__":
             Extension(
                 '*',
                 [
-                    'biopharma_scheduling_ESCAPE27/main.pyx'
+                    'biopharma_scheduling_ESCAPE27/scheduling_models.pyx'
                 ],
                 language='c++',
                 extra_compile_args=extra_compile_args

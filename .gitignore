@@ -296,3 +296,4 @@ temp-plot.html
 *.egg-info
 *.so
 dist
+main.cpp
