@@ -3,7 +3,7 @@
     
     Run `python setup.py` to build C++ extensions, Python package, and Python wheel.
 
-    In order to make `biopharma-scheduling` available globally, install it from the wheel
+    In order to make `biopharma-scheduling-ESCAPE27` available globally, install it from the wheel
     by running `pip install dist/*whl`.
 '''
 import os
@@ -40,7 +40,7 @@ if __name__ == "__main__":
             Extension(
                 '*',
                 [
-                    'src/continuous_time_capacity_planning.pyx'
+                    'biopharma_scheduling_ESCAPE27/main.pyx'
                 ],
                 language='c++',
                 extra_compile_args=extra_compile_args
@@ -51,7 +51,7 @@ if __name__ == "__main__":
 
     setup(
         name='biopharma-scheduling-ESCAPE27',
-        packages=['src'],
+        packages=['biopharma_scheduling_ESCAPE27'],
         version='1.0',
         description='Experimental tool for capacity planning and scheduling of biopharmaceutical facilities. Presented at the ESCAPE 27.',
         author='Karolis Jankauskas',

@@ -71,7 +71,7 @@ This software has been presented during a keynote lecture at the 27th European S
 ```
 python -m ipykernel install --user --name <environment-name> --display-name "<display-name>"
 ```
-* Launch `jupyter` in the root of `ContinuousTimeCapacityPlanning`
+* Launch `jupyter` in `ContinuousTimeCapacityPlanning/demo`
 ```
 jupyter notebook
 ```
