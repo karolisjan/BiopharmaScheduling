@@ -288,3 +288,11 @@ __pycache__/
 *.xsd.cs
 
 .ipynb_checkpoints
+.DS_Store
+src/tests.out
+build
+temp-plot.html
+.json
+*.egg-info
+*.so
+dist
