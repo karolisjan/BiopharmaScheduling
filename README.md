@@ -33,9 +33,13 @@ This software has been presented during a keynote lecture at the 27th European S
 
 <a id='ubuntu'></a>
 #### Ubuntu 16.04
-
-* `echo "deb http://ftp.de.debian.org/debian testing main" >> /etc/apt/sources.list`
-* `apt-get --force-yes update && apt-get --assume-yes install g++`
+```
+sudo apt-get update 
+sudo apt-get install build-essential software-properties-common -y 
+sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y 
+sudo apt-get update && sudo apt-get install gcc-snapshot -y 
+sudo apt-get update && sudo apt-get install gcc-7 g++-7 -y
+```
 
 [back to top](#index)
 
@@ -67,14 +71,13 @@ This software has been presented during a keynote lecture at the 27th European S
 <a id='demo'></a>
 ## Running the demo
 
+* Install `jupyter` with `pip install jupyter`
 * Setup the `ipykernel` for the environment created earlier
-```
-python -m ipykernel install --user --name <environment-name> --display-name "<display-name>"
-```
-* Launch `jupyter` in `ContinuousTimeCapacityPlanning/demo`
-```
-jupyter notebook
-```
+    ```
+    pip install ipykernel
+    python -m ipykernel install --user --name <environment-name> --display-name "<display-name>"
+    ```
+* Launch `jupyter demo` and navigate to `ContinuousTimeCapacityPlanning/demo`
 
 [back to top](#index)
 
