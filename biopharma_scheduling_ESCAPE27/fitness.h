@@ -350,7 +350,7 @@ namespace deterministic
 						usp_schedule[cmpgn.suite].push_back(cmpgn);
 					}
 					else {
-						c.genes.erase(c.genes.begin() + i);
+						// c.genes.erase(c.genes.begin() + i);x
 					}
 				}
 				else {
@@ -361,6 +361,25 @@ namespace deterministic
 						prev_cmpgn.end -= usp_days[prev_cmpgn.product - 1];
 				}
 			}
+
+			// int total_length = 0;
+
+			// for (const auto &it : usp_schedule) {
+			// 	for (const auto &cmpgn : it.second)
+			// 	++total_length;
+			// }
+
+			// c.genes.resize(total_length);
+			// total_length = 0;
+
+			// for (const auto &it : usp_schedule) {
+			// 	for (const auto &cmpgn : it.second) {
+			// 		c.genes[total_length].usp_suite_num = cmpgn.suite;
+			// 		c.genes[total_length].product_num = cmpgn.product;
+			// 		c.genes[total_length].num_batches = cmpgn.batches;
+			// 	}
+			// 	++total_length;
+			// }          \		
 
 			return usp_schedule;
 		}

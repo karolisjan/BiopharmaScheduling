@@ -16,7 +16,7 @@ namespace types
 	{
 		using DynamicIndividual::DynamicIndividual;
 
-		double objective, constraint;
+		double objective, constraint = 0;
 	};
 }
 

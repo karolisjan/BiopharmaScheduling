@@ -513,6 +513,7 @@ void Lakhdar2005Ex1_IncreasedDemandTest()
 				"\rRun %d, Gen: %d, Best: %.2f, Constraint: %.2f",
 				run + 1, gen + 1, simple_ga.Top().objective, simple_ga.Top().constraint
 			);
+			
 			std::cout << std::flush;
 		}
 
@@ -622,6 +623,8 @@ void Lakhdar2005Ex1_DoubledDemandProfileTest()
 				"\rRun %d, Gen: %d, Best: %.2f, Constraint: %.2f",
 				run + 1, gen + 1, simple_ga.Top().objective, simple_ga.Top().constraint
 			);
+
+			std::cout << std::flush;
 		}
 
 		auto best = simple_ga.Top();
