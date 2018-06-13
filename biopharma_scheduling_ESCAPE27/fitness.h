@@ -344,7 +344,8 @@ namespace deterministic
 						usp_schedule[cmpgn.suite].push_back(cmpgn);
 					}
 					else {
-						break;
+						// TODO: find out why the score is improved
+						break; 
 					}
 				}
 				else {
