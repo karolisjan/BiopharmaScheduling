@@ -403,8 +403,12 @@ void Lakhdar2005Ex1_BaseCaseTest()
 		for (size_t gen = 0; gen < 1000; ++gen) {
 			simple_ga.Update();
 
-			printf("\rRun %d, Gen: %d, Best: %.2f, Constraint: %.2f",
-				run + 1, gen + 1, simple_ga.Top().objective, simple_ga.Top().constraint);
+			printf(
+				"\rRun %d, Gen: %d, Best: %.2f, Constraint: %.2f",
+				run + 1, gen + 1, simple_ga.Top().objective, simple_ga.Top().constraint
+			);
+
+			std::cout << std::flush;
 		}
 
 		auto best = simple_ga.Top();
@@ -414,9 +418,8 @@ void Lakhdar2005Ex1_BaseCaseTest()
 		std::vector<std::vector<int>> inventory, sold, backlog, dsp_waste;
 		deterministic::Lakhdar2005Ex1Model::Objectives objectives = lakhdar2005ex1_model.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
 
-		printf(", (%.2f, %.2f)", objectives.profit, objectives.backlog_cost);
-
-		printf("\n");
+		printf(", (%.2f, %.2f)\n", objectives.profit, objectives.backlog_cost);
+		std::cout << std::flush;
 	}
 }
 
@@ -506,8 +509,11 @@ void Lakhdar2005Ex1_IncreasedDemandTest()
 		for (size_t gen = 0; gen < 1000; ++gen) {
 			simple_ga.Update();
 
-			printf("\rRun %d, Gen: %d, Best: %.2f, Constraint: %.2f",
-				run + 1, gen + 1, simple_ga.Top().objective, simple_ga.Top().constraint);
+			printf(
+				"\rRun %d, Gen: %d, Best: %.2f, Constraint: %.2f",
+				run + 1, gen + 1, simple_ga.Top().objective, simple_ga.Top().constraint
+			);
+			std::cout << std::flush;
 		}
 
 		auto best = simple_ga.Top();
@@ -517,9 +523,8 @@ void Lakhdar2005Ex1_IncreasedDemandTest()
 		std::vector<std::vector<int>> inventory, sold, backlog, dsp_waste;
 		deterministic::Lakhdar2005Ex1Model::Objectives objectives = lakhdar2005ex1_model.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
 
-		printf(", (%.2f, %.2f)", objectives.profit, objectives.backlog_cost);
-
-		printf("\n");
+		printf(", (%.2f, %.2f)\n", objectives.profit, objectives.backlog_cost);
+		std::cout << std::flush;
 	}
 }
 
@@ -613,8 +618,10 @@ void Lakhdar2005Ex1_DoubledDemandProfileTest()
 		for (size_t gen = 0; gen < 1000; ++gen) {
 			simple_ga.Update();
 
-			printf("\rRun %d, Gen: %d, Best: %.2f, Constraint: %.2f",
-				run + 1, gen + 1, simple_ga.Top().objective, simple_ga.Top().constraint);
+			printf(
+				"\rRun %d, Gen: %d, Best: %.2f, Constraint: %.2f",
+				run + 1, gen + 1, simple_ga.Top().objective, simple_ga.Top().constraint
+			);
 		}
 
 		auto best = simple_ga.Top();
@@ -624,9 +631,8 @@ void Lakhdar2005Ex1_DoubledDemandProfileTest()
 		std::vector<std::vector<int>> inventory, sold, backlog, dsp_waste;
 		deterministic::Lakhdar2005Ex1Model::Objectives objectives = lakhdar2005ex1_model.CalculateObjectives(usp_schedule, dsp_schedule, inventory, sold, dsp_waste, backlog);
 
-		printf(", (%.2f, %.2f)", objectives.profit, objectives.backlog_cost);
-
-		printf("\n");
+		printf(", (%.2f, %.2f)\n", objectives.profit, objectives.backlog_cost);
+		std::cout << std::flush;
 	}
 }
 
