@@ -54,7 +54,7 @@ This software has been presented during a keynote lecture at the 27th European S
 [back to top](#index)
 
 <a id='ubuntu'></a>
-### Ubuntu 16.04
+### Ubuntu 16.04 LTS
 
 * Install the essentials first
     ```
