@@ -2,11 +2,8 @@
 # Continuous-Time Capacity Planning for Biopharmaceutical Facility
 
 * [Setup](#setup)
-    * [OS dependent steps](#OS_dependent)
-        * [MacOS](#macos)
-        * [Ubuntu](#ubuntu)
-        * [Windows](#windows)
-    * [OS independent steps](#OS_independent)
+    * [macOS](#macos)
+    * [Ubuntu 16.04 LTS](#ubuntu)
 * [Running the demo](#demo)
 
 This is a genetic algorithm (GA) based optimisation approach for medium-term capacity planning of a multi-product, multi-suite biopharmaceutical facility using a continuous-time representation. The continuous-time model is implemented by utilising a dynamic chromosome structure capable of adapting to the problem by growing in length from a single gene corresponding to a production campaign in a manufacturing schedule.
@@ -18,52 +15,78 @@ This software has been presented during a keynote lecture at the 27th European S
 <a id='setup'></a>
 ## Setup 
 
-<a id='OS_dependent'></a>
-### OS dependent steps
-
 <a id='macos'></a>
-#### MacOS
+### MacOS
 
-* Install [`brew`](https://brew.sh/).
-* Install the build tools with `brew install gcc --without-multilib`.
-* Find the path to the `g++` binary with `brew ls gcc`. It should be `/usr/local/Cellar/gcc/<version>/bin/g++-<version>`. Only `g++ version 7.2.0` has been tested.
-* Export the path to the `g++` binary with `export CC=<path to g++ binary> && export CXX=<path to g++ binary>` where `<path to g++ binary>` contains the path obtained from the previous step. 
+* Install [`brew`](https://brew.sh/)
+
+* Install the necessary build tools
+    ```
+    brew update && brew install coreutils && brew install gcc --without-multilib
+    ```
+* Install [`anaconda`](https://www.anaconda.com/download/#linux)
+* Create and activate virtual Python environment
+    ```
+    conda create -n <environment-name> python=3.5
+    source activate <environement-name>
+    ```
+* Install Python libraries
+    ```
+    python -m pip install pip==10.0.1
+    pip install setuptools==38.6.0 Cython==0.26 jupyter
+    ```
+* Find the path to the `g++` binary with `brew ls gcc`. It should be in       
+    ```
+    /usr/local/Cellar/gcc/<version>/bin/g++-<version>
+    ```
+* Export the path to the `g++` binary 
+    ```
+    export CC=<path to g++ binary> && export CXX=<path to g++ binary>
+    ```
+* Compile and install the `biopharma-scheduling`
+    ```
+    git clone https://github.com/karolisjan/BiopharmaScheduling.git
+    cd BiopharmaScheduling
+    python setup.py
+    pip install dist/*whl
+    ```
 
 [back to top](#index)
 
 <a id='ubuntu'></a>
-#### Ubuntu 16.04
-```
-sudo apt-get update 
-sudo apt-get install build-essential software-properties-common -y 
-sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y 
-sudo apt-get update && sudo apt-get install gcc-snapshot -y 
-sudo apt-get update && sudo apt-get install gcc-7 g++-7 -y
-```
+### Ubuntu 16.04
 
-[back to top](#index)
-
-<a id='windows'></a>
-#### Windows
-
-* Download and install the build [tools](https://www.visualstudio.com/downloads/#build-tools-for-visual-studio-2017) for Visual Studio.
-
-[back to top](#index)
-
-<a id='OS_independent'></a>
-### OS independent steps
-
-* Install Python 3.6
-* Create a virtual environment with `conda create -n <environment-name> python=3.6` if you have [`anaconda`](https://www.anaconda.com/download/#macos) installed or `virtualenv <environment-name>` if you are running vanilla Python (you might need to install `virtualenv` first with `pip install virtualenv`).
-* Activate the virtual environment that was just created with `source activate <environment-name>` if you are using [`anaconda`](https://www.anaconda.com/download/#macos) or `source <environment-name>/bin/activate` otherwise. 
-* Run the following commands one by one in the root directory of `ContinuousTimeCapacityPlanning`:
+* Install the essentials first
+    ```
+    sudo apt-get update 
+    sudo apt-get install build-essential software-properties-common -y 
+    sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y 
+    sudo apt-get update && sudo apt-get install gcc-snapshot -y 
+    sudo apt-get update && sudo apt-get install gcc-7 g++-7 -y
+    sudo apt-get install git python-dev python3-dev python-pip python3-pip python-wheel python3-wheel python-virtualenv 
+    ```
+* Create and activate virtual Python environment
+    ```
+    virtualenv -p python3 ~/<environment-name>
+    echo "alias <environment-name>='source ~/<environment-name>/bin/activate'" >> ~/.bash_aliases
+    source ~/.bash_aliases
+    <environment-name>
+    ```
+* Install Python libraries
     ```
     python -m pip install pip==10.0.1
-    pip install setuptools==38.6.0
-    pip install Cython==0.26
+    pip install setuptools==38.6.0 Cython==0.26 jupyter
+    ```
+* Export the path to the `g++` binary 
+    ```
+    export CC=g++-7 && export CXX=g++-7
+    ```
+* Compile and install the `biopharma-scheduling`
+    ```
+    git clone https://github.com/karolisjan/BiopharmaScheduling.git
+    cd BiopharmaScheduling
     python setup.py
-    cd dist
-    pip install *.whl 
+    pip install dist/*whl
     ```
 
 [back to top](#index)
@@ -77,7 +100,7 @@ sudo apt-get update && sudo apt-get install gcc-7 g++-7 -y
     pip install ipykernel
     python -m ipykernel install --user --name <environment-name> --display-name "<display-name>"
     ```
-* Launch `jupyter demo` and navigate to `ContinuousTimeCapacityPlanning/demo`
+* Launch `jupyter notebook` and navigate to `ContinuousTimeCapacityPlanning/demo`
 
 [back to top](#index)
 
