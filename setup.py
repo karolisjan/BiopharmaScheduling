@@ -60,7 +60,7 @@ if __name__ == "__main__":
         keywords = ['genetic algorithmn', 'biopharmaceutical', 'capacity planning', 'scheduling'], 
         classifiers=[
             'Programming Language :: Python',
-            'Programming Language :: Python :: 3.6',
+            'Programming Language :: Python :: 3.5',
             'Development Status :: 4 - Beta',
             'Operating System :: MacOS :: MacOS X',
             'Operating System :: Microsoft :: Windows',
@@ -68,7 +68,7 @@ if __name__ == "__main__":
             'Intended Audience :: Developers',
             'Intended Audience :: Science/Research',
         ],
-        python_requires='>=3.6',
+        python_requires='>=3.5',
         install_requires=[str(r.req) for r in parse_requirements('requirements.txt', session='hack')],
         script_args=['build_ext', 'bdist_wheel'],
         options={'build_ext': {'inplace': True, 'force': True}},
