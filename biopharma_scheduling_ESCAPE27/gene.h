@@ -59,8 +59,9 @@ namespace types
 	private:
 		inline void mutate_product_num()
 		{
-			if (utils::random() >= p_product_mut)
+			if (utils::random() >= p_product_mut) {
 				return;
+			}
 
 			int random_product_num;
 			do { random_product_num = utils::random_int(1, num_products + 1); }
@@ -70,22 +71,24 @@ namespace types
 
 		inline void mutate_usp_suite_num()
 		{
-			if (utils::random() >= p_usp_suite_mut)
+			if (utils::random() >= p_usp_suite_mut) {
 				return;
+			}
 
 			int random_usp_suite_num;
-			do { random_usp_suite_num = utils::random_int(1, num_usp_suites + 1); } while (usp_suite_num == random_usp_suite_num);
+			do { random_usp_suite_num = utils::random_int(1, num_usp_suites + 1); } 
+			while (usp_suite_num == random_usp_suite_num);
 			usp_suite_num = random_usp_suite_num;
 		}
 
 		inline void mutate_num_batches()
 		{
-			if (utils::random() < p_plus_batch_mut)
+			if (utils::random() < p_plus_batch_mut) {
 				num_batches += 1;
+			}
 
-			if (utils::random() < p_minus_batch_mut) {
-				if (num_batches > 1)
-					num_batches -= 1;
+			if (num_batches > 1 && utils::random() < p_minus_batch_mut) {
+				num_batches -= 1;
 			}
 		}
 

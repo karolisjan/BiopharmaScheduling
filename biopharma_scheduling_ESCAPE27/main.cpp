@@ -319,9 +319,10 @@ void Lakhdar2005Ex1_DoubledDemandProfileGlobalOptimumTest()
 
 void Lakhdar2005Ex1_BaseCaseTest()
 {
-	int runs = 10, gens = 200, popsize = 100;
+	int seed = 0, num_threads = -1;
+	int runs = 10, gens = 200, popsize = 100; 
 
-	int seed = 0;
+	int starting_length;
 	double p_xo = 0.131266;
 	double p_product_mut = 0.131266;
 	double p_usp_suite_mut = 0.131266;
@@ -380,16 +381,19 @@ void Lakhdar2005Ex1_BaseCaseTest()
 		dsp_days,
 		dsp_lead_days,
 		dsp_shelf_life,
-		dsp_storage_cap);
+		dsp_storage_cap
+	);
 
 	algorithms::SingleObjectiveGA<types::SingleObjectiveIndividual, deterministic::Lakhdar2005Ex1Model> simple_ga(
 		lakhdar2005ex1_model,
-		seed
+		seed,
+		num_threads
 	);
 
-	for (size_t run = 0; run < 10; ++run) {
+	for (int run = 0; run < 10; ++run) {
 		simple_ga.Init(
 			popsize,
+			starting_length,
 			p_xo,
 			p_gene_swap,
 			num_products,
@@ -400,12 +404,12 @@ void Lakhdar2005Ex1_BaseCaseTest()
 			p_minus_batch_mut
 		);
 
-		for (size_t gen = 0; gen < 1000; ++gen) {
+		for (int gen = 0; gen < 1000; ++gen) {
 			simple_ga.Update();
 
 			printf(
 				"\rRun %d, Gen: %d, Best: %.2f, Constraint: %.2f",
-				run + 1, gen + 1, simple_ga.Top().objective, simple_ga.Top().constraint
+				run + 1, gen + 1, simple_ga.Top().objective, simple_ga.Top().constraints
 			);
 
 			std::cout << std::flush;
@@ -425,9 +429,10 @@ void Lakhdar2005Ex1_BaseCaseTest()
 
 void Lakhdar2005Ex1_IncreasedDemandTest()
 {
-	int runs = 10, gens = 1000, popsize = 100;
+	int seed = 0, num_threads = -1;
+	int runs = 10, gens = 200, popsize = 100; 
 
-	int seed = 0;
+	int starting_length;
 	double p_xo = 0.131266;
 	double p_product_mut = 0.131266;
 	double p_usp_suite_mut = 0.131266;
@@ -486,16 +491,19 @@ void Lakhdar2005Ex1_IncreasedDemandTest()
 		dsp_days,
 		dsp_lead_days,
 		dsp_shelf_life,
-		dsp_storage_cap);
+		dsp_storage_cap
+	);
 
 	algorithms::SingleObjectiveGA<types::SingleObjectiveIndividual, deterministic::Lakhdar2005Ex1Model> simple_ga(
 		lakhdar2005ex1_model,
-		seed
+		seed,
+		num_threads
 	);
 
-	for (size_t run = 0; run < 10; ++run) {
+	for (int run = 0; run < 10; ++run) {
 		simple_ga.Init(
 			popsize,
+			starting_length,
 			p_xo,
 			p_gene_swap,
 			num_products,
@@ -506,12 +514,12 @@ void Lakhdar2005Ex1_IncreasedDemandTest()
 			p_minus_batch_mut
 		);
 
-		for (size_t gen = 0; gen < 1000; ++gen) {
+		for (int gen = 0; gen < 1000; ++gen) {
 			simple_ga.Update();
 
 			printf(
 				"\rRun %d, Gen: %d, Best: %.2f, Constraint: %.2f",
-				run + 1, gen + 1, simple_ga.Top().objective, simple_ga.Top().constraint
+				run + 1, gen + 1, simple_ga.Top().objective, simple_ga.Top().constraints
 			);
 			
 			std::cout << std::flush;
@@ -531,9 +539,10 @@ void Lakhdar2005Ex1_IncreasedDemandTest()
 
 void Lakhdar2005Ex1_DoubledDemandProfileTest()
 {
-	int runs = 10, gens = 1000, popsize = 100;
+	int seed = 0, num_threads = -1;
+	int runs = 10, gens = 200, popsize = 100; 
 
-	int seed = 0;
+	int starting_length;
 	double p_xo = 0.131266;
 	double p_product_mut = 0.131266;
 	double p_usp_suite_mut = 0.131266;
@@ -596,16 +605,19 @@ void Lakhdar2005Ex1_DoubledDemandProfileTest()
 		dsp_days,
 		dsp_lead_days,
 		dsp_shelf_life,
-		dsp_storage_cap);
+		dsp_storage_cap
+	);
 
 	algorithms::SingleObjectiveGA<types::SingleObjectiveIndividual, deterministic::Lakhdar2005Ex1Model> simple_ga(
 		lakhdar2005ex1_model,
-		seed
+		seed,
+		num_threads
 	);
 
-	for (size_t run = 0; run < 10; ++run) {
+	for (int run = 0; run < 10; ++run) {
 		simple_ga.Init(
 			popsize,
+			starting_length,
 			p_xo,
 			p_gene_swap,
 			num_products,
@@ -616,12 +628,12 @@ void Lakhdar2005Ex1_DoubledDemandProfileTest()
 			p_minus_batch_mut
 		);
 
-		for (size_t gen = 0; gen < 1000; ++gen) {
+		for (int gen = 0; gen < 1000; ++gen) {
 			simple_ga.Update();
 
 			printf(
 				"\rRun %d, Gen: %d, Best: %.2f, Constraint: %.2f",
-				run + 1, gen + 1, simple_ga.Top().objective, simple_ga.Top().constraint
+				run + 1, gen + 1, simple_ga.Top().objective, simple_ga.Top().constraints
 			);
 
 			std::cout << std::flush;

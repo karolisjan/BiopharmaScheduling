@@ -1,16 +1,17 @@
 #if defined(__posix) || defined(__unix) || defined(__linux) || defined(__APPLE__)
     #pragma GCC diagnostic ignored "-Wreorder"
 	#pragma GCC diagnostic ignored "-Wsign-compare"
-	#pragma GCC diagnostic ignored "-Wunused-variable"
 #endif 
 
 #ifndef  __SINGLE_OBJECTIVE_GA_H__
 #define __SINGLE_OBJECTIVE_GA_H__
 
+#include <utility>
 #include <numeric>
 
 #include "base_ga.h"
 #include "utils.h"
+
 
 namespace algorithms
 {
@@ -30,38 +31,49 @@ namespace algorithms
 		// Updates the parents with the best individuals from the offspring population.
 		void Replace()
 		{
-			auto on_objective_and_constraint = [](Individual& c1, Individual& c2)
+			auto on_objective_and_constraints = [](const Individual &p, const Individual &q)
 			{
-				if (c1.constraint && c2.constraint)
-					return c1.constraint < c2.constraint;
-				if (!c1.constraint && !c2.constraint)
-					return c1.objective > c2.objective;
-				if (!c1.constraint && c2.constraint)
-					return true;
-				return false;
+                // If either p or q is infeasible
+                if (p.constraints != utils::Approx(q.constraints)) {
+                    return p.constraints < q.constraints;
+                }	
+
+                return p.objective < q.objective;
 			};
 
-			std::sort(offspring.begin(), offspring.end(), on_objective_and_constraint);
+			std::sort(offspring.begin(), offspring.end(), on_objective_and_constraints);
 			Population combo(parents.size() + offspring.size());
-			std::merge(parents.begin(), parents.end(), offspring.begin(), offspring.end(), combo.begin(), on_objective_and_constraint);
-			parents = Population(combo.begin(), combo.begin() + parents.size());
+
+			std::merge(
+                std::make_move_iterator(parents.begin()),
+                std::make_move_iterator(parents.end()), 
+                std::make_move_iterator(offspring.begin()),
+                std::make_move_iterator(offspring.end()), 
+                combo.begin(), 
+                on_objective_and_constraints
+            );
+
+			parents = Population(
+                std::make_move_iterator(combo.begin()), 
+                std::make_move_iterator(combo.begin() + parents.size())
+            );
 		}
 
-		Individual Tournament(Individual& p, Individual& q) override
-		{
-			if (p.constraint < q.constraint)
-				return p;
-			if (p.constraint > q.constraint)
-				return q;
+		inline bool Tournament(const Individual &p, const Individual &q) override
+		{	
+            // If either p or q is infeasible
+            if (p.constraints != utils::Approx(q.constraints)) {
+                return p.constraints < q.constraints;
+            }	
 
-			if (p.objective > q.objective)
-				return p;
-			if (p.objective < q.objective)
-				return q;
+			if (p.objective < q.objective) {
+				return true;
+			}
+			else if (p.objective > q.objective) {
+				return false;
+			}
 
-			if (utils::random() < 0.50)
-				return p;
-			return q;
+			return utils::random() < 0.5;
 		}
 
 	public:
@@ -74,37 +86,43 @@ namespace algorithms
 		{
 			indices.resize(popsize);
 			std::iota(indices.begin(), indices.end(), 0);
+			parents.reserve(popsize);
+			offspring.reserve(popsize);
+			parents.resize(0);
 
-			parents.clear();
-			while (popsize-- > 0)
-				parents.push_back(Individual(params...));
+			while (popsize-- > 0) {
+				parents.push_back(std::move(Individual(params...)));
+			}
 
-			for (auto &p : parents)
-				fitness_functor(p);
+			#pragma omp parallel for
+			for (int i = 0; i < parents.size(); ++i) {
+				fitness_functor(parents[i]);
+			}
 
 			// Sorts in an descending order of objective 
-			// and ascending order of constraint values
+			// and ascending order of constraints values
 			std::sort(parents.begin(), parents.end(),
-				[](Individual& c1, Individual& c2)
-			{
-				if (c1.constraint && c2.constraint)
-					return c1.constraint < c2.constraint;
-				if (!c1.constraint && !c2.constraint)
-					return c1.objective > c2.objective;
-				if (!c1.constraint && c2.constraint)
-					return true;
-				return false;
-			});
+				[](const Individual &p, const Individual &q)
+                {
+                    // If either p or q is infeasible
+                    if (p.constraints != utils::Approx(q.constraints)) {
+                        return p.constraints < q.constraints;
+                    }	
+
+                    return p.objective < q.objective;
+                }
+            );
 		}
 
-		void Update() override
+		void Update()
 		{
 			Select();
 			Reproduce();
 
 			#pragma omp parallel for 
-			for (int i = 0; i < offspring.size(); ++i)
+			for (int i = 0; i < offspring.size(); ++i) {
 				fitness_functor(offspring[i]);
+            }
 
 			Replace();
 		}
@@ -120,21 +138,20 @@ namespace algorithms
 		Individual Top(Population solutions)
 		{
 			std::sort(solutions.begin(), solutions.end(),
-				[](Individual& c1, Individual& c2)
-			{
-				if (c1.constraint && c2.constraint)
-					return c1.constraint < c2.constraint;
-				if (!c1.constraint && !c2.constraint)
-					return c1.objective > c2.objective;
-				if (!c1.constraint && c2.constraint)
-					return true;
-				return false;
-			});
+				[](const Individual &p, const Individual &q)
+                {
+                    // If either p or q is infeasible
+                    if (p.constraints != utils::Approx(q.constraints)) {
+                        return p.constraints < q.constraints;
+                    }	
 
-			return solutions[0];
+                    return p.objective < q.objective;
+                }
+            );
+
+			return std::move(solutions[0]);
 		}
 	};
 }
 
-#endif //!__SINGLE_OBJECTIVE_GA_H__
-
+#endif 

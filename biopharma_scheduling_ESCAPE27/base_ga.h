@@ -1,28 +1,29 @@
 #if defined(__posix) || defined(__unix) || defined(__linux) || defined(__APPLE__)
     #pragma GCC diagnostic ignored "-Wreorder"
 	#pragma GCC diagnostic ignored "-Wsign-compare"
-	#pragma GCC diagnostic ignored "-Wunused-variable"
 #endif 
 
 #ifndef __BASE_GA_H__
 #define __BASE_GA_H__
 
-#include <cassert>
-#include <cstdlib>
+#include <omp.h>
+#include <limits>
+
 #include <vector>
-#include <algorithm>
 #include <numeric>
+#include <cstdlib>
+#include <algorithm>
 
 #include "utils.h"
+
 
 namespace algorithms
 {
 	/*
-	Abstract base GA class. Not to be called directly.
-	Individual<Gene> class object is expected to have the following methods:
+		Individual<Gene> class object is expected to have the following methods:
 
-	void cross(Individual& other)
-	void mutate() methods
+		void cross(Individual& other)
+		void mutate() methods
 	*/
 	template<class Individual, class FitnessFunctor>
 	class BaseGA
@@ -33,25 +34,39 @@ namespace algorithms
 		Population parents, offspring;
 		std::vector<int> indices;
 
-		virtual Individual Tournament(Individual& p, Individual& q) = 0;
+		virtual bool Tournament(const Individual &p, const Individual &q) = 0;
 
-		virtual void Select()
+		inline void Select()
 		{
-			offspring.clear();
+			offspring.resize(0);
+			size_t p = 0;
 
 			utils::shuffle(indices);
-			for (size_t p = 0; p != parents.size(); p += 2)
-				offspring.push_back(
-					Tournament(parents[indices[p]], parents[indices[p + 1]]));
+			
+			for (; p != parents.size(); p += 2) {
+				if (Tournament(parents[indices[p]], parents[indices[p + 1]])) {
+					offspring.push_back(parents[indices[p]]);
+				}
+				else {
+					offspring.push_back(parents[indices[p + 1]]);
+				}
+			}
 
 			utils::shuffle(indices);
-			for (size_t p = 0; p != parents.size(); p += 2)
-				offspring.push_back(
-					Tournament(parents[indices[p]], parents[indices[p + 1]]));
+			for (p = 0; p != parents.size(); p += 2) {
+				if (Tournament(parents[indices[p]], parents[indices[p + 1]])) {
+					offspring.push_back(parents[indices[p]]);
+				}
+				else {
+					offspring.push_back(parents[indices[p + 1]]);
+				}
+			}
 		}
 
-		virtual void Reproduce()
+		inline void Reproduce()
 		{
+			std::sort(offspring.begin(), offspring.end(), [](const auto& i1, const auto &i2){ return i1.genes.size() > i2.genes.size(); });
+
 			for (size_t p = 0; p != offspring.size(); p += 2) {
 				offspring[p].cross(offspring[p + 1]);
 				offspring[p].mutate();
@@ -63,18 +78,22 @@ namespace algorithms
 		explicit BaseGA() {}
 		explicit BaseGA(
 			FitnessFunctor fitness_functor,
-			int seed
+			int seed=-1,
+			int num_procs=-1
 		) :
 			fitness_functor(fitness_functor)
 		{
-			if (seed != -1)
+			if (seed != -1) {
 				srand(seed);
-		}
+			}
 
-		// Updates the algorithm by one generation. 
-		// Call this for n generations.
-		virtual void Update() = 0;
+			int actual_num_threads = omp_get_num_procs();
+			if (num_procs >= 1 && num_procs <= actual_num_threads) {
+				omp_set_dynamic(0);
+				omp_set_num_threads(num_procs);
+			}
+		}
 	};
 }
 
-#endif // !__BASE_GA_H__
+#endif 
