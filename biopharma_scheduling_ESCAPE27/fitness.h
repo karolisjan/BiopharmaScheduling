@@ -477,8 +477,9 @@ namespace deterministic
 
 				dsp_cmpgn.end = dsp_cmpgn.start + dsp_days[dsp_cmpgn.product - 1];
 
-				if (dsp_cmpgn.end > horizon)
+				if (dsp_cmpgn.end > horizon) {
 					continue;
+				}
 
 				dsp_cmpgn.batches = usp_cmpgn.batches;
 

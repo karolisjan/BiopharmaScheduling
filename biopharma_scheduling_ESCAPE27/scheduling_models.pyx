@@ -127,7 +127,7 @@ class Example1Model(Base):
             double max_ = solutions[0].objective
 
         for i in range(1, solutions.size()):
-            if solutions[i].objective > max_:
+            if solutions[i].objective < max_:
                 best = i
                 max_ = solutions[i].objective
                 
@@ -178,7 +178,7 @@ class Example1Model(Base):
             production_cost=objectives.production_cost,
             dsp_storage_cost=objectives.dsp_storage_cost,
             dsp_waste_cost=objectives.dsp_waste_cost
-            )
+        )
             
         self.__inventory_profile = np.array([[inventory[i][j] for j in range(num_periods)] for i in range(num_products)]) 
         self.__sales_profile = np.array([[sold[i][j] for j in range(num_periods)] for i in range(num_products)]) 

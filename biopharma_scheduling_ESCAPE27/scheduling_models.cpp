@@ -2320,7 +2320,7 @@ static PyObject *__pyx_pf_29biopharma_scheduling_ESCAPE27_17scheduling_models_13
  *             double max_ = solutions[0].objective
  * 
  *         for i in range(1, solutions.size()):             # <<<<<<<<<<<<<<
- *             if solutions[i].objective > max_:
+ *             if solutions[i].objective < max_:
  *                 best = i
  */
   __pyx_t_13 = __pyx_v_solutions.size();
@@ -2330,16 +2330,16 @@ static PyObject *__pyx_pf_29biopharma_scheduling_ESCAPE27_17scheduling_models_13
     /* "biopharma_scheduling_ESCAPE27/scheduling_models.pyx":130
  * 
  *         for i in range(1, solutions.size()):
- *             if solutions[i].objective > max_:             # <<<<<<<<<<<<<<
+ *             if solutions[i].objective < max_:             # <<<<<<<<<<<<<<
  *                 best = i
  *                 max_ = solutions[i].objective
  */
-    __pyx_t_14 = (((__pyx_v_solutions[__pyx_v_i]).objective > __pyx_v_max_) != 0);
+    __pyx_t_14 = (((__pyx_v_solutions[__pyx_v_i]).objective < __pyx_v_max_) != 0);
     if (__pyx_t_14) {
 
       /* "biopharma_scheduling_ESCAPE27/scheduling_models.pyx":131
  *         for i in range(1, solutions.size()):
- *             if solutions[i].objective > max_:
+ *             if solutions[i].objective < max_:
  *                 best = i             # <<<<<<<<<<<<<<
  *                 max_ = solutions[i].objective
  * 
@@ -2347,7 +2347,7 @@ static PyObject *__pyx_pf_29biopharma_scheduling_ESCAPE27_17scheduling_models_13
       __pyx_v_best = __pyx_v_i;
 
       /* "biopharma_scheduling_ESCAPE27/scheduling_models.pyx":132
- *             if solutions[i].objective > max_:
+ *             if solutions[i].objective < max_:
  *                 best = i
  *                 max_ = solutions[i].objective             # <<<<<<<<<<<<<<
  * 
@@ -2359,7 +2359,7 @@ static PyObject *__pyx_pf_29biopharma_scheduling_ESCAPE27_17scheduling_models_13
       /* "biopharma_scheduling_ESCAPE27/scheduling_models.pyx":130
  * 
  *         for i in range(1, solutions.size()):
- *             if solutions[i].objective > max_:             # <<<<<<<<<<<<<<
+ *             if solutions[i].objective < max_:             # <<<<<<<<<<<<<<
  *                 best = i
  *                 max_ = solutions[i].objective
  */
@@ -2698,7 +2698,7 @@ static PyObject *__pyx_pf_29biopharma_scheduling_ESCAPE27_17scheduling_models_13
  *             production_cost=objectives.production_cost,
  *             dsp_storage_cost=objectives.dsp_storage_cost,             # <<<<<<<<<<<<<<
  *             dsp_waste_cost=objectives.dsp_waste_cost
- *             )
+ *         )
  */
   __pyx_t_17 = PyFloat_FromDouble(__pyx_v_objectives.dsp_storage_cost); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 179, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_17);
@@ -2709,7 +2709,7 @@ static PyObject *__pyx_pf_29biopharma_scheduling_ESCAPE27_17scheduling_models_13
  *             production_cost=objectives.production_cost,
  *             dsp_storage_cost=objectives.dsp_storage_cost,
  *             dsp_waste_cost=objectives.dsp_waste_cost             # <<<<<<<<<<<<<<
- *             )
+ *         )
  * 
  */
   __pyx_t_17 = PyFloat_FromDouble(__pyx_v_objectives.dsp_waste_cost); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 180, __pyx_L1_error)
@@ -2728,7 +2728,7 @@ static PyObject *__pyx_pf_29biopharma_scheduling_ESCAPE27_17scheduling_models_13
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "biopharma_scheduling_ESCAPE27/scheduling_models.pyx":183
- *             )
+ *         )
  * 
  *         self.__inventory_profile = np.array([[inventory[i][j] for j in range(num_periods)] for i in range(num_products)])             # <<<<<<<<<<<<<<
  *         self.__sales_profile = np.array([[sold[i][j] for j in range(num_periods)] for i in range(num_products)])
