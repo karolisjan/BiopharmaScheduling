@@ -322,7 +322,7 @@ void Lakhdar2005Ex1_BaseCaseTest()
 	int seed = 0, num_threads = -1;
 	int runs = 10, gens = 200, popsize = 100; 
 
-	int starting_length;
+	int starting_length = 1;
 	double p_xo = 0.131266;
 	double p_product_mut = 0.131266;
 	double p_usp_suite_mut = 0.131266;
@@ -432,7 +432,7 @@ void Lakhdar2005Ex1_IncreasedDemandTest()
 	int seed = 0, num_threads = -1;
 	int runs = 10, gens = 200, popsize = 100; 
 
-	int starting_length;
+	int starting_length = 1;	
 	double p_xo = 0.131266;
 	double p_product_mut = 0.131266;
 	double p_usp_suite_mut = 0.131266;
@@ -542,7 +542,7 @@ void Lakhdar2005Ex1_DoubledDemandProfileTest()
 	int seed = 0, num_threads = -1;
 	int runs = 10, gens = 200, popsize = 100; 
 
-	int starting_length;
+	int starting_length = 1;
 	double p_xo = 0.131266;
 	double p_product_mut = 0.131266;
 	double p_usp_suite_mut = 0.131266;
@@ -614,7 +614,7 @@ void Lakhdar2005Ex1_DoubledDemandProfileTest()
 		num_threads
 	);
 
-	for (int run = 0; run < 10; ++run) {
+	for (int run = 0; run != 10; ++run) {
 		simple_ga.Init(
 			popsize,
 			starting_length,

@@ -549,7 +549,7 @@ namespace deterministic
 
 			Objectives objectives = CalculateObjectives(usp_schedule, dsp_schedule, inventory_profile, sold, dsp_waste, backlog);
 
-			c.objective = objectives.profit;
+			c.objective = -objectives.profit;
 			c.constraints = objectives.backlog_cost;
 		}
 	};
