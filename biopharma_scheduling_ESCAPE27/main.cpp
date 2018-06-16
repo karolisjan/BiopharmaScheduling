@@ -154,7 +154,8 @@ void Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest()
 		dsp_days,
 		dsp_lead_days,
 		dsp_shelf_life,
-		dsp_storage_cap);
+		dsp_storage_cap
+    );
 
 	types::SingleObjectiveIndividual i;
 	i.genes.resize(7);
@@ -255,7 +256,8 @@ void Lakhdar2005Ex1_DoubledDemandProfileGlobalOptimumTest()
 		dsp_days,
 		dsp_lead_days,
 		dsp_shelf_life,
-		dsp_storage_cap);
+		dsp_storage_cap
+    );
 
 	types::SingleObjectiveIndividual i;
 	i.genes.resize(11);

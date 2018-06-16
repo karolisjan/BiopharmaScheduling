@@ -6,9 +6,10 @@ from libcpp.unordered_map cimport unordered_map
 cdef extern from "single_objective_ga.h" namespace "algorithms" nogil:
     cdef cppclass SingleObjectiveGA[Individual, FitnessFunctor]:
         SingleObjectiveGA()
-        SingleObjectiveGA(FitnessFunctor fitness, int seed)
+        SingleObjectiveGA(FitnessFunctor fitness, int seed, int num_threads)
         void Init(
             int popsize,
+            int starting_length,
             double p_xo,
             double p_gene_swap,
             
@@ -51,7 +52,9 @@ cdef extern from "fitness.h" namespace "deterministic" nogil:
             double dsp_storage_cost
             double usp_waste_cost
             double dsp_waste_cost
+
         Lakhdar2005Ex1Model()
+        
         Lakhdar2005Ex1Model(
             int num_usp_suites,
             int num_dsp_suites,
@@ -77,8 +80,10 @@ cdef extern from "fitness.h" namespace "deterministic" nogil:
             vector[double] dsp_shelf_life,
             vector[double] dsp_storage_cap
         )
+
         unordered_map[int, vector[Campaign]] CreateUSPSchedule(SingleObjectiveIndividual&)
         unordered_map[int, vector[Campaign]] CreateDSPSchedule(unordered_map[int, vector[Campaign]]& usp_schedule)
+        
         Objectives CalculateObjectives(
             unordered_map[int, vector[Campaign]]& usp_schedule,
             unordered_map[int, vector[Campaign]]& dsp_schedule,
@@ -86,4 +91,4 @@ cdef extern from "fitness.h" namespace "deterministic" nogil:
             vector[vector[int]]& sold,
             vector[vector[int]]& dsp_waste,
             vector[vector[int]]& backlog
-            )
+        )

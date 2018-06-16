@@ -9,18 +9,21 @@ class Base:
             int num_runs=10,
             int num_gens=1000,
             int popsize=100,
+            int starting_length=1,
             double p_xo=0.131266,
             double p_product_mut=0.131266,
             double p_usp_suite_mut=0.131266,
             double p_plus_batch_mut=0.131266,
             double p_minus_batch_mut=0.131266,
             double p_gene_swap=0.131266,
-            int seed=-1
+            int seed=-1,
+            int num_threads=-1
     ):
 
         self._num_runs = num_runs
         self._num_gens = num_gens
         self._popsize = popsize
+        self._starting_length = starting_length
         self._p_xo = p_xo
         self._p_product_mut = p_product_mut
         self._p_usp_suite_mut = p_usp_suite_mut
@@ -28,6 +31,7 @@ class Base:
         self._p_minus_batch_mut = p_minus_batch_mut
         self._p_gene_swap = p_gene_swap
         self._seed = seed
+        self._num_threads = num_threads
         
         
 class Example1Model(Base): 
@@ -92,13 +96,15 @@ class Example1Model(Base):
             SingleObjectiveGA[SingleObjectiveIndividual, Lakhdar2005Ex1Model] single_objective_ga = \
                 SingleObjectiveGA[SingleObjectiveIndividual, Lakhdar2005Ex1Model](
                     fitness_functor,
-                    self._seed
+                    self._seed,
+                    self._num_threads
             )
 
         for run in range(self._num_runs):
             single_objective_ga.Init(
                 self._popsize,
 
+                self._starting_length,
                 self._p_xo,
                 self._p_gene_swap,
                 
