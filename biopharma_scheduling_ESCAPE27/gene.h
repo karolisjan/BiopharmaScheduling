@@ -31,7 +31,7 @@ namespace types
 			p_minus_batch_mut(p_minus_batch_mut),
 			num_batches(1)
 		{
-			product_num = utils::random_int(1, num_products + 1);
+			product_num = utils::random_int(0, num_products + 1);
 			usp_suite_num = utils::random_int(1, num_usp_suites + 1);
 		}
 

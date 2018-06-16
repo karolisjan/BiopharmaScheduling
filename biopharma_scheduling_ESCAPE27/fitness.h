@@ -59,15 +59,28 @@ namespace deterministic
 			cmpgn.suite = gene.usp_suite_num;
 			cmpgn.product = gene.product_num;
 			cmpgn.batches = gene.num_batches;
-			cmpgn.start = usp_lead_days[cmpgn.product - 1];
-			cmpgn.end = cmpgn.start + usp_days[cmpgn.product - 1] * cmpgn.batches;
+
+			if (cmpgn.product != 0) {
+				cmpgn.start = usp_lead_days[cmpgn.product - 1];
+				cmpgn.end = cmpgn.start + usp_days[cmpgn.product - 1] * cmpgn.batches;
+
+				while (cmpgn.end > horizon && --cmpgn.batches > 0) {
+					cmpgn.end -= usp_days[cmpgn.product - 1];
+				}
+			}
+			else {
+				cmpgn.start = 0;
+				cmpgn.end = cmpgn.batches;
 
 
-			while (cmpgn.end > horizon && --cmpgn.batches > 0)
-				cmpgn.end -= usp_days[cmpgn.product - 1];
+				while (cmpgn.end > horizon && --cmpgn.batches > 0) {
+					cmpgn.end = cmpgn.batches;
+				}
+			}
 
-			if (cmpgn.batches)
+			if (cmpgn.batches) {
 				usp_schedule[cmpgn.suite].push_back(cmpgn);
+			}
 
 			gene.num_batches = cmpgn.batches;
 		}
@@ -76,9 +89,9 @@ namespace deterministic
 		template<class PriorityQueue>
 		inline void add_first_dsp_campaign(
 			int dsp_suite,
-			std::unordered_map<int, std::vector<types::Campaign>>& dsp_schedule,
-			PriorityQueue& dsp_campaigns,
-			types::Campaign& usp_cmpgn
+			std::unordered_map<int, std::vector<types::Campaign>> &dsp_schedule,
+			PriorityQueue &dsp_campaigns,
+			types::Campaign &usp_cmpgn
 		)
 		{
 			types::Campaign dsp_cmpgn;
@@ -92,8 +105,9 @@ namespace deterministic
 
 			dsp_cmpgn.end = dsp_cmpgn.start + dsp_days[dsp_cmpgn.product - 1];
 
-			if (dsp_cmpgn.end > horizon)
+			if (dsp_cmpgn.end > horizon) {
 				return;
+			}
 
 			dsp_cmpgn.batches = usp_cmpgn.batches;
 
@@ -334,10 +348,21 @@ namespace deterministic
 					cmpgn.product = gene.product_num;
 					cmpgn.batches = gene.num_batches;
 					cmpgn.start = prev_cmpgn.end + usp_lead_days[cmpgn.product - 1];
-					cmpgn.end = cmpgn.start + usp_days[cmpgn.product - 1] * cmpgn.batches;
 
-					while (cmpgn.end > horizon && --cmpgn.batches > 0)
-						cmpgn.end -= usp_days[cmpgn.product - 1];
+					if (cmpgn.product != 0) {
+						cmpgn.end = cmpgn.start + usp_days[cmpgn.product - 1] * cmpgn.batches;
+
+						while (cmpgn.end > horizon && --cmpgn.batches > 0) {
+							cmpgn.end -= usp_days[cmpgn.product - 1];
+						}
+					}
+					else {
+						cmpgn.end = cmpgn.start + cmpgn.batches;
+
+						while (cmpgn.end > horizon && --cmpgn.batches > 0) {
+							--cmpgn.end;
+						}
+					}
 
 					if (cmpgn.batches) {
 						gene.num_batches = cmpgn.batches;
@@ -350,10 +375,21 @@ namespace deterministic
 				}
 				else {
 					prev_cmpgn.batches += gene.num_batches;
-					prev_cmpgn.end = prev_cmpgn.start + usp_days[prev_cmpgn.product - 1] * prev_cmpgn.batches;
 
-					while (prev_cmpgn.end > horizon && --prev_cmpgn.batches > 0)
-						prev_cmpgn.end -= usp_days[prev_cmpgn.product - 1];
+					if (prev_cmpgn.product != 0) {
+						prev_cmpgn.end = prev_cmpgn.start + usp_days[prev_cmpgn.product - 1] * prev_cmpgn.batches;
+
+						while (prev_cmpgn.end > horizon && --prev_cmpgn.batches > 0) {
+							prev_cmpgn.end -= usp_days[prev_cmpgn.product - 1];
+						}
+					}
+					else {
+						prev_cmpgn.end = prev_cmpgn.start + prev_cmpgn.batches;
+
+						while (prev_cmpgn.end > horizon && --prev_cmpgn.batches > 0) {
+							--prev_cmpgn.end;
+						}
+					}
 				}
 			}
 
@@ -396,8 +432,8 @@ namespace deterministic
 			auto earlier_usp_cmpgn_start = [](const types::Campaign& a, const types::Campaign& b) { return a.start > b.start; };
 			std::priority_queue<types::Campaign, std::vector<types::Campaign>, decltype(earlier_usp_cmpgn_start)> usp_campaigns(earlier_usp_cmpgn_start);
 
-			for (auto& it : usp_schedule) {
-				for (auto& cmpgn : it.second) {
+			for (auto &it : usp_schedule) {
+				for (const auto &cmpgn : it.second) {
 					usp_campaigns.push(cmpgn);
 				}
 			}
@@ -415,6 +451,10 @@ namespace deterministic
 			while (!usp_campaigns.empty()) {
 				types::Campaign usp_cmpgn = usp_campaigns.top();
 				usp_campaigns.pop();
+
+				if (usp_cmpgn.product == 0) {
+					continue;
+				}
 
 				dsp_suite = dsp_campaigns.top().suite;
 				dsp_campaigns.pop();
