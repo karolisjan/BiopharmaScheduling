@@ -54,7 +54,10 @@ if __name__ == "__main__":
         name='biopharma-scheduling-ESCAPE27',
         packages=['biopharma_scheduling_ESCAPE27'],
         version='1.0',
-        description='Experimental tool for capacity planning and scheduling of biopharmaceutical facilities. Presented at the ESCAPE 27.',
+        description='''
+            Experimental tool for capacity planning and scheduling of biopharmaceutical facilities. 
+            Presented at the ESCAPE 27.
+            ''',
         author='Karolis Jankauskas',
         author_email='karolis.jankauskas@gmail.com',
         url='https://github.com/karolisjan/ContinuousTimeCapacityPlanning',
