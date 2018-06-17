@@ -5,7 +5,6 @@
     "distutils": {
         "depends": [
             "biopharma_scheduling_ESCAPE27/campaign.h",
-            "biopharma_scheduling_ESCAPE27/fitness.h",
             "biopharma_scheduling_ESCAPE27/single_objective_ga.h",
             "biopharma_scheduling_ESCAPE27/single_objective_individual.h"
         ],
