@@ -40,7 +40,6 @@ namespace algorithms
 		{
 			int p;
 			offspring.resize(0);
-		
 			utils::shuffle(indices);
 			
 			for (p = 0; p != parents.size(); p += 2) {

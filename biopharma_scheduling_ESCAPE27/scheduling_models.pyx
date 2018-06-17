@@ -7,7 +7,7 @@ class Base:
     def __init__(
             self,
             int num_runs=10,
-            int num_gens=1000,
+            int num_gens=200,
             int popsize=100,
             int starting_length=1,
             double p_xo=0.131266,
@@ -121,6 +121,11 @@ class Example1Model(Base):
                 single_objective_ga.Update()
                 
             solutions.push_back(single_objective_ga.Top())
+
+            print(
+                "Run: %d, Profit: %.2f, Backlog: %.2f" % 
+                (run + 1, solutions.back().objective, solutions.back().constraints)
+            )
                 
         cdef:
             int i, best = 0
@@ -131,9 +136,6 @@ class Example1Model(Base):
                 best = i
                 max_ = solutions[i].objective
                 
-        # tqdm.write("Best solution found -> Profit: %.2f, Backlog penalty: %.2f" 
-        #    % (solutions[best].objective, solutions[best].constraint))
-
         cdef:
             unordered_map[int, vector[Campaign]] usp_schedule = fitness_functor.CreateUSPSchedule(solutions[best])
             unordered_map[int, vector[Campaign]] dsp_schedule = fitness_functor.CreateDSPSchedule(usp_schedule)
