@@ -38,12 +38,12 @@ namespace algorithms
 
 		inline void Select()
 		{
+			int p;
 			offspring.resize(0);
-			size_t p = 0;
 
 			utils::shuffle(indices);
 			
-			for (; p != parents.size(); p += 2) {
+			for (p = 0; p != parents.size(); p += 2) {
 				if (Tournament(parents[indices[p]], parents[indices[p + 1]])) {
 					offspring.push_back(parents[indices[p]]);
 				}
@@ -53,6 +53,7 @@ namespace algorithms
 			}
 
 			utils::shuffle(indices);
+			
 			for (p = 0; p != parents.size(); p += 2) {
 				if (Tournament(parents[indices[p]], parents[indices[p + 1]])) {
 					offspring.push_back(parents[indices[p]]);
@@ -67,8 +68,13 @@ namespace algorithms
 		{
 			std::sort(offspring.begin(), offspring.end(), [](const auto& i1, const auto &i2){ return i1.genes.size() > i2.genes.size(); });
 
-			for (size_t p = 0; p != offspring.size(); p += 2) {
+			int p = 0;
+
+			for (p = 0; p != offspring.size(); p += 2) {
 				offspring[p].cross(offspring[p + 1]);
+			}
+
+			for (p = 0; p != offspring.size(); p += 2) {
 				offspring[p].mutate();
 				offspring[p + 1].mutate();
 			}

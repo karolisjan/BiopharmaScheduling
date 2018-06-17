@@ -528,10 +528,13 @@ namespace deterministic
 			Objectives objectives;
 
 			for (auto& it : usp_schedule) {
-				objectives.changeover_cost += it.second.size();
-
-				for (auto& usp_cmpgn : it.second)
+				for (auto& usp_cmpgn : it.second) {
+					if (usp_cmpgn.product == 0) {
+						continue;
+					}
+					objectives.changeover_cost += 1; 
 					objectives.production_cost += (usp_cmpgn.batches * production_cost[usp_cmpgn.product - 1]);
+				}
 			}
 
 			for (auto& it : dsp_schedule) {

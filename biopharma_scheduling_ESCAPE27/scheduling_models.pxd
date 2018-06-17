@@ -29,7 +29,7 @@ cdef extern from "single_objective_ga.h" namespace "algorithms" nogil:
 cdef extern from "single_objective_individual.h" namespace "types":
     cdef struct SingleObjectiveIndividual:
         SingleObjectiveIndividual()
-        double objective, constraint
+        double objective, constraints
         
         
 cdef extern from "campaign.h" namespace "types":
