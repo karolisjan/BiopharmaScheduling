@@ -29,26 +29,23 @@ namespace deterministic
 		int num_usp_suites, num_dsp_suites;
 
 		std::vector<std::vector<int>> demand;
-
 		std::vector<int> days_per_period;
 
-		std::vector<double> usp_storage_cost;
 		std::vector<double> sales_price;
 		std::vector<double> production_cost;
 		std::vector<double> waste_disposal_cost;
-		std::vector<double> dsp_storage_cost;
+		std::vector<double> storage_cost;
 		std::vector<double> backlog_penalty;
 		std::vector<double> changeover_cost;
 
 		std::vector<double> usp_days;
-		std::vector<double> usp_lead_days;
-		std::vector<double> usp_shelf_life;
-		std::vector<double> usp_storage_cap;
+		std::vector<std::vector<double>> usp_changeovers;
 
 		std::vector<double> dsp_days;
-		std::vector<double> dsp_lead_days;
-		std::vector<double> dsp_shelf_life;
-		std::vector<double> dsp_storage_cap;
+		std::vector<std::vector<double>> dsp_changeovers;
+
+		std::vector<double> shelf_life;
+		std::vector<double> storage_cap;
 
 		inline void add_first_usp_campaign(
 			std::unordered_map<int, std::vector<types::Campaign>>& usp_schedule,
@@ -61,7 +58,7 @@ namespace deterministic
 			cmpgn.batches = gene.num_batches;
 
 			if (cmpgn.product != 0) {
-				cmpgn.start = usp_lead_days[cmpgn.product - 1];
+				cmpgn.start = usp_changeovers[cmpgn.product - 1][cmpgn.product - 1];
 				cmpgn.end = cmpgn.start + usp_days[cmpgn.product - 1] * cmpgn.batches;
 
 				while (cmpgn.end > horizon && --cmpgn.batches > 0) {
@@ -71,7 +68,6 @@ namespace deterministic
 			else {
 				cmpgn.start = 0;
 				cmpgn.end = cmpgn.batches;
-
 
 				while (cmpgn.end > horizon && --cmpgn.batches > 0) {
 					cmpgn.end = cmpgn.batches;
@@ -100,8 +96,8 @@ namespace deterministic
 
 			double usp_batch_fill_date = usp_cmpgn.start + usp_days[dsp_cmpgn.product - 1];
 
-			dsp_cmpgn.start = (dsp_lead_days[dsp_cmpgn.product - 1] > usp_batch_fill_date) ?
-				dsp_lead_days[dsp_cmpgn.product - 1] : usp_batch_fill_date;
+			dsp_cmpgn.start = (dsp_changeovers[dsp_cmpgn.product - 1][dsp_cmpgn.product - 1] > usp_batch_fill_date) ?
+				dsp_changeovers[dsp_cmpgn.product - 1][dsp_cmpgn.product - 1] : usp_batch_fill_date;
 
 			dsp_cmpgn.end = dsp_cmpgn.start + dsp_days[dsp_cmpgn.product - 1];
 
@@ -114,7 +110,7 @@ namespace deterministic
 			types::Batch dsp_batch;
 			dsp_batch.product = dsp_cmpgn.product;
 			dsp_batch.stored_at = dsp_cmpgn.end;
-			dsp_batch.expires_at = dsp_batch.stored_at + dsp_shelf_life[dsp_cmpgn.product - 1];
+			dsp_batch.expires_at = dsp_batch.stored_at + shelf_life[dsp_cmpgn.product - 1];
 
 			dsp_cmpgn.batches_list.push_back(dsp_batch);
 
@@ -131,7 +127,7 @@ namespace deterministic
 				types::Batch dsp_batch;
 				dsp_batch.product = dsp_cmpgn.product;
 				dsp_batch.stored_at = dsp_cmpgn.end;
-				dsp_batch.expires_at = dsp_batch.stored_at + dsp_shelf_life[dsp_cmpgn.product - 1];
+				dsp_batch.expires_at = dsp_batch.stored_at + shelf_life[dsp_cmpgn.product - 1];
 
 				dsp_cmpgn.batches_list.push_back(dsp_batch);
 			}
@@ -182,16 +178,6 @@ namespace deterministic
 			return inventory_profile;
 		}
 
-		template <class T, class S, class C>
-		S& access_queue_container(std::priority_queue<T, S, C>& q) {
-			struct hacked_queue : private std::priority_queue<T, S, C> {
-				static S& access_queue_container(std::priority_queue<T, S, C>& q) {
-					return q.*&hacked_queue::c;
-				}
-			};
-			return hacked_queue::access_queue_container(q);
-		}
-
 		template<class PriorityQueue>
 		void CreateOtherProfiles(
 			std::vector<std::vector<PriorityQueue>>& inventory_profile,
@@ -218,8 +204,9 @@ namespace deterministic
 
 				if (inventory_profile[product][period].size() >= demand[product][period]) {
 					sold[product][period] = demand[product][period];
-					for (int i = 0; i < sold[product][period]; ++i)
+					for (int i = 0; i < sold[product][period]; ++i) {
 						inventory_profile[product][period].pop();
+					}
 				}
 				else {
 					sold[product][period] = inventory_profile[product][period].size();
@@ -230,8 +217,9 @@ namespace deterministic
 				for (period = 1; period < num_periods; ++period) {
 					due_date += days_per_period[period];
 
-					for (auto& batch : access_queue_container(inventory_profile[product][period - 1]))
+					for (auto& batch : utils::access_queue_container(inventory_profile[product][period - 1])) {
 						inventory_profile[product][period].push(batch);
+					}
 
 					while (!inventory_profile[product][period].empty() && inventory_profile[product][period].top().expires_at <= due_date) {
 						inventory_profile[product][period].pop();
@@ -276,80 +264,76 @@ namespace deterministic
 			std::vector<std::vector<int>> demand,
 			std::vector<int> days_per_period,
 
-			std::vector<double> usp_storage_cost,
 			std::vector<double> sales_price,
 			std::vector<double> production_cost,
 			std::vector<double> waste_disposal_cost,
-			std::vector<double> dsp_storage_cost,
+			std::vector<double> storage_cost,
 			std::vector<double> backlog_penalty,
 			std::vector<double> changeover_cost,
 
 			std::vector<double> usp_days,
-			std::vector<double> usp_lead_days,
-			std::vector<double> usp_shelf_life,
-			std::vector<double> usp_storage_cap,
+			std::vector<std::vector<double>> usp_changeovers,
 
 			std::vector<double> dsp_days,
-			std::vector<double> dsp_lead_days,
-			std::vector<double> dsp_shelf_life,
-			std::vector<double> dsp_storage_cap
+			std::vector<std::vector<double>> dsp_changeovers,
+
+			std::vector<double> shelf_life,
+			std::vector<double> storage_cap
 		) :
 			num_usp_suites(num_usp_suites),
 			num_dsp_suites(num_dsp_suites),
+			num_products(demand.size()),
+			num_periods(demand[0].size()),
+			horizon(0),
 
 			demand(demand),
 			days_per_period(days_per_period),
 
-			usp_storage_cost(usp_storage_cost),
 			sales_price(sales_price),
 			production_cost(production_cost),
 			waste_disposal_cost(waste_disposal_cost),
-			dsp_storage_cost(dsp_storage_cost),
+			storage_cost(storage_cost),
 			backlog_penalty(backlog_penalty),
 			changeover_cost(changeover_cost),
 
 			usp_days(usp_days),
-			usp_lead_days(usp_lead_days),
-			usp_shelf_life(usp_shelf_life),
-			usp_storage_cap(usp_storage_cap),
+			usp_changeovers(usp_changeovers),
 
 			dsp_days(dsp_days),
-			dsp_lead_days(dsp_lead_days),
-			dsp_shelf_life(dsp_shelf_life),
-			dsp_storage_cap(dsp_storage_cap)
+			dsp_changeovers(dsp_changeovers),
+			
+			shelf_life(shelf_life),
+			storage_cap(storage_cap)
 		{
-			num_products = demand.size();
-			num_periods = demand[0].size();
-
-			horizon = 0;
-			for (auto &val : days_per_period)
+			for (auto &val : days_per_period) {
 				horizon += val;
+			}
 		}
 
-		std::unordered_map<int, std::vector<types::Campaign>> CreateUSPSchedule(types::SingleObjectiveIndividual& c)
+		std::unordered_map<int, std::vector<types::Campaign>> CreateUSPSchedule(types::SingleObjectiveIndividual &c)
 		{
 			std::unordered_map<int, std::vector<types::Campaign>> usp_schedule;
 
 			int i = 0;
 
 			for (; i < c.genes.size(); ++i) {
-				auto& gene = c.genes[i];
+				auto &gene = c.genes[i];
 
 				if (usp_schedule.find(gene.usp_suite_num) == usp_schedule.end()) {
 					add_first_usp_campaign(usp_schedule, gene);
 					continue;
 				}
 
-				types::Campaign& prev_cmpgn = usp_schedule[gene.usp_suite_num].back();
+				types::Campaign &prev_cmpgn = usp_schedule[gene.usp_suite_num].back();
 
 				if (gene.product_num != prev_cmpgn.product) {
 					types::Campaign cmpgn;
 					cmpgn.suite = gene.usp_suite_num;
 					cmpgn.product = gene.product_num;
 					cmpgn.batches = gene.num_batches;
-					cmpgn.start = prev_cmpgn.end + usp_lead_days[cmpgn.product - 1];
+					cmpgn.start = prev_cmpgn.end + usp_changeovers[prev_cmpgn.product - 1][cmpgn.product - 1];
 
-					if (cmpgn.product != 0) {
+					if (cmpgn.product != 0) { d
 						cmpgn.end = cmpgn.start + usp_days[cmpgn.product - 1] * cmpgn.batches;
 
 						while (cmpgn.end > horizon && --cmpgn.batches > 0) {
@@ -422,7 +406,7 @@ namespace deterministic
 		};
 
 		std::unordered_map<int, std::vector<types::Campaign>> CreateDSPSchedule(
-			std::unordered_map<int, std::vector<types::Campaign>>& usp_schedule
+			std::unordered_map<int, std::vector<types::Campaign>> &usp_schedule
 		)
 		{
 			std::unordered_map<int, std::vector<types::Campaign>> dsp_schedule;
