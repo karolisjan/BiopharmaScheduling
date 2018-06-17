@@ -31,7 +31,8 @@ namespace deterministic
 		std::vector<std::vector<int>> demand;
 		std::vector<int> days_per_period;
 
-		std::vector<double> sales_price;
+		std::vector<double> sales_price;4!$HA+!0ve
+		
 		std::vector<double> production_cost;
 		std::vector<double> waste_disposal_cost;
 		std::vector<double> storage_cost;
@@ -44,12 +45,13 @@ namespace deterministic
 		std::vector<double> dsp_days;
 		std::vector<std::vector<double>> dsp_changeovers;
 
+		std::vector<double> production_factor;
 		std::vector<double> shelf_life;
 		std::vector<double> storage_cap;
 
-		inline void add_first_usp_campaign(
-			std::unordered_map<int, std::vector<types::Campaign>>& usp_schedule,
-			types::Gene& gene
+		inline void AddFirstUSPCampaign(
+			std::unordered_map<int, std::vector<types::Campaign>> &usp_schedule,
+			types::Gene &gene
 		)
 		{
 			types::Campaign cmpgn;
@@ -180,10 +182,10 @@ namespace deterministic
 
 		template<class PriorityQueue>
 		void CreateOtherProfiles(
-			std::vector<std::vector<PriorityQueue>>& inventory_profile,
-			std::vector<std::vector<int>>& sold,
-			std::vector<std::vector<int>>& dsp_waste,
-			std::vector<std::vector<int>>& backlog
+			std::vector<std::vector<PriorityQueue>> &inventory_profile,
+			std::vector<std::vector<int>> &sold,
+			std::vector<std::vector<int>> &dsp_waste,
+			std::vector<std::vector<int>> &backlog
 		)
 		{
 			sold = std::vector<std::vector<int>>(num_products, std::vector<int>(num_periods, 0));
