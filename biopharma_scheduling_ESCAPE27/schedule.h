@@ -7,8 +7,6 @@
 #define __SCHEDULE_H__
 
 #include <queue>
-#include <string>
-#include <unordered_map>
 
 #include "campaign.h"
 

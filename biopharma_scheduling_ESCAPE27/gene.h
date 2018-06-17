@@ -97,6 +97,6 @@ namespace types
 	};
 }
 
-#endif // ! __GENE_H__
+#endif 
 
 

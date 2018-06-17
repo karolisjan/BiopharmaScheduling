@@ -23,6 +23,19 @@
 
 namespace deterministic
 {
+	enum OBJECTIVES 
+    {
+		TOTAL_CHANGEOVER_COSTS,
+		TOTAL_BACKLOG_PENALTY,
+        TOTAL_PRODUCTION_COST,
+        TOTAL_STORAGE_COST,
+        TOTAL_WASTE_COST,
+        TOTAL_REVENUE,
+        TOTAL_PROFIT,
+        TOTAL_COST,
+        NUM_OBJECTIVES = TOTAL_COST + 1
+    };
+
 	class Lakhdar2005Ex1Model
 	{
 		int num_products, num_periods, horizon;
@@ -31,8 +44,7 @@ namespace deterministic
 		std::vector<std::vector<int>> demand;
 		std::vector<int> days_per_period;
 
-		std::vector<double> sales_price;4!$HA+!0ve
-		
+		std::vector<double> sales_price;
 		std::vector<double> production_cost;
 		std::vector<double> waste_disposal_cost;
 		std::vector<double> storage_cost;
@@ -55,34 +67,33 @@ namespace deterministic
 		)
 		{
 			types::Campaign cmpgn;
-			cmpgn.suite = gene.usp_suite_num;
-			cmpgn.product = gene.product_num;
-			cmpgn.batches = gene.num_batches;
+			cmpgn.suite_num = gene.usp_suite_num;
+			cmpgn.product_num = gene.product_num;
+			cmpgn.num_batches = gene.num_batches;
 
-			if (cmpgn.product != 0) {
-				cmpgn.start = usp_changeovers[cmpgn.product - 1][cmpgn.product - 1];
-				cmpgn.end = cmpgn.start + usp_days[cmpgn.product - 1] * cmpgn.batches;
+			if (cmpgn.product_num != 0) {
+				cmpgn.start = usp_changeovers[cmpgn.product_num - 1][cmpgn.product_num - 1];
+				cmpgn.end = cmpgn.start + usp_days[cmpgn.product_num - 1] * cmpgn.num_batches;
 
-				while (cmpgn.end > horizon && --cmpgn.batches > 0) {
-					cmpgn.end -= usp_days[cmpgn.product - 1];
+				while (cmpgn.end > horizon && --cmpgn.num_batches > 0) {
+					cmpgn.end -= usp_days[cmpgn.product_num - 1];
 				}
 			}
 			else {
 				cmpgn.start = 0;
-				cmpgn.end = cmpgn.batches;
+				cmpgn.end = cmpgn.num_batches;
 
-				while (cmpgn.end > horizon && --cmpgn.batches > 0) {
-					cmpgn.end = cmpgn.batches;
+				while (cmpgn.end > horizon && --cmpgn.num_batches > 0) {
+					cmpgn.end = cmpgn.num_batches;
 				}
 			}
 
-			if (cmpgn.batches) {
-				usp_schedule[cmpgn.suite].push_back(cmpgn);
+			if (cmpgn.num_batches) {
+				usp_schedule[cmpgn.suite_num].push_back(cmpgn);
 			}
 
-			gene.num_batches = cmpgn.batches;
+			gene.num_batches = cmpgn.num_batches;
 		}
-
 
 		template<class PriorityQueue>
 		inline void add_first_dsp_campaign(
@@ -93,45 +104,45 @@ namespace deterministic
 		)
 		{
 			types::Campaign dsp_cmpgn;
-			dsp_cmpgn.suite = dsp_suite;
-			dsp_cmpgn.product = usp_cmpgn.product;
+			dsp_cmpgn.suite_num = dsp_suite;
+			dsp_cmpgn.product_num = usp_cmpgn.product_num;
 
-			double usp_batch_fill_date = usp_cmpgn.start + usp_days[dsp_cmpgn.product - 1];
+			double usp_batch_fill_date = usp_cmpgn.start + usp_days[dsp_cmpgn.product_num - 1];
 
-			dsp_cmpgn.start = (dsp_changeovers[dsp_cmpgn.product - 1][dsp_cmpgn.product - 1] > usp_batch_fill_date) ?
-				dsp_changeovers[dsp_cmpgn.product - 1][dsp_cmpgn.product - 1] : usp_batch_fill_date;
+			dsp_cmpgn.start = (dsp_changeovers[dsp_cmpgn.product_num - 1][dsp_cmpgn.product_num - 1] > usp_batch_fill_date) ?
+				dsp_changeovers[dsp_cmpgn.product_num - 1][dsp_cmpgn.product_num - 1] : usp_batch_fill_date;
 
-			dsp_cmpgn.end = dsp_cmpgn.start + dsp_days[dsp_cmpgn.product - 1];
+			dsp_cmpgn.end = dsp_cmpgn.start + dsp_days[dsp_cmpgn.product_num - 1];
 
 			if (dsp_cmpgn.end > horizon) {
 				return;
 			}
 
-			dsp_cmpgn.batches = usp_cmpgn.batches;
+			dsp_cmpgn.num_batches = usp_cmpgn.num_batches;
 
 			types::Batch dsp_batch;
-			dsp_batch.product = dsp_cmpgn.product;
+			dsp_batch.product_num = dsp_cmpgn.product_num;
 			dsp_batch.stored_at = dsp_cmpgn.end;
-			dsp_batch.expires_at = dsp_batch.stored_at + shelf_life[dsp_cmpgn.product - 1];
+			dsp_batch.expires_at = dsp_batch.stored_at + shelf_life[dsp_cmpgn.product_num - 1];
 
-			dsp_cmpgn.batches_list.push_back(dsp_batch);
+			dsp_cmpgn.batches.push_back(dsp_batch);
 
-			for (int batches = 1; batches < usp_cmpgn.batches; ++batches) {
-				usp_batch_fill_date += usp_days[dsp_cmpgn.product - 1];
-				dsp_cmpgn.end = usp_batch_fill_date + dsp_days[dsp_cmpgn.product - 1];
+			for (int num_batches = 1; num_batches < usp_cmpgn.num_batches; ++num_batches) {
+				usp_batch_fill_date += usp_days[dsp_cmpgn.product_num - 1];
+				dsp_cmpgn.end = usp_batch_fill_date + dsp_days[dsp_cmpgn.product_num - 1];
 
 				if (dsp_cmpgn.end > horizon) {
-					dsp_cmpgn.end -= dsp_days[dsp_cmpgn.product - 1];
-					dsp_cmpgn.batches = batches;
+					dsp_cmpgn.end -= dsp_days[dsp_cmpgn.product_num - 1];
+					dsp_cmpgn.num_batches = num_batches;
 					break;
 				}
 
 				types::Batch dsp_batch;
-				dsp_batch.product = dsp_cmpgn.product;
+				dsp_batch.product_num = dsp_cmpgn.product_num;
 				dsp_batch.stored_at = dsp_cmpgn.end;
-				dsp_batch.expires_at = dsp_batch.stored_at + shelf_life[dsp_cmpgn.product - 1];
+				dsp_batch.expires_at = dsp_batch.stored_at + shelf_life[dsp_cmpgn.product_num - 1];
 
-				dsp_cmpgn.batches_list.push_back(dsp_batch);
+				dsp_cmpgn.batches.push_back(dsp_batch);
 			}
 
 			dsp_schedule[dsp_suite].push_back(dsp_cmpgn);
@@ -153,9 +164,9 @@ namespace deterministic
 			std::vector<std::vector<std::priority_queue<types::Batch, std::vector<types::Batch>, oldest_batch_first>>> inventory_profile(num_products,
 				std::vector<std::priority_queue<types::Batch, std::vector<types::Batch>, oldest_batch_first>>(num_periods));
 
-			for (int product = 0; product < num_products; ++product) {
+			for (int product_num = 0; product_num < num_products; ++product_num) {
 				for (int period = 0; period < num_periods; ++period) {
-					inventory_profile[product][period] = std::priority_queue<types::Batch, std::vector<types::Batch>, oldest_batch_first>();
+					inventory_profile[product_num][period] = std::priority_queue<types::Batch, std::vector<types::Batch>, oldest_batch_first>();
 				}
 			}
 
@@ -163,7 +174,7 @@ namespace deterministic
 
 			for (auto& it : dsp_schedule) {
 				for (types::Campaign& dsp_cmpgn : it.second) {
-					for (types::Batch& batch : dsp_cmpgn.batches_list) {
+					for (types::Batch& batch : dsp_cmpgn.batches) {
 						prev_date = due_date = 0;
 
 						for (int period = 0; period < num_periods; ++period) {
@@ -171,7 +182,7 @@ namespace deterministic
 							due_date += days_per_period[period];
 
 							if (batch.stored_at > prev_date && batch.stored_at <= due_date)
-								inventory_profile[batch.product - 1][period].push(batch);
+								inventory_profile[batch.product_num - 1][period].push(batch);
 						}
 					}
 				}
@@ -195,62 +206,62 @@ namespace deterministic
 			int period;
 			double due_date;
 
-			for (int product = 0; product < num_products; ++product) {
+			for (int product_num = 0; product_num < num_products; ++product_num) {
 				period = 0;
 				due_date = days_per_period[period];
 
-				while (!inventory_profile[product][period].empty() && inventory_profile[product][period].top().expires_at <= due_date) {
-					inventory_profile[product][period].pop();
-					++dsp_waste[product][period];
+				while (!inventory_profile[product_num][period].empty() && inventory_profile[product_num][period].top().expires_at <= due_date) {
+					inventory_profile[product_num][period].pop();
+					++dsp_waste[product_num][period];
 				}
 
-				if (inventory_profile[product][period].size() >= demand[product][period]) {
-					sold[product][period] = demand[product][period];
-					for (int i = 0; i < sold[product][period]; ++i) {
-						inventory_profile[product][period].pop();
+				if (inventory_profile[product_num][period].size() >= demand[product_num][period]) {
+					sold[product_num][period] = demand[product_num][period];
+					for (int i = 0; i < sold[product_num][period]; ++i) {
+						inventory_profile[product_num][period].pop();
 					}
 				}
 				else {
-					sold[product][period] = inventory_profile[product][period].size();
-					inventory_profile[product][period] = PriorityQueue();
-					backlog[product][period] = demand[product][period] - sold[product][period];
+					sold[product_num][period] = inventory_profile[product_num][period].size();
+					inventory_profile[product_num][period] = PriorityQueue();
+					backlog[product_num][period] = demand[product_num][period] - sold[product_num][period];
 				}
 
 				for (period = 1; period < num_periods; ++period) {
 					due_date += days_per_period[period];
 
-					for (auto& batch : utils::access_queue_container(inventory_profile[product][period - 1])) {
-						inventory_profile[product][period].push(batch);
+					for (auto& batch : utils::access_queue_container(inventory_profile[product_num][period - 1])) {
+						inventory_profile[product_num][period].push(batch);
 					}
 
-					while (!inventory_profile[product][period].empty() && inventory_profile[product][period].top().expires_at <= due_date) {
-						inventory_profile[product][period].pop();
-						++dsp_waste[product][period];
+					while (!inventory_profile[product_num][period].empty() && inventory_profile[product_num][period].top().expires_at <= due_date) {
+						inventory_profile[product_num][period].pop();
+						++dsp_waste[product_num][period];
 					}
 
-					if (inventory_profile[product][period].size() >= demand[product][period]) {
-						sold[product][period] = demand[product][period];
-						for (int i = 0; i < sold[product][period]; ++i)
-							inventory_profile[product][period].pop();
+					if (inventory_profile[product_num][period].size() >= demand[product_num][period]) {
+						sold[product_num][period] = demand[product_num][period];
+						for (int i = 0; i < sold[product_num][period]; ++i)
+							inventory_profile[product_num][period].pop();
 
-						if (backlog[product][period - 1]) {
-							if (inventory_profile[product][period].size() >= backlog[product][period - 1]) {
-								sold[product][period] += backlog[product][period - 1];
-								backlog[product][period] = 0;
-								for (int i = 0; i < backlog[product][period]; ++i)
-									inventory_profile[product][period].pop();
+						if (backlog[product_num][period - 1]) {
+							if (inventory_profile[product_num][period].size() >= backlog[product_num][period - 1]) {
+								sold[product_num][period] += backlog[product_num][period - 1];
+								backlog[product_num][period] = 0;
+								for (int i = 0; i < backlog[product_num][period]; ++i)
+									inventory_profile[product_num][period].pop();
 							}
 							else {
-								sold[product][period] += inventory_profile[product][period].size();
-								backlog[product][period] = backlog[product][period - 1] - inventory_profile[product][period].size();
-								inventory_profile[product][period] = PriorityQueue();
+								sold[product_num][period] += inventory_profile[product_num][period].size();
+								backlog[product_num][period] = backlog[product_num][period - 1] - inventory_profile[product_num][period].size();
+								inventory_profile[product_num][period] = PriorityQueue();
 							}
 						}
 					}
 					else {
-						sold[product][period] = inventory_profile[product][period].size();
-						inventory_profile[product][period] = PriorityQueue();
-						backlog[product][period] = backlog[product][period - 1] + demand[product][period] - sold[product][period];
+						sold[product_num][period] = inventory_profile[product_num][period].size();
+						inventory_profile[product_num][period] = PriorityQueue();
+						backlog[product_num][period] = backlog[product_num][period - 1] + demand[product_num][period] - sold[product_num][period];
 					}
 				}
 			}
@@ -322,37 +333,37 @@ namespace deterministic
 				auto &gene = c.genes[i];
 
 				if (usp_schedule.find(gene.usp_suite_num) == usp_schedule.end()) {
-					add_first_usp_campaign(usp_schedule, gene);
+					AddFirstUSPCampaign(usp_schedule, gene);
 					continue;
 				}
 
 				types::Campaign &prev_cmpgn = usp_schedule[gene.usp_suite_num].back();
 
-				if (gene.product_num != prev_cmpgn.product) {
+				if (gene.product_num != prev_cmpgn.product_num) {
 					types::Campaign cmpgn;
-					cmpgn.suite = gene.usp_suite_num;
-					cmpgn.product = gene.product_num;
-					cmpgn.batches = gene.num_batches;
-					cmpgn.start = prev_cmpgn.end + usp_changeovers[prev_cmpgn.product - 1][cmpgn.product - 1];
+					cmpgn.suite_num = gene.usp_suite_num;
+					cmpgn.product_num = gene.product_num;
+					cmpgn.num_batches = gene.num_batches;
+					cmpgn.start = prev_cmpgn.end + usp_changeovers[prev_cmpgn.product_num - 1][cmpgn.product_num - 1];
 
-					if (cmpgn.product != 0) { d
-						cmpgn.end = cmpgn.start + usp_days[cmpgn.product - 1] * cmpgn.batches;
+					if (cmpgn.product_num != 0) { 
+						cmpgn.end = cmpgn.start + usp_days[cmpgn.product_num - 1] * cmpgn.num_batches;
 
-						while (cmpgn.end > horizon && --cmpgn.batches > 0) {
-							cmpgn.end -= usp_days[cmpgn.product - 1];
+						while (cmpgn.end > horizon && --cmpgn.num_batches > 0) {
+							cmpgn.end -= usp_days[cmpgn.product_num - 1];
 						}
 					}
 					else {
-						cmpgn.end = cmpgn.start + cmpgn.batches;
+						cmpgn.end = cmpgn.start + cmpgn.num_batches;
 
-						while (cmpgn.end > horizon && --cmpgn.batches > 0) {
+						while (cmpgn.end > horizon && --cmpgn.num_batches > 0) {
 							--cmpgn.end;
 						}
 					}
 
-					if (cmpgn.batches) {
-						gene.num_batches = cmpgn.batches;
-						usp_schedule[cmpgn.suite].push_back(cmpgn);
+					if (cmpgn.num_batches) {
+						gene.num_batches = cmpgn.num_batches;
+						usp_schedule[cmpgn.suite_num].push_back(cmpgn);
 					}
 					else {
 						// TODO: find out why the score is improved
@@ -360,19 +371,19 @@ namespace deterministic
 					}
 				}
 				else {
-					prev_cmpgn.batches += gene.num_batches;
+					prev_cmpgn.num_batches += gene.num_batches;
 
-					if (prev_cmpgn.product != 0) {
-						prev_cmpgn.end = prev_cmpgn.start + usp_days[prev_cmpgn.product - 1] * prev_cmpgn.batches;
+					if (prev_cmpgn.product_num != 0) {
+						prev_cmpgn.end = prev_cmpgn.start + usp_days[prev_cmpgn.product_num - 1] * prev_cmpgn.num_batches;
 
-						while (prev_cmpgn.end > horizon && --prev_cmpgn.batches > 0) {
-							prev_cmpgn.end -= usp_days[prev_cmpgn.product - 1];
+						while (prev_cmpgn.end > horizon && --prev_cmpgn.num_batches > 0) {
+							prev_cmpgn.end -= usp_days[prev_cmpgn.product_num - 1];
 						}
 					}
 					else {
-						prev_cmpgn.end = prev_cmpgn.start + prev_cmpgn.batches;
+						prev_cmpgn.end = prev_cmpgn.start + prev_cmpgn.num_batches;
 
-						while (prev_cmpgn.end > horizon && --prev_cmpgn.batches > 0) {
+						while (prev_cmpgn.end > horizon && --prev_cmpgn.num_batches > 0) {
 							--prev_cmpgn.end;
 						}
 					}
@@ -429,7 +440,7 @@ namespace deterministic
 
 			for (; dsp_suite <= num_dsp_suites; ++dsp_suite) {
 				types::Campaign dummy_dsp;
-				dummy_dsp.suite = dsp_suite + num_usp_suites;
+				dummy_dsp.suite_num = dsp_suite + num_usp_suites;
 				dummy_dsp.end = 0;
 				dsp_campaigns.push(dummy_dsp);
 			}
@@ -438,11 +449,11 @@ namespace deterministic
 				types::Campaign usp_cmpgn = usp_campaigns.top();
 				usp_campaigns.pop();
 
-				if (usp_cmpgn.product == 0) {
+				if (usp_cmpgn.product_num == 0) {
 					continue;
 				}
 
-				dsp_suite = dsp_campaigns.top().suite;
+				dsp_suite = dsp_campaigns.top().suite_num;
 				dsp_campaigns.pop();
 
 				if (dsp_schedule.find(dsp_suite) == dsp_schedule.end()) {
@@ -452,46 +463,46 @@ namespace deterministic
 
 				types::Campaign& prev_dsp_cmpgn = dsp_schedule[dsp_suite].back();
 				types::Campaign dsp_cmpgn;
-				dsp_cmpgn.suite = dsp_suite;
-				dsp_cmpgn.product = usp_cmpgn.product;
+				dsp_cmpgn.suite_num = dsp_suite;
+				dsp_cmpgn.product_num = usp_cmpgn.product_num;
 
-				double usp_batch_fill_date = usp_cmpgn.start + usp_days[dsp_cmpgn.product - 1];
+				double usp_batch_fill_date = usp_cmpgn.start + usp_days[dsp_cmpgn.product_num - 1];
 
-				dsp_cmpgn.start = (prev_dsp_cmpgn.end + dsp_lead_days[dsp_cmpgn.product - 1] > usp_batch_fill_date) ?
-					prev_dsp_cmpgn.end + dsp_lead_days[dsp_cmpgn.product - 1] :
+				dsp_cmpgn.start = (prev_dsp_cmpgn.end + dsp_lead_days[dsp_cmpgn.product_num - 1] > usp_batch_fill_date) ?
+					prev_dsp_cmpgn.end + dsp_lead_days[dsp_cmpgn.product_num - 1] :
 					usp_batch_fill_date;
 
-				dsp_cmpgn.end = dsp_cmpgn.start + dsp_days[dsp_cmpgn.product - 1];
+				dsp_cmpgn.end = dsp_cmpgn.start + dsp_days[dsp_cmpgn.product_num - 1];
 
 				if (dsp_cmpgn.end > horizon) {
 					continue;
 				}
 
-				dsp_cmpgn.batches = usp_cmpgn.batches;
+				dsp_cmpgn.num_batches = usp_cmpgn.num_batches;
 
 				types::Batch dsp_batch;
-				dsp_batch.product = dsp_cmpgn.product;
+				dsp_batch.product_num = dsp_cmpgn.product_num;
 				dsp_batch.stored_at = dsp_cmpgn.end;
-				dsp_batch.expires_at = dsp_batch.stored_at + dsp_shelf_life[dsp_cmpgn.product - 1];
+				dsp_batch.expires_at = dsp_batch.stored_at + shelf_life[dsp_cmpgn.product_num - 1];
 
-				dsp_cmpgn.batches_list.push_back(dsp_batch);
+				dsp_cmpgn.batches.push_back(dsp_batch);
 
-				for (int batches = 1; batches < usp_cmpgn.batches; ++batches) {
-					usp_batch_fill_date += usp_days[dsp_cmpgn.product - 1];
-					dsp_cmpgn.end = usp_batch_fill_date + dsp_days[dsp_cmpgn.product - 1];
+				for (int num_batches = 1; num_batches < usp_cmpgn.num_batches; ++num_batches) {
+					usp_batch_fill_date += usp_days[dsp_cmpgn.product_num - 1];
+					dsp_cmpgn.end = usp_batch_fill_date + dsp_days[dsp_cmpgn.product_num - 1];
 
 					if (dsp_cmpgn.end > horizon) {
-						dsp_cmpgn.end -= dsp_days[dsp_cmpgn.product - 1];
-						dsp_cmpgn.batches = batches;
+						dsp_cmpgn.end -= dsp_days[dsp_cmpgn.product_num - 1];
+						dsp_cmpgn.num_batches = num_batches;
 						break;
 					}
 
 					types::Batch dsp_batch;
-					dsp_batch.product = dsp_cmpgn.product;
+					dsp_batch.product_num = dsp_cmpgn.product_num;
 					dsp_batch.stored_at = dsp_cmpgn.end;
-					dsp_batch.expires_at = dsp_batch.stored_at + dsp_shelf_life[dsp_cmpgn.product - 1];
+					dsp_batch.expires_at = dsp_batch.stored_at + shelf_life[dsp_cmpgn.product_num - 1];
 
-					dsp_cmpgn.batches_list.push_back(dsp_batch);
+					dsp_cmpgn.batches.push_back(dsp_batch);
 				}
 
 				dsp_schedule[dsp_suite].push_back(dsp_cmpgn);
@@ -515,11 +526,11 @@ namespace deterministic
 
 			for (auto& it : usp_schedule) {
 				for (auto& usp_cmpgn : it.second) {
-					if (usp_cmpgn.product == 0) {
+					if (usp_cmpgn.product_num == 0) {
 						continue;
 					}
 					objectives.changeover_cost += 1; 
-					objectives.production_cost += (usp_cmpgn.batches * production_cost[usp_cmpgn.product - 1]);
+					objectives.production_cost += (usp_cmpgn.num_batches * production_cost[usp_cmpgn.product_num - 1]);
 				}
 			}
 
@@ -527,15 +538,15 @@ namespace deterministic
 				objectives.changeover_cost += it.second.size();
 
 				for (auto& dsp_cmpgn : it.second)
-					objectives.production_cost += (dsp_cmpgn.batches * production_cost[dsp_cmpgn.product - 1]);
+					objectives.production_cost += (dsp_cmpgn.num_batches * production_cost[dsp_cmpgn.product_num - 1]);
 			}
 
-			for (int product = 0; product < num_products; ++product) {
+			for (int product_num = 0; product_num < num_products; ++product_num) {
 				for (int period = 0; period < num_periods; ++period) {
-					objectives.dsp_storage_cost += (inventory_profile[product][period].size() * dsp_storage_cost[product]);
-					objectives.backlog_cost += (backlog[product][period] * backlog_penalty[product]);
-					objectives.dsp_waste_cost += (dsp_waste[product][period] * waste_disposal_cost[product]);
-					objectives.sales += (sold[product][period] * sales_price[product]);
+					objectives.dsp_storage_cost += (inventory_profile[product_num][period].size() * dsp_storage_cost[product_num]);
+					objectives.backlog_cost += (backlog[product_num][period] * backlog_penalty[product_num]);
+					objectives.dsp_waste_cost += (dsp_waste[product_num][period] * waste_disposal_cost[product_num]);
+					objectives.sales += (sold[product_num][period] * sales_price[product_num]);
 				}
 			}
 
@@ -558,9 +569,9 @@ namespace deterministic
 			CreateOtherProfiles(inventory_profile, sold, dsp_waste, backlog);
 
 			inventory = std::vector<std::vector<int>>(num_products, std::vector<int>(num_periods, 0));
-			for (int product = 0; product < num_products; ++product) {
+			for (int product_num = 0; product_num < num_products; ++product_num) {
 				for (int period = 0; period < num_periods; ++period) {
-					inventory[product][period] = inventory_profile[product][period].size();
+					inventory[product_num][period] = inventory_profile[product_num][period].size();
 				}
 			}
 

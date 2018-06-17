@@ -12,12 +12,12 @@ namespace types
 	struct Batch
 	{
 		Batch() : 
-			product(0),
+			product_num(-1),
 			stored_at(0),
 			expires_at(0)
 		{}
 
-		int product;
+		int product_num;
 		double stored_at, expires_at;
 	};
 }
