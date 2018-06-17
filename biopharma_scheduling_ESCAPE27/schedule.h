@@ -23,14 +23,6 @@ namespace types
         }
     } oldest_batch_first;
 
-    struct EarliestApprovedBatchFirst
-    {
-        bool operator()(const types::Batch &b1, const types::Batch &b2)
-        {
-            return b1.approved_at > b2.approved_at;
-        }
-    } earliest_approved_batch_first;
-
     template <class T>
     std::vector<T> make_reserved(const std::size_t size)
     {
@@ -79,8 +71,6 @@ namespace types
         std::vector<types::Campaign> campaigns; 
         std::vector<std::vector<double>> inventory, supply, backlog, waste;  
 
-        // Tracks actual batches (with expiry, aproval etc. dates) 
-        // that are available in between product demand due dates
         std::vector< 
             std::vector<
                 std::priority_queue<

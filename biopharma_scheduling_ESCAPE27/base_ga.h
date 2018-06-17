@@ -39,7 +39,7 @@ namespace algorithms
 		inline void Select()
 		{
 			offspring.resize(0);
-			size_t p = 0;
+			int p = 0;
 
 			utils::shuffle(indices);
 			
@@ -67,7 +67,7 @@ namespace algorithms
 		{
 			std::sort(offspring.begin(), offspring.end(), [](const auto& i1, const auto &i2){ return i1.genes.size() > i2.genes.size(); });
 
-			for (size_t p = 0; p != offspring.size(); p += 2) {
+			for (int p = 0; p != offspring.size(); p += 2) {
 				offspring[p].cross(offspring[p + 1]);
 				offspring[p].mutate();
 				offspring[p + 1].mutate();
