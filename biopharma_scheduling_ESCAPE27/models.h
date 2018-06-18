@@ -57,7 +57,7 @@ namespace deterministic
 			std::vector<int> storage_cap,
 
 			std::vector<double> sales_prices,
-			std::vector<double> sotrage_cost,
+			std::vector<double> storage_cost,
 			std::vector<double> backlog_penalty,
 			std::vector<double> waste_disposal_cost,
 			std::vector<double> usp_production_cost,
@@ -85,7 +85,7 @@ namespace deterministic
 			storage_cap(storage_cap),
 
 			sales_price(sales_price),
-			storage_cost(sotrage_cost),
+			storage_cost(storage_cost),
 			backlog_penalty(backlog_penalty),
 			waste_disposal_cost(waste_disposal_cost),
 			usp_production_cost(usp_production_cost),
@@ -98,7 +98,7 @@ namespace deterministic
 		{
 			int prev = 0;
 
-			for (const auto &days : days_per_period) {
+			for (auto &days : days_per_period) {
 				due_dates.push_back(days + prev);
 				prev = due_dates.back();
 			}

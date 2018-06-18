@@ -20,8 +20,6 @@ void Lakhdar2005Ex1_BaseCaseGlobalOptimumTest()
 	std::vector<int> days_per_period = { 60, 60, 60, 60, 60, 60 };
 
     int num_usp_suites = 2, num_dsp_suites = 2;
-	int num_products = demand.size();
-	int num_periods = demand[0].size();
 
 	std::vector<double> sales_price = { 20, 20, 20 };
 	std::vector<double> usp_production_cost = { 2, 2, 2 };
