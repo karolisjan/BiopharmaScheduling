@@ -95,7 +95,7 @@ void Lakhdar2005Ex1_BaseCaseGlobalOptimumTest()
 
 	single_site_multi_suite_model(i);
 
-	printf("%.2f profit", i.objective);
+	printf("%.1f profit, %.1f backlog\n", i.objective, i.constraints);
 }
 
 int main()

@@ -561,6 +561,9 @@ namespace deterministic
 		{
 			types::SingleSiteMultiSuiteSchedule schedule;
 			CreateSchedule(individual, schedule);
+
+			individual.objective = schedule.objectives[TOTAL_PROFIT];
+			individual.constraints = schedule.objectives[TOTAL_BACKLOG_PENALTY];
 		}
 	};
 }
