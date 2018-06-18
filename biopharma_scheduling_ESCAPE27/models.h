@@ -56,7 +56,7 @@ namespace deterministic
 			std::vector<int> shelf_life,
 			std::vector<int> storage_cap,
 
-			std::vector<double> sales_prices,
+			std::vector<double> sales_price,
 			std::vector<double> storage_cost,
 			std::vector<double> backlog_penalty,
 			std::vector<double> waste_disposal_cost,
@@ -151,12 +151,18 @@ namespace deterministic
 			auto &gene = individual.genes[cmpgn_num];
 
 			types::Campaign new_cmpgn;
-			types::Campaign &prev_cmpgn = schedule.suites[gene.usp_suite_num].back();
 
 			new_cmpgn.suite_num = gene.usp_suite_num;
 			new_cmpgn.product_num = gene.product_num;
 			new_cmpgn.num_batches = gene.num_batches;
-			new_cmpgn.start = prev_cmpgn.end + input_data.usp_lead_days[new_cmpgn.product_num - 1];
+
+			if (schedule.suites[new_cmpgn.suite_num - 1].size()) {
+				types::Campaign &prev_cmpgn = schedule.suites[new_cmpgn.suite_num - 1].back();
+				new_cmpgn.start = prev_cmpgn.end + input_data.usp_lead_days[new_cmpgn.product_num - 1];
+			}
+			else {
+				new_cmpgn.start = input_data.usp_lead_days[new_cmpgn.product_num - 1];
+			}
 
 			// Real campaign
 			if (new_cmpgn.product_num != 0) { 
@@ -178,7 +184,7 @@ namespace deterministic
 			gene.num_batches = new_cmpgn.num_batches;
 
 			if (new_cmpgn.num_batches) {
-				schedule.suites[new_cmpgn.suite_num].push_back(new_cmpgn);
+				schedule.suites[new_cmpgn.suite_num - 1].push_back(new_cmpgn);
 			}
 		}
 
@@ -190,7 +196,7 @@ namespace deterministic
 		)
 		{
 			auto &gene = individual.genes[cmpgn_num];
-			types::Campaign &prev_cmpgn = schedule.suites[gene.usp_suite_num].back();
+			types::Campaign &prev_cmpgn = schedule.suites[gene.usp_suite_num - 1].back();
 
 			prev_cmpgn.num_batches += gene.num_batches;
 
@@ -218,15 +224,17 @@ namespace deterministic
 		{
 			schedule.Init(input_data.num_products, input_data.num_periods, input_data.num_usp_suites + input_data.num_dsp_suites, NUM_OBJECTIVES);
 
-			for (int cmpgn_num = 0; cmpgn_num != individual.genes.size(); ++cmpgn_num) {
+			AddNewUSPCampaign(0, individual, schedule);
+
+			for (int cmpgn_num = 1; cmpgn_num != individual.genes.size(); ++cmpgn_num) {
 				if (
 					individual.genes[cmpgn_num].product_num != individual.genes[cmpgn_num - 1].product_num && // different product
 					individual.genes[cmpgn_num].usp_suite_num == individual.genes[cmpgn_num - 1].usp_suite_num // same suite
 				) {
-					AddNewUSPCampaign(cmpgn_num, individual, schedule);
+					ContinuePreviousUSPCampaign(cmpgn_num, individual, schedule);
 				}
 				else {
-					ContinuePreviousUSPCampaign(cmpgn_num, individual, schedule);
+					AddNewUSPCampaign(cmpgn_num, individual, schedule);
 				}
 			}
 		}
@@ -284,7 +292,7 @@ namespace deterministic
 			}
 
 			dsp_campaigns.push(dsp_cmpgn);
-			schedule.suites[dsp_suite].push_back(dsp_cmpgn);
+			schedule.suites[dsp_suite - 1].push_back(dsp_cmpgn);
 		}
 
 		template<class Individual>
@@ -328,13 +336,13 @@ namespace deterministic
 				dsp_suite = dsp_campaigns.top().suite_num;
 				dsp_campaigns.pop();
 
-				if (!schedule.suites[dsp_suite].size()) {
+				if (!schedule.suites[dsp_suite - 1].size()) {
 					AddFirstDSPCampaign(dsp_suite, schedule, dsp_campaigns, usp_cmpgn);
 					continue;
 				}
 
 				types::Campaign dsp_cmpgn;
-				types::Campaign &prev_dsp_cmpgn = schedule.suites[dsp_suite].back();
+				types::Campaign &prev_dsp_cmpgn = schedule.suites[dsp_suite - 1].back();
 				
 				dsp_cmpgn.suite_num = dsp_suite;
 				dsp_cmpgn.product_num = usp_cmpgn.product_num;
@@ -381,7 +389,7 @@ namespace deterministic
 				}
 
 				dsp_campaigns.push(dsp_cmpgn);
-				schedule.suites[dsp_suite].push_back(dsp_cmpgn);
+				schedule.suites[dsp_suite - 1].push_back(dsp_cmpgn);
 			}
 		}
 
@@ -504,8 +512,8 @@ namespace deterministic
 				}
 			}
 
-			for (int dsp_suite = input_data.num_usp_suites; dsp_suite != schedule.suites.size(); ++dsp_suite) {
-				for (const auto &dsp_cmpgn : schedule.suites[dsp_suite]) {
+			for (int dsp_suite = input_data.num_usp_suites - 1; dsp_suite <= schedule.suites.size(); ++dsp_suite) {
+				for (const auto &dsp_cmpgn : schedule.suites[dsp_suite - 1]) {
 					if (dsp_cmpgn.product_num == 0) {
 						continue;
 					}

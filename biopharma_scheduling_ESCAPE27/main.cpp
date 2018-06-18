@@ -29,7 +29,7 @@ void Lakhdar2005Ex1_BaseCaseGlobalOptimumTest()
 	std::vector<double> backlog_penalty = { 20, 20, 20 };
 	std::vector<double> usp_changeover_cost = { 1, 1, 1 };
     std::vector<double> dsp_changeover_cost = { 1, 1, 1 };
-
+ 
 	std::vector<double> usp_days = { 20, 22, 12.5 };
 	std::vector<double> dsp_days = { 10, 10, 10 };
     std::vector<double> production_factor = { 1, 1, 1 };
