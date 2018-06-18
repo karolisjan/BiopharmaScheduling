@@ -188,8 +188,8 @@ namespace utils
         1. val = 10, 'search' will return 2.
         2. val = 9, 'search' will return 1.
     */
-    template<class T>
-    static inline int search(const std::vector<T> &v, const T &val)
+    template<class T1, class T2>
+    static inline int search(const std::vector<T1> &v, const T2 &val)
     {
         if (val >= v.back()) {
             return -1;

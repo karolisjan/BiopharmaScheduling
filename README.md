@@ -1,16 +1,16 @@
 <a id='index'></a>
 # Continuous-Time Capacity Planning for Biopharmaceutical Facility
 
-* [Setup](#setup)
-    * [macOS](#macos)
-    * [Ubuntu 16.04 LTS](#ubuntu)
-* [Running the demo](#demo)
-
 This is a genetic algorithm (GA) based optimisation approach for medium-term capacity planning of a multi-product, multi-suite biopharmaceutical facility using a continuous-time representation. The continuous-time model is implemented by utilising a dynamic chromosome structure capable of adapting to the problem by growing in length from a single gene corresponding to a production campaign in a manufacturing schedule.
 
 This software has been presented during a keynote lecture at the 27th European Symposium on Computer Aided Process Engineering (ESCAPE) and used in the following publication:
 
 > Jankauskas, K., Papageorgiou, L. G., & Farid, S. S. (2017). Continuous-Time Heuristic Model for Medium-Term Capacity Planning of a Multi-Suite, Multi-Product Biopharmaceutical Facility. In *Computer Aided Chemical Engineering* (Vol. 40, pp. 1303-1308). Elsevier. **DOI:** [10.1016/B978-0-444-63965-3.50219-1](https://doi.org/10.1016/B978-0-444-63965-3.50219-1).
+
+* [Setup](#setup)
+    * [macOS](#macos)
+    * [Ubuntu 16.04 LTS](#ubuntu)
+* [Running the demo](#demo)
 
 <a id='setup'></a>
 ## Setup 

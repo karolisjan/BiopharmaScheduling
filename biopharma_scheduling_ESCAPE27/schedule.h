@@ -29,11 +29,11 @@ namespace types
         return std::move(v);
     }
 
-    struct Schedule
+    struct SingleSiteMultiSuiteSchedule
     {       
-        Schedule() {}
+        SingleSiteMultiSuiteSchedule() {}
 
-        void Init(int num_products, int num_periods, int num_objectives) 
+        void Init(int num_products, int num_periods, int num_suites, int num_objectives) 
         {
             using queue = std::priority_queue<types::Batch, std::vector<types::Batch>, OldestBatchFirst>;
 
@@ -45,6 +45,8 @@ namespace types
                     q = queue(oldest_batch_first, make_reserved<types::Batch>(100));
                 }
             }
+
+            suites.resize(num_suites);
 
             inventory = std::vector<std::vector<double>>(
                 num_products, std::vector<double>(num_periods, 0.0)
@@ -66,7 +68,7 @@ namespace types
         }
 
         std::vector<double> objectives;
-        std::vector<types::Campaign> campaigns; 
+        std::vector<std::vector<types::Campaign>> suites; 
         std::vector<std::vector<double>> inventory, supply, backlog, waste;  
 
         std::vector< 
