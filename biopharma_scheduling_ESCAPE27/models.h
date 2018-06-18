@@ -228,7 +228,7 @@ namespace deterministic
 
 			for (int cmpgn_num = 1; cmpgn_num != individual.genes.size(); ++cmpgn_num) {
 				if (
-					individual.genes[cmpgn_num].product_num != individual.genes[cmpgn_num - 1].product_num && // different product
+					individual.genes[cmpgn_num].product_num == individual.genes[cmpgn_num - 1].product_num && // different product
 					individual.genes[cmpgn_num].usp_suite_num == individual.genes[cmpgn_num - 1].usp_suite_num // same suite
 				) {
 					ContinuePreviousUSPCampaign(cmpgn_num, individual, schedule);

@@ -95,7 +95,51 @@ void Lakhdar2005Ex1_BaseCaseGlobalOptimumTest()
 
 	single_site_multi_suite_model(i);
 
-	printf("%.1f profit, %.1f backlog\n", i.objective, i.constraints);
+	printf("%.1f profit, %.1f backlog\n\n", i.objective, i.constraints);
+
+	types::SingleSiteMultiSuiteSchedule schedule;
+	single_site_multi_suite_model.CreateSchedule(i, schedule);
+
+	for (const auto &suite : schedule.suites) {
+		for (const auto &cmpgn : suite) {
+			printf(
+				"Suite: %d, p%d, %d\n", 
+				cmpgn.suite_num, cmpgn.product_num, cmpgn.num_batches
+			);
+		}
+	}
+
+	printf("\nInventory\n\n");
+	for (const auto &row : schedule.inventory) {
+		for (const auto &val : row) {
+			printf("%d  ", val);
+		}
+		printf("\n");
+	}
+
+	printf("\nBacklog\n\n");
+	for (const auto &row : schedule.backlog) {
+		for (const auto &val : row) {
+			printf("%d  ", val);
+		}
+		printf("\n");
+	}
+
+	printf("\nSold\n\n");
+	for (const auto &row : schedule.supply) {
+		for (const auto &val : row) {
+			printf("%d  ", val);
+		}
+		printf("\n");
+	}
+
+	printf("\nWaste\n\n");
+	for (const auto &row : schedule.waste) {
+		for (const auto &val : row) {
+			printf("%d  ", val);
+		}
+		printf("\n");
+	}
 }
 
 int main()

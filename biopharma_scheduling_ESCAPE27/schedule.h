@@ -48,20 +48,20 @@ namespace types
 
             suites.resize(num_suites);
 
-            inventory = std::vector<std::vector<double>>(
-                num_products, std::vector<double>(num_periods, 0.0)
+            inventory = std::vector<std::vector<int>>(
+                num_products, std::vector<int>(num_periods, 0.0)
             );
 
-            supply = std::vector<std::vector<double>>(
-                num_products, std::vector<double>(num_periods, 0.0)
+            supply = std::vector<std::vector<int>>(
+                num_products, std::vector<int>(num_periods, 0.0)
             );
 
-            backlog = std::vector<std::vector<double>>(
-                num_products, std::vector<double>(num_periods, 0.0)
+            backlog = std::vector<std::vector<int>>(
+                num_products, std::vector<int>(num_periods, 0.0)
             );
             
-            waste = std::vector<std::vector<double>>(
-                num_products, std::vector<double>(num_periods, 0.0)
+            waste = std::vector<std::vector<int>>(
+                num_products, std::vector<int>(num_periods, 0.0)
             );
 
             objectives = std::vector<double>(num_objectives, 0.0);
@@ -69,7 +69,7 @@ namespace types
 
         std::vector<double> objectives;
         std::vector<std::vector<types::Campaign>> suites; 
-        std::vector<std::vector<double>> inventory, supply, backlog, waste;  
+        std::vector<std::vector<int>> inventory, supply, backlog, waste;  
 
         std::vector< 
             std::vector<
