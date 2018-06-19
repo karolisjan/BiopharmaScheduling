@@ -22,11 +22,8 @@ namespace types
 			start(-1),
 			end(-1) {}
 
-		int	product_num;
-		int suite_num;
-		int	num_batches;
-		int	start;
-		int	end;
+		int	product_num, suite_num, num_batches;
+		double start, end;
 
 		std::vector<Batch> batches;
 	};

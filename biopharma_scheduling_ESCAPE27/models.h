@@ -2,6 +2,7 @@
     #pragma GCC diagnostic ignored "-Wreorder"
 	#pragma GCC diagnostic ignored "-Wsign-compare"
 	#pragma GCC diagnostic ignored "-Wunused-variable"
+	#pragma GCC diagnostic ignored "-Wformat="
 #endif 
 
 #ifndef  __MODELS_H__
@@ -134,7 +135,16 @@ namespace deterministic
 		{
 			// Range based binary search for a time period_num to fit the batch in 
 			// based on its approval date
-			int period_num = utils::search(input_data.due_dates, new_batch.stored_at); 
+			// int period_num = utils::search(input_data.due_dates, new_batch.stored_at); 
+
+			int period_num = -1;
+
+			for (int t = 0; t != input_data.due_dates.size(); ++t) {
+				if (new_batch.stored_at <= input_data.due_dates[t]) {
+					period_num = t;
+					break;
+				}
+			}
 
 			if (period_num != -1) {
 				schedule.batch_inventory[new_batch.product_num - 1][period_num].push(new_batch);
@@ -358,6 +368,7 @@ namespace deterministic
 					continue;
 				}
 
+				// TODO
 				// Production factor doesn't make sense from the biomanufacturing perspective:
 				// For example, if for every 1 USP batch 2 DSP batches are produced, how is the DSP processing time affected?..
 				dsp_cmpgn.num_batches = usp_cmpgn.num_batches; // input_data.production_factor[usp_cmpgn.product_num - 1];
@@ -386,6 +397,7 @@ namespace deterministic
 					dsp_batch.expires_at = dsp_batch.stored_at + input_data.shelf_life[dsp_cmpgn.product_num - 1];
 
 					dsp_cmpgn.batches.push_back(dsp_batch);
+					AddToInventory(schedule, dsp_batch);
 				}
 
 				dsp_campaigns.push(dsp_cmpgn);
@@ -475,6 +487,15 @@ namespace deterministic
 		)
 		{
 			int product_num, period_num;
+
+			// printf("\nTemp. inventory\n\n");
+			// for (int p = 0; p != input_data.num_products; ++p) {
+			// 	for (int t = 0; t != input_data.num_periods; ++t) {
+			// 		printf("%d  ", schedule.batch_inventory[p][t].size());
+			// 	}
+			// 	printf("\n");
+			// }
+			// printf("\n");
 	
 			for (product_num = 0; product_num < input_data.num_products; ++product_num) {
 
@@ -512,8 +533,8 @@ namespace deterministic
 				}
 			}
 
-			for (int dsp_suite = input_data.num_usp_suites - 1; dsp_suite <= schedule.suites.size(); ++dsp_suite) {
-				for (const auto &dsp_cmpgn : schedule.suites[dsp_suite - 1]) {
+			for (int dsp_suite = input_data.num_usp_suites; dsp_suite < schedule.suites.size(); ++dsp_suite) {
+				for (const auto &dsp_cmpgn : schedule.suites[dsp_suite]) {
 					if (dsp_cmpgn.product_num == 0) {
 						continue;
 					}
@@ -539,7 +560,7 @@ namespace deterministic
 				schedule.objectives[TOTAL_PRODUCTION_COST]
 			);
 
-			schedule.objectives[TOTAL_PROFIT] = schedule.objectives[TOTAL_REVENUE] - schedule.objectives[TOTAL_WASTE_COST];
+			schedule.objectives[TOTAL_PROFIT] = schedule.objectives[TOTAL_REVENUE] - schedule.objectives[TOTAL_COST];
 		}
 
 	public:
