@@ -71,7 +71,7 @@ void Lakhdar2005Ex1_BaseCaseGlobalOptimumTest()
 
 	types::SingleObjectiveIndividual i;
 
-	i.genes.resize(5);
+	i.genes.resize(6);
 
 	i.genes[0].usp_suite_num = 1;
 	i.genes[0].product_num = 2;
@@ -90,6 +90,10 @@ void Lakhdar2005Ex1_BaseCaseGlobalOptimumTest()
 	i.genes[3].num_batches = 9;
 
 	i.genes[4].usp_suite_num = 2;
+	i.genes[4].product_num = 1;
+	i.genes[4].num_batches = 10;
+
+		i.genes[4].usp_suite_num = 2;
 	i.genes[4].product_num = 1;
 	i.genes[4].num_batches = 10;
 
@@ -227,27 +231,31 @@ void Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest()
 
 	types::SingleObjectiveIndividual i;
 
-	i.genes.resize(5);
+	i.genes.resize(6);
 
 	i.genes[0].usp_suite_num = 1;
-	i.genes[0].product_num = 2;
-	i.genes[0].num_batches = 6;
+	i.genes[0].product_num = 3;
+	i.genes[0].num_batches = 1;
 
 	i.genes[1].usp_suite_num = 1;
-	i.genes[1].product_num = 1;
-	i.genes[1].num_batches = 2;
+	i.genes[1].product_num = 2;
+	i.genes[1].num_batches = 6;
 
 	i.genes[2].usp_suite_num = 1;
 	i.genes[2].product_num = 3;
-	i.genes[2].num_batches = 7;
+	i.genes[2].num_batches = 8;
 
-	i.genes[3].usp_suite_num = 2;
-	i.genes[3].product_num = 3;
-	i.genes[3].num_batches = 9;
+	i.genes[3].usp_suite_num = 1;
+	i.genes[3].product_num = 1;
+	i.genes[3].num_batches = 3;
 
 	i.genes[4].usp_suite_num = 2;
-	i.genes[4].product_num = 1;
-	i.genes[4].num_batches = 10;
+	i.genes[4].product_num = 3;
+	i.genes[4].num_batches = 7;
+
+	i.genes[5].usp_suite_num = 2;
+	i.genes[5].product_num = 1;
+	i.genes[5].num_batches = 12;
 
 	types::SingleSiteMultiSuiteSchedule schedule;
 	single_site_multi_suite_model.CreateSchedule(i, schedule);
@@ -433,8 +441,11 @@ void Lakhdar2005Ex1_BaseCaseTest()
 
 int main()
 {
-	printf("Lakhdar2005 Example 1 (base case) model test...\n\n");
-	Lakhdar2005Ex1_BaseCaseGlobalOptimumTest();
+	// printf("Lakhdar2005 Example 1 (base case) model test...\n\n");
+	// Lakhdar2005Ex1_BaseCaseGlobalOptimumTest();
+
+	// printf("Lakhdar2005 Example 1 (increased demand for p1) model test...\n\n");
+	// Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest();
 
 	printf("\nLakhdar2005 Example 1 (base case) GA test...\n\n");
 	Lakhdar2005Ex1_BaseCaseTest();
