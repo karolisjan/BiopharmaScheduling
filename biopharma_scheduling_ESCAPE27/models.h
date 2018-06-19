@@ -178,20 +178,22 @@ namespace deterministic
 			if (new_cmpgn.product_num != 0) { 
 				new_cmpgn.end = new_cmpgn.start + input_data.usp_days[new_cmpgn.product_num - 1] * new_cmpgn.num_batches;
 
-				while (new_cmpgn.end > input_data.horizon && --new_cmpgn.num_batches > 0) {
+				while (new_cmpgn.end > input_data.horizon && new_cmpgn.num_batches > 0) {
 					new_cmpgn.end -= input_data.usp_days[new_cmpgn.product_num - 1];
+					--new_cmpgn.num_batches;
 				}
 			}
 			// Dummy one
 			else {
 				new_cmpgn.end = new_cmpgn.start + new_cmpgn.num_batches;
 
-				while (new_cmpgn.end > input_data.horizon && --new_cmpgn.num_batches > 0) {
+				while (new_cmpgn.end > input_data.horizon && new_cmpgn.num_batches > 0) {
 					--new_cmpgn.end;
+					--new_cmpgn.num_batches;				
 				}
 			}
 
-			gene.num_batches = new_cmpgn.num_batches;
+			gene.num_batches = new_cmpgn.num_batches;	
 
 			if (new_cmpgn.num_batches) {
 				schedule.suites[new_cmpgn.suite_num - 1].push_back(new_cmpgn);
@@ -213,15 +215,17 @@ namespace deterministic
 			if (prev_cmpgn.product_num != 0) {
 				prev_cmpgn.end = prev_cmpgn.start + input_data.usp_days[prev_cmpgn.product_num - 1] * prev_cmpgn.num_batches;
 
-				while (prev_cmpgn.end > input_data.horizon && --prev_cmpgn.num_batches > 0) {
+				while (prev_cmpgn.end > input_data.horizon && prev_cmpgn.num_batches > 0) {
 					prev_cmpgn.end -= input_data.usp_days[prev_cmpgn.product_num - 1];
+					--prev_cmpgn.num_batches;
 				}
 			}
 			else {
 				prev_cmpgn.end = prev_cmpgn.start + prev_cmpgn.num_batches;
 
-				while (prev_cmpgn.end > input_data.horizon && --prev_cmpgn.num_batches > 0) {
+				while (prev_cmpgn.end > input_data.horizon && prev_cmpgn.num_batches > 0) {
 					--prev_cmpgn.end;
+					--prev_cmpgn.num_batches;
 				}
 			}
 		}
@@ -239,7 +243,8 @@ namespace deterministic
 			for (int cmpgn_num = 1; cmpgn_num != individual.genes.size(); ++cmpgn_num) {
 				if (
 					individual.genes[cmpgn_num].product_num == individual.genes[cmpgn_num - 1].product_num && // different product
-					individual.genes[cmpgn_num].usp_suite_num == individual.genes[cmpgn_num - 1].usp_suite_num // same suite
+					individual.genes[cmpgn_num].usp_suite_num == individual.genes[cmpgn_num - 1].usp_suite_num && // same suite
+					schedule.suites[individual.genes[cmpgn_num].usp_suite_num - 1].size()
 				) {
 					ContinuePreviousUSPCampaign(cmpgn_num, individual, schedule);
 				}
@@ -247,6 +252,13 @@ namespace deterministic
 					AddNewUSPCampaign(cmpgn_num, individual, schedule);
 				}
 			}
+
+			// int total_num_usp_campaigns = 0;
+			// for (int usp_suite = 0; usp_suite != input_data.num_usp_suites; ++usp_suite) {
+			// 	total_num_usp_campaigns += schedule.suites[usp_suite].size();
+			// }
+			// individual.genes.erase(individual.genes.begin() + total_num_usp_campaigns, individual.genes.end());
+
 		}
 
 		template<class PriorityQueue>
@@ -344,7 +356,10 @@ namespace deterministic
 				}
 
 				dsp_suite = dsp_campaigns.top().suite_num;
-				dsp_campaigns.pop();
+
+				if (!dsp_campaigns.empty()) {
+					dsp_campaigns.pop();
+				}
 
 				if (!schedule.suites[dsp_suite - 1].size()) {
 					AddFirstDSPCampaign(dsp_suite, schedule, dsp_campaigns, usp_cmpgn);
@@ -583,7 +598,7 @@ namespace deterministic
 			types::SingleSiteMultiSuiteSchedule schedule;
 			CreateSchedule(individual, schedule);
 
-			individual.objective = schedule.objectives[TOTAL_PROFIT];
+			individual.objective = -schedule.objectives[TOTAL_PROFIT];
 			individual.constraints = schedule.objectives[TOTAL_BACKLOG_PENALTY];
 		}
 	};
