@@ -87,7 +87,7 @@ namespace types
 				num_batches += 1;
 			}
 
-			if (num_batches > 1 && utils::random() < p_minus_batch_mut) {
+			if (num_batches > 0 && utils::random() < p_minus_batch_mut) {
 				num_batches -= 1;
 			}
 		}

@@ -170,6 +170,7 @@ namespace deterministic
 				types::Campaign &prev_cmpgn = schedule.suites[new_cmpgn.suite_num - 1].back();
 				new_cmpgn.start = prev_cmpgn.end + input_data.usp_lead_days[new_cmpgn.product_num - 1];
 			}
+			// First campaign in this suite
 			else {
 				new_cmpgn.start = input_data.usp_lead_days[new_cmpgn.product_num - 1];
 			}
@@ -238,9 +239,11 @@ namespace deterministic
 		{
 			schedule.Init(input_data.num_products, input_data.num_periods, input_data.num_usp_suites + input_data.num_dsp_suites, NUM_OBJECTIVES);
 
-			AddNewUSPCampaign(0, individual, schedule);
+			int cmpgn_num = 0;
 
-			for (int cmpgn_num = 1; cmpgn_num != individual.genes.size(); ++cmpgn_num) {
+			AddNewUSPCampaign(cmpgn_num, individual, schedule);
+
+			for (cmpgn_num = 1; cmpgn_num != individual.genes.size(); ++cmpgn_num) {
 				if (
 					individual.genes[cmpgn_num].product_num == individual.genes[cmpgn_num - 1].product_num && // different product
 					individual.genes[cmpgn_num].usp_suite_num == individual.genes[cmpgn_num - 1].usp_suite_num && // same suite
@@ -253,12 +256,26 @@ namespace deterministic
 				}
 			}
 
-			// int total_num_usp_campaigns = 0;
-			// for (int usp_suite = 0; usp_suite != input_data.num_usp_suites; ++usp_suite) {
-			// 	total_num_usp_campaigns += schedule.suites[usp_suite].size();
-			// }
-			// individual.genes.erase(individual.genes.begin() + total_num_usp_campaigns, individual.genes.end());
+			// Ensure usp_schedule == chromosome
+			auto earlier_usp_cmpgn_start = [](const auto &a, const auto &b) { return a.start > b.start; };
+			std::priority_queue<types::Campaign, std::vector<types::Campaign>, decltype(earlier_usp_cmpgn_start)> usp_campaigns(earlier_usp_cmpgn_start);
 
+			for (const auto &suite : schedule.suites) {
+				for (const auto &cmpgn : suite) {
+					usp_campaigns.push(cmpgn);
+				}
+			}
+
+			cmpgn_num = 0;
+			individual.genes.resize(usp_campaigns.size());
+
+			while (!usp_campaigns.empty()) {
+				individual.genes[cmpgn_num].usp_suite_num = usp_campaigns.top().suite_num;
+				individual.genes[cmpgn_num].product_num = usp_campaigns.top().product_num;
+				individual.genes[cmpgn_num].num_batches = usp_campaigns.top().num_batches;
+				usp_campaigns.pop();
+				++cmpgn_num;
+			}
 		}
 
 		template<class PriorityQueue>

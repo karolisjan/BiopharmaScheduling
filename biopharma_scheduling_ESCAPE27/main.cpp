@@ -5,6 +5,20 @@
 #include "single_objective_ga.h"
 
 
+bool display_schedules = false;
+int seed = 0, num_threads = -1;
+int runs = 10, gens = 1000, popsize = 200; 
+
+int starting_length = 1;
+
+double p_xo = 0.131266;
+double p_product_mut = 0.131266;
+double p_usp_suite_mut = 0.131266;
+double p_plus_batch_mut = 0.131266;
+double p_minus_batch_mut = 0.131266;
+double p_gene_swap = 0.131266;
+
+
 void DisplaySchedule(types::SingleSiteMultiSuiteSchedule &schedule)
 {
 	printf("Total proft %.1f\n", schedule.objectives[deterministic::OBJECTIVES::TOTAL_PROFIT]);
@@ -270,19 +284,6 @@ void Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest()
 
 void Lakhdar2005Ex1_BaseCaseTest()
 {
-	bool display_schedules = false;
-	int seed = 0, num_threads = -1;
-	int runs = 20, gens = 1000, popsize = 100; 
-
-	int starting_length = 1;
-	double p_xo = 0.131266;
-	double p_product_mut = 0.131266;
-	double p_usp_suite_mut = 0.131266;
-	double p_dsp_suite_mut = 0.131266;
-	double p_plus_batch_mut = 0.131266;
-	double p_minus_batch_mut = 0.131266;
-	double p_gene_swap = 0.131266;
-
 	std::vector<std::vector<int>> demand =
 	{
 		{ 0, 0, 0, 6, 0, 6 },
@@ -366,8 +367,8 @@ void Lakhdar2005Ex1_BaseCaseTest()
 			simple_ga.Update();
 
 			printf(
-				"\rRun %d, Gen: %d, Best: %.1f, Constraint: %.1f",
-				run + 1, gen + 1, simple_ga.Top().objective, simple_ga.Top().constraints
+				"\rRun %d, Gen: %d, Best: %.1f, Constraint: %.1f, Length: %d",
+				run + 1, gen + 1, simple_ga.Top().objective, simple_ga.Top().constraints, simple_ga.Top().genes.size()
 			);
 
 			std::cout << std::flush;
@@ -378,7 +379,18 @@ void Lakhdar2005Ex1_BaseCaseTest()
 		types::SingleSiteMultiSuiteSchedule schedule;
 		single_site_multi_suite_model.CreateSchedule(best, schedule);
 
-		printf(", (%.1f, %.1f)\n", schedule.objectives[deterministic::OBJECTIVES::TOTAL_PROFIT], schedule.objectives[deterministic::OBJECTIVES::TOTAL_BACKLOG_PENALTY]);
+		int total_num_usp_campaigns = 0;
+
+		for (int usp_suite = 0; usp_suite != num_usp_suites; ++usp_suite) {
+			total_num_usp_campaigns += schedule.suites[usp_suite].size();
+		}
+
+		printf(
+			", (%.1f, %.1f, %d)\n", 
+			schedule.objectives[deterministic::OBJECTIVES::TOTAL_PROFIT], 
+			schedule.objectives[deterministic::OBJECTIVES::TOTAL_BACKLOG_PENALTY],
+			total_num_usp_campaigns
+		);
 		std::cout << std::flush;
 
 		if (display_schedules) {
@@ -389,19 +401,6 @@ void Lakhdar2005Ex1_BaseCaseTest()
 
 void Lakhdar2005Ex1_IncreasedDemandTest()
 {
-	bool display_schedules = false;
-	int seed = 0, num_threads = -1;
-	int runs = 20, gens = 1000, popsize = 100; 
-
-	int starting_length = 1;
-	double p_xo = 0.131266;
-	double p_product_mut = 0.131266;
-	double p_usp_suite_mut = 0.131266;
-	double p_dsp_suite_mut = 0.131266;
-	double p_plus_batch_mut = 0.131266;
-	double p_minus_batch_mut = 0.131266;
-	double p_gene_swap = 0.131266;
-
 	std::vector<std::vector<int>> demand =
 	{
 		{ 0, 0, 0, 6, 0, 9 },
@@ -485,8 +484,8 @@ void Lakhdar2005Ex1_IncreasedDemandTest()
 			simple_ga.Update();
 
 			printf(
-				"\rRun %d, Gen: %d, Best: %.1f, Constraint: %.1f",
-				run + 1, gen + 1, simple_ga.Top().objective, simple_ga.Top().constraints
+				"\rRun %d, Gen: %d, Best: %.1f, Constraint: %.1f, Length: %d",
+				run + 1, gen + 1, simple_ga.Top().objective, simple_ga.Top().constraints, simple_ga.Top().genes.size()
 			);
 
 			std::cout << std::flush;
@@ -497,7 +496,18 @@ void Lakhdar2005Ex1_IncreasedDemandTest()
 		types::SingleSiteMultiSuiteSchedule schedule;
 		single_site_multi_suite_model.CreateSchedule(best, schedule);
 
-		printf(", (%.1f, %.1f)\n", schedule.objectives[deterministic::OBJECTIVES::TOTAL_PROFIT], schedule.objectives[deterministic::OBJECTIVES::TOTAL_BACKLOG_PENALTY]);
+		int total_num_usp_campaigns = 0;
+
+		for (int usp_suite = 0; usp_suite != num_usp_suites; ++usp_suite) {
+			total_num_usp_campaigns += schedule.suites[usp_suite].size();
+		}
+
+		printf(
+			", (%.1f, %.1f, %d)\n", 
+			schedule.objectives[deterministic::OBJECTIVES::TOTAL_PROFIT], 
+			schedule.objectives[deterministic::OBJECTIVES::TOTAL_BACKLOG_PENALTY],
+			total_num_usp_campaigns
+		);
 		std::cout << std::flush;
 
 		if (display_schedules) {
@@ -514,8 +524,8 @@ int main()
 	// printf("Lakhdar2005 Example 1 (increased demand for p1) model test...\n\n");
 	// Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest();
 
-	// printf("\nLakhdar2005 Example 1 (base case) GA test...\n\n");
-	// Lakhdar2005Ex1_BaseCaseTest();
+	printf("\nLakhdar2005 Example 1 (base case) GA test...\n\n");
+	Lakhdar2005Ex1_BaseCaseTest();
 
 	printf("\nLakhdar2005 Example 1 (increased demand for p1) GA test...\n\n");
 	Lakhdar2005Ex1_IncreasedDemandTest();
