@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <iostream>
 
-#include "models.h"
+#include "scheduling_models.h"
 #include "single_objective_ga.h"
 
 
@@ -91,6 +91,12 @@ void DisplaySchedule(types::SingleSiteMultiSuiteSchedule &schedule)
 // The calculated profit should be 518.
 void Lakhdar2005Ex1_BaseCaseGlobalOptimumTest()
 {
+	std::unordered_map<deterministic::OBJECTIVES, int> objectives;
+	objectives.emplace(deterministic::TOTAL_PROFIT, -1);
+	
+	std::unordered_map<deterministic::OBJECTIVES, std::pair<int, double>> constraints;
+	constraints.emplace(deterministic::TOTAL_KG_BACKLOG, std::make_pair(-1, 0));
+
 	std::vector<std::vector<int>> demand =
 	{
 		{ 0, 0, 0, 6, 0, 6 },

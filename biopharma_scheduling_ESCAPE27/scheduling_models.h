@@ -2,561 +2,633 @@
     #pragma GCC diagnostic ignored "-Wreorder"
 	#pragma GCC diagnostic ignored "-Wsign-compare"
 	#pragma GCC diagnostic ignored "-Wunused-variable"
+	#pragma GCC diagnostic ignored "-Wformat="
 #endif 
 
-#ifndef  __FITNESS_H__
-#define __FITNESS_H__
+#ifndef  __MODELS_H__
+#define __MODELS_H__
 
-#include <iostream>
-#include <cassert>
+#include <queue>
 #include <cmath>
 #include <vector>
-#include <algorithm>
+#include <utility>
 #include <numeric>
+#include <cassert>
+#include <stdio.h>
+#include <iostream>
+#include <algorithm>
 #include <unordered_map>
-#include <queue>
 
 #include "batch.h"
 #include "campaign.h"
+#include "schedule.h"
 #include "single_objective_individual.h"
 
-using namespace std;
-using namespace types;
-
-class Lakhdar2005Ex1Model
+namespace deterministic
 {
-	int num_products, num_periods, horizon;
-	int num_usp_suites, num_dsp_suites;
+	enum OBJECTIVES 
+    {
+        TOTAL_KG_INVENTORY_DEFICIT,
+        TOTAL_KG_THROUGHPUT,
+        TOTAL_KG_BACKLOG,
+        TOTAL_KG_SUPPLY,
+        TOTAL_KG_WASTE,
 
-	vector<vector<int>> demand;
+        TOTAL_INVENTORY_PENALTY,
+        TOTAL_BACKLOG_PENALTY,
+        TOTAL_PRODUCTION_COST,
+        TOTAL_STORAGE_COST,
+        TOTAL_WASTE_COST,
+        TOTAL_REVENUE,
+        TOTAL_PROFIT,
+        TOTAL_COST,
+        NUM_OBJECTIVES = TOTAL_COST + 1
+    };
 
-	vector<int> days_per_period;
-
-	vector<double> usp_storage_cost;
-	vector<double> sales_price;
-	vector<double> production_cost;
-	vector<double> waste_disposal_cost;
-	vector<double> dsp_storage_cost;
-	vector<double> backlog_penalty;
-	vector<double> changeover_cost;
-
-	vector<double> usp_days;
-	vector<double> usp_lead_days;
-	vector<double> usp_shelf_life;
-	vector<double> usp_storage_cap;
-
-	vector<double> dsp_days;
-	vector<double> dsp_lead_days;
-	vector<double> dsp_shelf_life;
-	vector<double> dsp_storage_cap;
-
-	inline void add_first_usp_campaign(
-		unordered_map<int, vector<Campaign>>& usp_schedule,
-		Gene& gene
-	)
+	struct SingleSiteMultiSuiteInputData
 	{
-		Campaign cmpgn;
-		cmpgn.suite = gene.usp_suite_num;
-		cmpgn.product = gene.product_num;
-		cmpgn.batches = gene.num_batches;
-		cmpgn.start = usp_lead_days[cmpgn.product - 1];
-		cmpgn.end = cmpgn.start + usp_days[cmpgn.product - 1] * cmpgn.batches;
+		SingleSiteMultiSuiteInputData() {}
 
+		SingleSiteMultiSuiteInputData(
+			std::unordered_map<OBJECTIVES, int> objectives,
 
-		while (cmpgn.end > horizon && --cmpgn.batches > 0) 
-			cmpgn.end -= usp_days[cmpgn.product - 1];
+			int num_usp_suites,
+			int num_dsp_suites,
 
-		if (cmpgn.batches)
-			usp_schedule[cmpgn.suite].push_back(cmpgn);
+			std::vector<std::vector<int>> demand,
+			std::vector<int> days_per_period,
 
-		gene.num_batches = cmpgn.batches;
-	}
+			std::vector<double> usp_days,
+			std::vector<double> dsp_days,
+			std::vector<double> production_factor,
 
+			std::vector<int> shelf_life,
+			std::vector<int> storage_cap,
 
-	template<class PriorityQueue>
-	inline void add_first_dsp_campaign(
-		int dsp_suite,
-		unordered_map<int, vector<Campaign>>& dsp_schedule,
-		PriorityQueue& dsp_campaigns,
-		Campaign& usp_cmpgn)
-	{
-		Campaign dsp_cmpgn;
-		dsp_cmpgn.suite = dsp_suite;
-		dsp_cmpgn.product = usp_cmpgn.product;
+			std::vector<double> sales_price,
+			std::vector<double> storage_cost,
+			std::vector<double> backlog_penalty,
+			std::vector<double> waste_disposal_cost,
+			std::vector<double> usp_production_cost,
+			std::vector<double> dsp_production_cost,
+			std::vector<double> usp_changeover_cost,
+			std::vector<double> dsp_changeover_cost,
 
-		double usp_batch_fill_date = usp_cmpgn.start + usp_days[dsp_cmpgn.product - 1];
+			std::vector<double> usp_lead_days,
+			std::vector<double> dsp_lead_days,
 
-		dsp_cmpgn.start = (dsp_lead_days[dsp_cmpgn.product - 1] > usp_batch_fill_date) ?
-			dsp_lead_days[dsp_cmpgn.product - 1] : usp_batch_fill_date;
+			std::unordered_map<OBJECTIVES, std::pair<int, double>> *constraints = NULL
+		) :
+			num_usp_suites(num_usp_suites),
+			num_dsp_suites(num_dsp_suites),
 
-		dsp_cmpgn.end = dsp_cmpgn.start + dsp_days[dsp_cmpgn.product - 1];
+			demand(demand),
+			days_per_period(days_per_period),
 
-		if (dsp_cmpgn.end > horizon)
-			return;
+			num_products(demand.size()),
+			num_periods(days_per_period.size()),
 
-		dsp_cmpgn.batches = usp_cmpgn.batches;
-
-		Batch dsp_batch;
-		dsp_batch.product = dsp_cmpgn.product;
-		dsp_batch.stored_at = dsp_cmpgn.end;
-		dsp_batch.expires_at = dsp_batch.stored_at + dsp_shelf_life[dsp_cmpgn.product - 1];
-
-		dsp_cmpgn.batches_list.push_back(dsp_batch);
-
-		for (int batches = 1; batches < usp_cmpgn.batches; ++batches) {
-			usp_batch_fill_date += usp_days[dsp_cmpgn.product - 1];
-			dsp_cmpgn.end = usp_batch_fill_date + dsp_days[dsp_cmpgn.product - 1];
+			usp_days(usp_days),
+			dsp_days(dsp_days),
+			production_factor(production_factor),
 			
-			if (dsp_cmpgn.end > horizon) {
-				dsp_cmpgn.end -= dsp_days[dsp_cmpgn.product - 1];
-				dsp_cmpgn.batches = batches;
-				break;
-			}
+			shelf_life(shelf_life),
+			storage_cap(storage_cap),
 
-			Batch dsp_batch;
-			dsp_batch.product = dsp_cmpgn.product;
-			dsp_batch.stored_at = dsp_cmpgn.end;
-			dsp_batch.expires_at = dsp_batch.stored_at + dsp_shelf_life[dsp_cmpgn.product - 1];
+			sales_price(sales_price),
+			storage_cost(storage_cost),
+			backlog_penalty(backlog_penalty),
+			waste_disposal_cost(waste_disposal_cost),
+			usp_production_cost(usp_production_cost),
+			dsp_production_cost(dsp_production_cost),
+			usp_changeover_cost(usp_changeover_cost),
+			dsp_changeover_cost(dsp_changeover_cost),
 
-			dsp_cmpgn.batches_list.push_back(dsp_batch);
-		}
-
-		dsp_schedule[dsp_suite].push_back(dsp_cmpgn);
-		dsp_campaigns.push(dsp_cmpgn);
-	}
-
-	struct oldest_batch_first
-	{
-		bool operator()(const Batch& b1, const Batch& b2)
+			usp_lead_days(usp_lead_days),
+			dsp_lead_days(dsp_lead_days)
 		{
-			return b1.expires_at > b2.expires_at;
+			int prev = 0;
+
+			for (auto &days : days_per_period) {
+				due_dates.push_back(days + prev);
+				prev = due_dates.back();
+			}
+
+			horizon = due_dates.back();
 		}
+
+		int num_products, num_periods, horizon, num_usp_suites, num_dsp_suites;
+
+		std::vector<std::vector<int>> demand;
+		std::vector<int> days_per_period, due_dates;
+
+		std::vector<double> usp_production_cost, dsp_production_cost;
+		std::vector<double> usp_changeover_cost, dsp_changeover_cost;
+		std::vector<double> sales_price, storage_cost, backlog_penalty, waste_disposal_cost;
+
+		std::vector<double> production_factor;
+		std::vector<double> usp_days, dsp_days;
+		std::vector<double> usp_lead_days, dsp_lead_days;
+
+		std::vector<int> shelf_life, storage_cap;
 	};
 
-	auto CreateInventoryProfile(
-		unordered_map<int, vector<Campaign>>& dsp_schedule
-	)
+	class SingleSiteMultiSuiteModel
 	{
-		vector<vector<priority_queue<Batch, vector<Batch>, oldest_batch_first>>> inventory_profile(num_products,
-			vector<priority_queue<Batch, vector<Batch>, oldest_batch_first>>(num_periods));
+		SingleSiteMultiSuiteInputData input_data;
 
-		for (int product = 0; product < num_products; ++product) {
-			for (int period = 0; period < num_periods; ++period) {
-				inventory_profile[product][period] = priority_queue<Batch, vector<Batch>, oldest_batch_first>();
-			}
-		}
+		/*
+			Adds a batch to an inventory priority queue (oldest first) within an appropriate time
+			bucket based on the approval date of the said batch.
+		*/
+		inline void AddToInventory(types::SingleSiteMultiSuiteSchedule &schedule, types::Batch &new_batch)
+		{
+			// Range based binary search for a time period_num to fit the batch in 
+			// based on its approval date
+			// int period_num = utils::search(input_data.due_dates, new_batch.stored_at); 
 
-		double prev_date, due_date;
+			int period_num = -1;
 
-		for (auto& it : dsp_schedule) {
-			for (Campaign& dsp_cmpgn : it.second) {
-				for (Batch& batch : dsp_cmpgn.batches_list) {
-					prev_date = due_date = 0;
-
-					for (int period = 0; period < num_periods; ++period) {
-						prev_date = due_date;
-						due_date += days_per_period[period];
-
-						if (batch.stored_at > prev_date && batch.stored_at <= due_date) 
-							inventory_profile[batch.product - 1][period].push(batch);
-					}
+			for (int t = 0; t != input_data.due_dates.size(); ++t) {
+				if (new_batch.stored_at <= input_data.due_dates[t]) {
+					period_num = t;
+					break;
 				}
 			}
+
+			if (period_num != -1) {
+				schedule.batch_inventory[new_batch.product_num - 1][period_num].push(new_batch);
+			}
 		}
 
-		return inventory_profile;
-	}
+		template<class Individual>
+		inline void AddNewUSPCampaign(
+			int cmpgn_num,
+			Individual &individual,
+			types::SingleSiteMultiSuiteSchedule &schedule
+		)
+		{
+			auto &gene = individual.genes[cmpgn_num];
 
-	template <class T, class S, class C>
-	S& access_queue_container(priority_queue<T, S, C>& q) {
-		struct hacked_queue : private priority_queue<T, S, C> {
-			static S& access_queue_container(priority_queue<T, S, C>& q) {
-				return q.*&hacked_queue::c;
+			types::Campaign new_cmpgn;
+
+			new_cmpgn.suite_num = gene.usp_suite_num;
+			new_cmpgn.product_num = gene.product_num;
+			new_cmpgn.num_batches = gene.num_batches;
+
+			if (schedule.suites[new_cmpgn.suite_num - 1].size()) {
+				types::Campaign &prev_cmpgn = schedule.suites[new_cmpgn.suite_num - 1].back();
+				new_cmpgn.start = prev_cmpgn.end + input_data.usp_lead_days[new_cmpgn.product_num - 1];
 			}
-		};
-		return hacked_queue::access_queue_container(q);
-	}
-
-	template<class PriorityQueue>
-	void CreateOtherProfiles(
-		vector<vector<PriorityQueue>>& inventory_profile,
-		vector<vector<int>>& sold,
-		vector<vector<int>>& dsp_waste,
-		vector<vector<int>>& backlog
-	)
-	{
-		sold = vector<vector<int>>(num_products, vector<int>(num_periods, 0));
-		dsp_waste = vector<vector<int>>(num_products, vector<int>(num_periods, 0));
-		backlog= vector<vector<int>>(num_products, vector<int>(num_periods, 0));
-
-		int period;
-		double due_date;
-
-		for (int product = 0; product < num_products; ++product) {
-			period = 0;
-			due_date = days_per_period[period];
-
-			while (!inventory_profile[product][period].empty() && inventory_profile[product][period].top().expires_at <= due_date) {
-				inventory_profile[product][period].pop();
-				++dsp_waste[product][period];
-			}
-
-			if (inventory_profile[product][period].size() >= demand[product][period]) {
-				sold[product][period] = demand[product][period];
-				for (int i = 0; i < sold[product][period]; ++i)
-					inventory_profile[product][period].pop();
-			}
+			// First campaign in this suite
 			else {
-				sold[product][period] = inventory_profile[product][period].size();
-				inventory_profile[product][period] = PriorityQueue();
-				backlog[product][period] = demand[product][period] - sold[product][period];
+				new_cmpgn.start = input_data.usp_lead_days[new_cmpgn.product_num - 1];
 			}
 
-			for (period = 1; period < num_periods; ++period) {
-				due_date += days_per_period[period];
+			// Real campaign
+			if (new_cmpgn.product_num != 0) { 
+				new_cmpgn.end = new_cmpgn.start + input_data.usp_days[new_cmpgn.product_num - 1] * new_cmpgn.num_batches;
 
-				for (auto& batch : access_queue_container(inventory_profile[product][period - 1]))
-					inventory_profile[product][period].push(batch);
-
-				while (!inventory_profile[product][period].empty() && inventory_profile[product][period].top().expires_at <= due_date) {
-					inventory_profile[product][period].pop();
-					++dsp_waste[product][period];
+				while (new_cmpgn.end > input_data.horizon && new_cmpgn.num_batches > 0) {
+					new_cmpgn.end -= input_data.usp_days[new_cmpgn.product_num - 1];
+					--new_cmpgn.num_batches;
 				}
+			}
+			// Dummy one
+			else {
+				new_cmpgn.end = new_cmpgn.start + new_cmpgn.num_batches;
 
-				if (inventory_profile[product][period].size() >= demand[product][period]) {
-					sold[product][period] = demand[product][period];
-					for (int i = 0; i < sold[product][period]; ++i)
-						inventory_profile[product][period].pop();
+				while (new_cmpgn.end > input_data.horizon && new_cmpgn.num_batches > 0) {
+					--new_cmpgn.end;
+					--new_cmpgn.num_batches;				
+				}
+			}
 
-					if (backlog[product][period - 1]) {
-						if (inventory_profile[product][period].size() >= backlog[product][period - 1]) {
-							sold[product][period] += backlog[product][period - 1];
-							backlog[product][period] = 0;
-							for (int i = 0; i < backlog[product][period]; ++i)
-								inventory_profile[product][period].pop();
-						}
-						else {
-							sold[product][period] += inventory_profile[product][period].size();
-							backlog[product][period] = backlog[product][period - 1] - inventory_profile[product][period].size();
-							inventory_profile[product][period] = PriorityQueue();
-						}
-					}
-				}
-				else {
-					sold[product][period] = inventory_profile[product][period].size();
-					inventory_profile[product][period] = PriorityQueue();
-					backlog[product][period] = backlog[product][period - 1] + demand[product][period] - sold[product][period];
-				}
+			gene.num_batches = new_cmpgn.num_batches;	
+
+			if (new_cmpgn.num_batches) {
+				schedule.suites[new_cmpgn.suite_num - 1].push_back(new_cmpgn);
 			}
 		}
-	}
 
-public:
-	Lakhdar2005Ex1Model() {}
+		template<class Individual>
+		inline void ContinuePreviousUSPCampaign(
+			int cmpgn_num,
+			Individual &individual,
+			types::SingleSiteMultiSuiteSchedule &schedule
+		)
+		{
+			auto &gene = individual.genes[cmpgn_num];
+			types::Campaign &prev_cmpgn = schedule.suites[gene.usp_suite_num - 1].back();
 
-	Lakhdar2005Ex1Model(
-		int num_usp_suites,
-		int num_dsp_suites,
+			prev_cmpgn.num_batches += gene.num_batches;
 
-		vector<vector<int>> demand,
-		vector<int> days_per_period,
+			if (prev_cmpgn.product_num != 0) {
+				prev_cmpgn.end = prev_cmpgn.start + input_data.usp_days[prev_cmpgn.product_num - 1] * prev_cmpgn.num_batches;
 
-		vector<double> usp_storage_cost,
-		vector<double> sales_price,
-		vector<double> production_cost,
-		vector<double> waste_disposal_cost,
-		vector<double> dsp_storage_cost,
-		vector<double> backlog_penalty,
-		vector<double> changeover_cost,
-
-		vector<double> usp_days,
-		vector<double> usp_lead_days,
-		vector<double> usp_shelf_life,
-		vector<double> usp_storage_cap,
-
-		vector<double> dsp_days,
-		vector<double> dsp_lead_days,
-		vector<double> dsp_shelf_life,
-		vector<double> dsp_storage_cap
-	) :
-	num_usp_suites(num_usp_suites),
-	num_dsp_suites(num_dsp_suites),
-
-	demand(demand),
-	days_per_period(days_per_period),
-
-	usp_storage_cost(usp_storage_cost),
-	sales_price(sales_price),
-	production_cost(production_cost),
-	waste_disposal_cost(waste_disposal_cost),
-	dsp_storage_cost(dsp_storage_cost),
-	backlog_penalty(backlog_penalty),
-	changeover_cost(changeover_cost),
-
-	usp_days(usp_days),
-	usp_lead_days(usp_lead_days),
-	usp_shelf_life(usp_shelf_life),
-	usp_storage_cap(usp_storage_cap),
-
-	dsp_days(dsp_days),
-	dsp_lead_days(dsp_lead_days),
-	dsp_shelf_life(dsp_shelf_life),
-	dsp_storage_cap(dsp_storage_cap)
-	{
-		num_products = demand.size();
-		num_periods = demand[0].size();
-
-		horizon = 0;
-		for (auto &val : days_per_period)
-			horizon += val;
-	}
-
-	unordered_map<int, vector<Campaign>> CreateUSPSchedule(SingleObjectiveIndividual& c)
-	{
-		unordered_map<int, vector<Campaign>> usp_schedule;
-
-		int i = 0;
-
-		for (; i < c.genes.size(); ++i) {
-			auto& gene = c.genes[i];
-
-			if (usp_schedule.find(gene.usp_suite_num) == usp_schedule.end()) {
-				add_first_usp_campaign(usp_schedule, gene);
-				continue;
-			}
-
-			Campaign& prev_cmpgn = usp_schedule[gene.usp_suite_num].back();
-
-			if (gene.product_num != prev_cmpgn.product) {
-				Campaign cmpgn;
-				cmpgn.suite = gene.usp_suite_num;
-				cmpgn.product = gene.product_num;
-				cmpgn.batches = gene.num_batches;
-				cmpgn.start = prev_cmpgn.end + usp_lead_days[cmpgn.product - 1];
-
-				if (cmpgn.start > horizon) {
-					c.genes.erase(c.genes.begin() + i);
-					continue;
-				}
-
-				cmpgn.end = cmpgn.start + usp_days[cmpgn.product - 1] * cmpgn.batches;
-
-				while (cmpgn.end > horizon && --cmpgn.batches > 0)
-					cmpgn.end -= usp_days[cmpgn.product - 1];
-
-				if (cmpgn.batches) {
-					gene.num_batches = cmpgn.batches;
-					usp_schedule[cmpgn.suite].push_back(cmpgn);
-				}
-				else {
-					c.genes.erase(c.genes.begin() + i);
+				while (prev_cmpgn.end > input_data.horizon && prev_cmpgn.num_batches > 0) {
+					prev_cmpgn.end -= input_data.usp_days[prev_cmpgn.product_num - 1];
+					--prev_cmpgn.num_batches;
 				}
 			}
 			else {
-				prev_cmpgn.batches += gene.num_batches;
-				prev_cmpgn.end = prev_cmpgn.start + usp_days[prev_cmpgn.product - 1] * prev_cmpgn.batches;
+				prev_cmpgn.end = prev_cmpgn.start + prev_cmpgn.num_batches;
 
-				while (prev_cmpgn.end > horizon && --prev_cmpgn.batches > 0)
-					prev_cmpgn.end -= usp_days[prev_cmpgn.product - 1];
+				while (prev_cmpgn.end > input_data.horizon && prev_cmpgn.num_batches > 0) {
+					--prev_cmpgn.end;
+					--prev_cmpgn.num_batches;
+				}
 			}
 		}
 
-		return usp_schedule;
-	}
+		template<class Individual>
+		void CreateUSPSchedule(
+			Individual &individual,
+			types::SingleSiteMultiSuiteSchedule &schedule
+		)
+		{
+			schedule.Init(input_data.num_products, input_data.num_periods, input_data.num_usp_suites + input_data.num_dsp_suites, NUM_OBJECTIVES);
 
-	struct Objectives
-	{
-		Objectives() :
-			profit(0),
-			sales(0),
-			backlog_cost(0),
-			changeover_cost(0),
-			production_cost(0),
-			usp_storage_cost(0),
-			dsp_storage_cost(0),
-			usp_waste_cost(0),
-			dsp_waste_cost(0)
-		{}
+			int cmpgn_num = 0;
 
-		double profit;
-		double sales;
-		double backlog_cost;
-		double changeover_cost;
-		double production_cost;
-		double usp_storage_cost;
-		double dsp_storage_cost;
-		double usp_waste_cost;
-		double dsp_waste_cost;
-	};
+			AddNewUSPCampaign(cmpgn_num, individual, schedule);
 
-	unordered_map<int, vector<Campaign>> CreateDSPSchedule(
-		unordered_map<int, vector<Campaign>>& usp_schedule
-	)
-	{
-		unordered_map<int, vector<Campaign>> dsp_schedule;
-		int dsp_suite = 1;
-		bool over_horizon = false;
+			for (cmpgn_num = 1; cmpgn_num != individual.genes.size(); ++cmpgn_num) {
+				if (
+					individual.genes[cmpgn_num].product_num == individual.genes[cmpgn_num - 1].product_num && // different product
+					individual.genes[cmpgn_num].usp_suite_num == individual.genes[cmpgn_num - 1].usp_suite_num && // same suite
+					schedule.suites[individual.genes[cmpgn_num].usp_suite_num - 1].size()
+				) {
+					ContinuePreviousUSPCampaign(cmpgn_num, individual, schedule);
+				}
+				else {
+					AddNewUSPCampaign(cmpgn_num, individual, schedule);
+				}
+			}
 
-		auto earlier_usp_cmpgn_start = [](const Campaign& a, const Campaign& b) { return a.start > b.start; };
-		priority_queue<Campaign, vector<Campaign>, decltype(earlier_usp_cmpgn_start)> usp_campaigns(earlier_usp_cmpgn_start);
+			// Ensure usp_schedule == chromosome
+			auto earlier_usp_cmpgn_start = [](const auto &a, const auto &b) { return a.start > b.start; };
+			std::priority_queue<types::Campaign, std::vector<types::Campaign>, decltype(earlier_usp_cmpgn_start)> usp_campaigns(earlier_usp_cmpgn_start);
 
-		for (auto& it : usp_schedule) {
-			for (auto& cmpgn : it.second) {
-				usp_campaigns.push(cmpgn);
+			for (const auto &suite : schedule.suites) {
+				for (const auto &cmpgn : suite) {
+					usp_campaigns.push(cmpgn);
+				}
+			}
+
+			cmpgn_num = 0;
+			individual.genes.resize(usp_campaigns.size());
+
+			while (!usp_campaigns.empty()) {
+				individual.genes[cmpgn_num].usp_suite_num = usp_campaigns.top().suite_num;
+				individual.genes[cmpgn_num].product_num = usp_campaigns.top().product_num;
+				individual.genes[cmpgn_num].num_batches = usp_campaigns.top().num_batches;
+				usp_campaigns.pop();
+				++cmpgn_num;
 			}
 		}
 
-		auto earlier_dsp_cmpgn_end = [](const Campaign& a, const Campaign& b) { return a.end > b.end; };
-		priority_queue<Campaign, vector<Campaign>, decltype(earlier_dsp_cmpgn_end)> dsp_campaigns(earlier_dsp_cmpgn_end);
+		template<class PriorityQueue>
+		inline void AddFirstDSPCampaign(
+			int dsp_suite,
+			types::SingleSiteMultiSuiteSchedule &schedule,
+			PriorityQueue &dsp_campaigns,
+			types::Campaign &usp_cmpgn
+		)
+		{
+			types::Campaign dsp_cmpgn;
+			dsp_cmpgn.suite_num = dsp_suite;
+			dsp_cmpgn.product_num = usp_cmpgn.product_num;
 
-		for (; dsp_suite <= num_dsp_suites; ++dsp_suite) {
-			Campaign dummy_dsp;
-			dummy_dsp.suite = dsp_suite + num_usp_suites;
-			dummy_dsp.end = 0;
-			dsp_campaigns.push(dummy_dsp);
-		}
+			double usp_batch_fill_date = usp_cmpgn.start + input_data.usp_days[dsp_cmpgn.product_num - 1];
 
-		while (!usp_campaigns.empty()) {
-			Campaign usp_cmpgn = usp_campaigns.top();
-			usp_campaigns.pop();
+			dsp_cmpgn.start = (input_data.dsp_lead_days[dsp_cmpgn.product_num - 1] > usp_batch_fill_date) ?
+				input_data.dsp_lead_days[dsp_cmpgn.product_num - 1] : usp_batch_fill_date;
 
-			dsp_suite = dsp_campaigns.top().suite;
-			dsp_campaigns.pop();
+			dsp_cmpgn.end = dsp_cmpgn.start + input_data.dsp_days[dsp_cmpgn.product_num - 1];
 
-			if (dsp_schedule.find(dsp_suite) == dsp_schedule.end()) {
-				add_first_dsp_campaign(dsp_suite, dsp_schedule, dsp_campaigns, usp_cmpgn);
-				continue;
+			if (dsp_cmpgn.end > input_data.horizon) {
+				return;
 			}
 
-			Campaign& prev_dsp_cmpgn = dsp_schedule[dsp_suite].back();
-			Campaign dsp_cmpgn;
-			dsp_cmpgn.suite = dsp_suite;
-			dsp_cmpgn.product = usp_cmpgn.product;
+			dsp_cmpgn.num_batches = usp_cmpgn.num_batches;
 
-			double usp_batch_fill_date = usp_cmpgn.start + usp_days[dsp_cmpgn.product - 1];
-
-			dsp_cmpgn.start = (prev_dsp_cmpgn.end + dsp_lead_days[dsp_cmpgn.product - 1] > usp_batch_fill_date) ?
-				prev_dsp_cmpgn.end + dsp_lead_days[dsp_cmpgn.product - 1] :
-				usp_batch_fill_date;
-
-			dsp_cmpgn.end = dsp_cmpgn.start + dsp_days[dsp_cmpgn.product - 1];
-
-			if (dsp_cmpgn.end > horizon)
-				continue;
-
-			dsp_cmpgn.batches = usp_cmpgn.batches;
-
-			Batch dsp_batch;
-			dsp_batch.product = dsp_cmpgn.product;
+			types::Batch dsp_batch;
+			dsp_batch.product_num = dsp_cmpgn.product_num;
 			dsp_batch.stored_at = dsp_cmpgn.end;
-			dsp_batch.expires_at = dsp_batch.stored_at + dsp_shelf_life[dsp_cmpgn.product - 1];
+			dsp_batch.expires_at = dsp_batch.stored_at + input_data.shelf_life[dsp_cmpgn.product_num - 1];
+			
+			dsp_cmpgn.batches.push_back(dsp_batch);
+			AddToInventory(schedule, dsp_batch);
 
-			dsp_cmpgn.batches_list.push_back(dsp_batch);
+			for (int num_batches = 1; num_batches != usp_cmpgn.num_batches; ++num_batches) {
+				usp_batch_fill_date += input_data.usp_days[dsp_cmpgn.product_num - 1];
+				dsp_cmpgn.end = usp_batch_fill_date + input_data.dsp_days[dsp_cmpgn.product_num - 1];
 
-			for (int batches = 1; batches < usp_cmpgn.batches; ++batches) {
-				usp_batch_fill_date += usp_days[dsp_cmpgn.product - 1];
-				dsp_cmpgn.end = usp_batch_fill_date + dsp_days[dsp_cmpgn.product - 1];
-
-				if (dsp_cmpgn.end > horizon) {
-					dsp_cmpgn.end -= dsp_days[dsp_cmpgn.product - 1];
-					dsp_cmpgn.batches = batches;
+				if (dsp_cmpgn.end > input_data.horizon) {
+					dsp_cmpgn.end -= input_data.dsp_days[dsp_cmpgn.product_num - 1];
+					dsp_cmpgn.num_batches = num_batches;
 					break;
 				}
 
-				Batch dsp_batch;
-				dsp_batch.product = dsp_cmpgn.product;
+				types::Batch dsp_batch;
+				dsp_batch.product_num = dsp_cmpgn.product_num;
 				dsp_batch.stored_at = dsp_cmpgn.end;
-				dsp_batch.expires_at = dsp_batch.stored_at + dsp_shelf_life[dsp_cmpgn.product - 1];
-
-				dsp_cmpgn.batches_list.push_back(dsp_batch);
+				dsp_batch.expires_at = dsp_batch.stored_at + input_data.shelf_life[dsp_cmpgn.product_num - 1];
+				
+				dsp_cmpgn.batches.push_back(dsp_batch);
+				AddToInventory(schedule, dsp_batch);
 			}
 
-			dsp_schedule[dsp_suite].push_back(dsp_cmpgn);
 			dsp_campaigns.push(dsp_cmpgn);
+			schedule.suites[dsp_suite - 1].push_back(dsp_cmpgn);
 		}
 
-		return dsp_schedule;
-	}
+		template<class Individual>
+		void CreateDSPSchedule(
+			Individual &individual,
+			types::SingleSiteMultiSuiteSchedule &schedule
+		)
+		{
+			int dsp_suite = 1;
+			bool over_horizon = false;
 
-	template<class PriorityQueue>
-	Objectives CalculateObjectives(
-		unordered_map<int, vector<Campaign>>& usp_schedule,
-		unordered_map<int, vector<Campaign>>& dsp_schedule,
-		vector<vector<PriorityQueue>>& inventory_profile,
-		vector<vector<int>>& sold,
-		vector<vector<int>>& dsp_waste,
-		vector<vector<int>>& backlog
-	)
-	{
-		Objectives objectives;
+			// Priority queue for usp campaigns with the earliest start dates
+			auto earlier_usp_cmpgn_start = [](const auto &a, const auto &b) { return a.start > b.start; };
+			std::priority_queue<types::Campaign, std::vector<types::Campaign>, decltype(earlier_usp_cmpgn_start)> usp_campaigns(earlier_usp_cmpgn_start);
 
-		for (auto& it : usp_schedule) {
-			objectives.changeover_cost += it.second.size();
+			for (const auto &suite : schedule.suites) {
+				for (const auto &cmpgn : suite) {
+					usp_campaigns.push(cmpgn);
+				}
+			}
 
-			for (auto& usp_cmpgn : it.second)
-				objectives.production_cost += (usp_cmpgn.batches * production_cost[usp_cmpgn.product - 1]);
-		}
+			// Priority queue for dsp campaigns with the earliest end dates
+			auto earlier_dsp_cmpgn_end = [](const auto &a, const auto &b) { return a.end > b.end; };
+			std::priority_queue<types::Campaign, std::vector<types::Campaign>, decltype(earlier_dsp_cmpgn_end)> dsp_campaigns(earlier_dsp_cmpgn_end);
 
-		for (auto& it : dsp_schedule) {
-			objectives.changeover_cost += it.second.size();
+			for (; dsp_suite <= input_data.num_dsp_suites; ++dsp_suite) {
+				types::Campaign dummy_dsp;
+				dummy_dsp.suite_num = dsp_suite + input_data.num_usp_suites;
+				dummy_dsp.end = 0;
+				dsp_campaigns.push(dummy_dsp);
+			}
 
-			for (auto& dsp_cmpgn : it.second)
-				objectives.production_cost += (dsp_cmpgn.batches * production_cost[dsp_cmpgn.product - 1]);
-		}
+			while (!usp_campaigns.empty()) {
+				auto usp_cmpgn = usp_campaigns.top();
+				usp_campaigns.pop();
 
-		for (int product = 0; product < num_products; ++product) {
-			for (int period = 0; period < num_periods; ++period) {
-				objectives.dsp_storage_cost += (inventory_profile[product][period].size() * dsp_storage_cost[product]);
-				objectives.backlog_cost += (backlog[product][period] * backlog_penalty[product]);
-				objectives.dsp_waste_cost += (dsp_waste[product][period] * waste_disposal_cost[product]);
-				objectives.sales += (sold[product][period] * sales_price[product]);
+				if (usp_cmpgn.product_num == 0) {
+					continue;
+				}
+
+				dsp_suite = dsp_campaigns.top().suite_num;
+
+				if (!dsp_campaigns.empty()) {
+					dsp_campaigns.pop();
+				}
+
+				if (!schedule.suites[dsp_suite - 1].size()) {
+					AddFirstDSPCampaign(dsp_suite, schedule, dsp_campaigns, usp_cmpgn);
+					continue;
+				}
+
+				types::Campaign dsp_cmpgn;
+				types::Campaign &prev_dsp_cmpgn = schedule.suites[dsp_suite - 1].back();
+				
+				dsp_cmpgn.suite_num = dsp_suite;
+				dsp_cmpgn.product_num = usp_cmpgn.product_num;
+
+				auto usp_batch_fill_date = usp_cmpgn.start + input_data.usp_days[dsp_cmpgn.product_num - 1];
+
+				dsp_cmpgn.start = (prev_dsp_cmpgn.end + input_data.dsp_lead_days[dsp_cmpgn.product_num - 1] > usp_batch_fill_date) ?
+					prev_dsp_cmpgn.end + input_data.dsp_lead_days[dsp_cmpgn.product_num - 1] : usp_batch_fill_date;
+
+				dsp_cmpgn.end = dsp_cmpgn.start + input_data.dsp_days[dsp_cmpgn.product_num - 1];
+
+				if (dsp_cmpgn.end > input_data.horizon) {
+					continue;
+				}
+
+				// TODO
+				// Production factor doesn't make sense from the biomanufacturing perspective:
+				// For example, if for every 1 USP batch 2 DSP batches are produced, how is the DSP processing time affected?..
+				dsp_cmpgn.num_batches = usp_cmpgn.num_batches; // input_data.production_factor[usp_cmpgn.product_num - 1];
+
+				types::Batch dsp_batch;
+				dsp_batch.product_num = dsp_cmpgn.product_num;
+				dsp_batch.stored_at = dsp_cmpgn.end;
+				dsp_batch.expires_at = dsp_batch.stored_at + input_data.shelf_life[dsp_cmpgn.product_num - 1];
+
+				dsp_cmpgn.batches.push_back(dsp_batch);
+				AddToInventory(schedule, dsp_batch);
+
+				for (int num_batches = 1; num_batches != dsp_cmpgn.num_batches; ++num_batches) {
+					usp_batch_fill_date += input_data.usp_days[dsp_cmpgn.product_num - 1];
+					dsp_cmpgn.end = usp_batch_fill_date + input_data.dsp_days[dsp_cmpgn.product_num - 1];
+
+					if (dsp_cmpgn.end > input_data.horizon) {
+						dsp_cmpgn.end -= input_data.dsp_days[dsp_cmpgn.product_num - 1];
+						dsp_cmpgn.num_batches = num_batches;
+						break;
+					}
+
+					types::Batch dsp_batch;
+					dsp_batch.product_num = dsp_cmpgn.product_num;
+					dsp_batch.stored_at = dsp_cmpgn.end;
+					dsp_batch.expires_at = dsp_batch.stored_at + input_data.shelf_life[dsp_cmpgn.product_num - 1];
+
+					dsp_cmpgn.batches.push_back(dsp_batch);
+					AddToInventory(schedule, dsp_batch);
+				}
+
+				dsp_campaigns.push(dsp_cmpgn);
+				schedule.suites[dsp_suite - 1].push_back(dsp_cmpgn);
 			}
 		}
 
-		objectives.profit = objectives.sales -
-			(objectives.production_cost + objectives.changeover_cost + objectives.dsp_storage_cost + objectives.backlog_cost + objectives.dsp_waste_cost);
+		inline void RemoveExcess(types::SingleSiteMultiSuiteSchedule &schedule, int product_num, int period_num) 
+		{
+			int batches_over = schedule.inventory[product_num][period_num] - input_data.storage_cap[product_num];
 
-		return objectives;
-	}
-
-	Objectives CalculateObjectives(
-		unordered_map<int, vector<Campaign>>& usp_schedule,
-		unordered_map<int, vector<Campaign>>& dsp_schedule,
-		vector<vector<int>>& inventory,
-		vector<vector<int>>& sold,
-		vector<vector<int>>& dsp_waste,
-		vector<vector<int>>& backlog
-	)
-	{
-		auto inventory_profile = CreateInventoryProfile(dsp_schedule);
-		CreateOtherProfiles(inventory_profile, sold, dsp_waste, backlog);
-
-		inventory = vector<vector<int>>(num_products, vector<int>(num_periods, 0));
-		for (int product = 0; product < num_products; ++product) {
-			for (int period = 0; period < num_periods; ++period) {
-				inventory[product][period] = inventory_profile[product][period].size();
+			while (!schedule.batch_inventory[product_num][period_num].empty() && batches_over > input_data.storage_cap[product_num]) {
+				++schedule.waste[product_num][period_num];
+				schedule.batch_inventory[product_num][period_num].pop();
+				--batches_over;
 			}
 		}
 
-		return CalculateObjectives(usp_schedule, dsp_schedule, inventory_profile, sold, dsp_waste, backlog);
-	}
+		inline void RemoveExpired(types::SingleSiteMultiSuiteSchedule &schedule, int product_num, int period_num)
+		{
+			// Keep popping batches out of the queue as long as their expiry date is < due date of the current time period_num
+			while (
+				!schedule.batch_inventory[product_num][period_num].empty() && 
+				schedule.batch_inventory[product_num][period_num].top().expires_at < input_data.due_dates[period_num]
+			) {
+				++schedule.waste[product_num][period_num];
+				schedule.batch_inventory[product_num][period_num].pop();
+			}
+		}
 
-	void operator()(SingleObjectiveIndividual& c)
-	{
-		unordered_map<int, vector<Campaign>> usp_schedule = CreateUSPSchedule(c);
-		unordered_map<int, vector<Campaign>> dsp_schedule = CreateDSPSchedule(usp_schedule);
-		
-		auto inventory_profile = CreateInventoryProfile(dsp_schedule);
+		void CheckSupplyDemandBacklogInventory(
+			types::SingleSiteMultiSuiteSchedule &schedule, 
+			int product_num, 
+			int period_num
+		)
+		{
+			int batches_available = schedule.batch_inventory[product_num][period_num].size();
 
-		vector<vector<int>> sold, dsp_waste, backlog;
-		CreateOtherProfiles(inventory_profile, sold, dsp_waste, backlog);
-		
-		Objectives objectives = CalculateObjectives(usp_schedule, dsp_schedule, inventory_profile, sold, dsp_waste, backlog);
+			// No demand and backlog orders -> exit early
+			if (period_num && !input_data.demand[product_num][period_num] && !schedule.backlog[product_num][period_num - 1]) {
+				schedule.inventory[product_num][period_num] = batches_available;
+				return;
+			}
+
+			// Check that there is indeed a demand for a given product
+			if (input_data.demand[product_num][period_num]) {
+				if (batches_available >= input_data.demand[product_num][period_num]) {
+					schedule.supply[product_num][period_num] = input_data.demand[product_num][period_num];
+					batches_available -= input_data.demand[product_num][period_num];
+				}
+				else {
+					schedule.supply[product_num][period_num] = batches_available;
+					schedule.backlog[product_num][period_num] = input_data.demand[product_num][period_num] - batches_available;
+					batches_available = 0;
+
+					if (period_num) {
+						schedule.backlog[product_num][period_num] += schedule.backlog[product_num][period_num - 1];
+					}	
+				}
+			}
+
+			// Check if there are any backlog orders that can be filled
+			if (period_num && schedule.backlog[product_num][period_num - 1] > 0 && batches_available) {
+				if (batches_available >= schedule.backlog[product_num][period_num - 1]) {
+					schedule.supply[product_num][period_num] += schedule.backlog[product_num][period_num - 1];
+					batches_available -= schedule.backlog[product_num][period_num - 1];
+				}
+				else {
+					schedule.supply[product_num][period_num] += batches_available;
+					schedule.backlog[product_num][period_num] += schedule.backlog[product_num][period_num - 1];
+				}
+			}
+
+			int batches_supplied = schedule.supply[product_num][period_num];
+
+			// Adjust the batch inventory according to the supplied
+			while (!schedule.batch_inventory[product_num][period_num].empty() && batches_supplied > 0) {
+				schedule.batch_inventory[product_num][period_num].pop();
+				--batches_supplied;
+			}
+
+			schedule.inventory[product_num][period_num] = batches_available;
+		}
+
+		void EvaluateCampaigns(
+			types::SingleSiteMultiSuiteSchedule &schedule
+		)
+		{
+			int product_num, period_num;
+
+			// printf("\nTemp. inventory\n\n");
+			// for (int p = 0; p != input_data.num_products; ++p) {
+			// 	for (int t = 0; t != input_data.num_periods; ++t) {
+			// 		printf("%d  ", schedule.batch_inventory[p][t].size());
+			// 	}
+			// 	printf("\n");
+			// }
+			// printf("\n");
 	
-		c.objective = objectives.profit;
-		c.constraint = objectives.backlog_cost;
-	}
-};
+			for (product_num = 0; product_num < input_data.num_products; ++product_num) {
 
+				period_num = 0;
 
-#endif //!__FITNESS_H__
+				RemoveExpired(schedule, product_num, period_num);		
+				CheckSupplyDemandBacklogInventory(schedule, product_num, period_num);
+				RemoveExcess(schedule, product_num, period_num);
+			
+				for (period_num = 1; period_num < input_data.num_periods; ++period_num) {
+					for (const auto &batch : utils::access_queue_container(schedule.batch_inventory[product_num][period_num - 1])) {
+						schedule.batch_inventory[product_num][period_num].push(std::move(batch));
+					}
+					
+					RemoveExpired(schedule, product_num, period_num);		
+					CheckSupplyDemandBacklogInventory(schedule, product_num, period_num);
+					RemoveExcess(schedule, product_num, period_num);
+				}
+			}
+
+		}
+
+		void CalculateObjectiveFunction(
+			types::SingleSiteMultiSuiteSchedule &schedule
+		)
+		{
+			for (int usp_suite = 0; usp_suite != input_data.num_usp_suites; ++usp_suite) {
+				for (const auto &usp_cmpgn : schedule.suites[usp_suite]) {
+					if (usp_cmpgn.product_num == 0) {
+						continue;
+					}
+
+					schedule.objectives[TOTAL_CHANGEOVER_COSTS] += input_data.usp_changeover_cost[usp_cmpgn.product_num - 1];
+					schedule.objectives[TOTAL_PRODUCTION_COST] += (usp_cmpgn.num_batches * input_data.usp_production_cost[usp_cmpgn.product_num - 1]);
+				}
+			}
+
+			for (int dsp_suite = input_data.num_usp_suites; dsp_suite < schedule.suites.size(); ++dsp_suite) {
+				for (const auto &dsp_cmpgn : schedule.suites[dsp_suite]) {
+					if (dsp_cmpgn.product_num == 0) {
+						continue;
+					}
+
+					schedule.objectives[TOTAL_CHANGEOVER_COSTS] += input_data.dsp_changeover_cost[dsp_cmpgn.product_num - 1];
+					schedule.objectives[TOTAL_PRODUCTION_COST] += (dsp_cmpgn.num_batches * input_data.dsp_production_cost[dsp_cmpgn.product_num - 1]);
+				}
+			}
+
+			for (int product_num = 0; product_num != input_data.num_products; ++product_num) {
+				for (int period_num = 0; period_num != input_data.num_periods; ++period_num) {
+					schedule.objectives[TOTAL_STORAGE_COST] += schedule.inventory[product_num][period_num] * input_data.storage_cost[product_num];
+					schedule.objectives[TOTAL_BACKLOG_PENALTY] += schedule.backlog[product_num][period_num] * input_data.backlog_penalty[product_num];
+					schedule.objectives[TOTAL_WASTE_COST] += schedule.waste[product_num][period_num] * input_data.waste_disposal_cost[product_num];
+					schedule.objectives[TOTAL_REVENUE] += schedule.supply[product_num][period_num] * input_data.sales_price[product_num];
+				}
+			}
+			schedule.objectives[TOTAL_COST] = (
+				schedule.objectives[TOTAL_STORAGE_COST] + 
+				schedule.objectives[TOTAL_BACKLOG_PENALTY] + 
+				schedule.objectives[TOTAL_WASTE_COST] + 
+				schedule.objectives[TOTAL_CHANGEOVER_COSTS] + 
+				schedule.objectives[TOTAL_PRODUCTION_COST]
+			);
+
+			schedule.objectives[TOTAL_PROFIT] = schedule.objectives[TOTAL_REVENUE] - schedule.objectives[TOTAL_COST];
+		}
+
+	public:
+		SingleSiteMultiSuiteModel(const SingleSiteMultiSuiteInputData &input_data) : input_data(input_data) {}
+
+		template<class Individual>
+		void CreateSchedule(
+			Individual &individual,
+			types::SingleSiteMultiSuiteSchedule &schedule
+		)
+		{
+			CreateUSPSchedule(individual, schedule);
+			CreateDSPSchedule(individual, schedule);
+			EvaluateCampaigns(schedule);
+			CalculateObjectiveFunction(schedule);
+		}
+
+		void operator()(types::SingleObjectiveIndividual &individual)
+		{
+			types::SingleSiteMultiSuiteSchedule schedule;
+			CreateSchedule(individual, schedule);
+
+			individual.objective = -schedule.objectives[TOTAL_PROFIT];
+			individual.constraints = schedule.objectives[TOTAL_BACKLOG_PENALTY];
+		}
+	};
+}
+
+#endif 

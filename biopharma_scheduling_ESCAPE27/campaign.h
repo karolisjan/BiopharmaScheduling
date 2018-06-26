@@ -11,22 +11,58 @@
 
 #include "batch.h"
 
+
 namespace types
 {
-	struct Campaign
+	template<class Batch>
+	struct BaseCampaign 
 	{
-		Campaign() :
-			product_num(-1),
-			num_batches(0),
-			suite_num(0),
-			start(-1),
-			end(-1) {}
+		int product_num;
+		int num_batches;
 
-		int	product_num, suite_num, num_batches;
-		double start, end;
+		double start;
+		double end;
 
 		std::vector<Batch> batches;
 	};
+
+	struct SingleSiteSimpleCampaign : public BaseCampaign<Batch>
+	{
+		using BaseCampaign::product_num;
+		using BaseCampaign::num_batches;
+		using BaseCampaign::start;
+		using BaseCampaign::end;
+		using BaseCampaign::batches;
+
+		SingleSiteSimpleCampaign()
+		{
+			product_num = -1;
+			start = -1;
+			end = -1;
+			kg = -1;
+		}
+
+		double kg;
+	};
+
+	struct SingleSiteMultiSuiteCampaign  : public BaseCampaign<Batch>
+	{
+		using BaseCampaign::product_num;
+		using BaseCampaign::num_batches;
+		using BaseCampaign::start;
+		using BaseCampaign::end;
+		using BaseCampaign::batches;
+
+		SingleSiteMultiSuiteCampaign() 
+		{
+			product_num = -1;
+			start = -1;
+			end = -1;
+			suite_num = -1;
+		}
+
+		int	suite_num;
+	};
 }
 
-#endif // !__CAMPAIGN_H__
+#endif 
