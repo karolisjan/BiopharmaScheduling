@@ -2,7 +2,6 @@
 #include <iostream>
 
 #include "scheduling_models.h"
-#include "single_objective_ga.h"
 
 
 bool display_schedules = false;
@@ -24,7 +23,7 @@ void DisplaySchedule(types::SingleSiteMultiSuiteSchedule &schedule)
 	printf("Total proft %.1f\n", schedule.objectives[deterministic::OBJECTIVES::TOTAL_PROFIT]);
 	printf("Backlog penalty %.1f\n", schedule.objectives[deterministic::OBJECTIVES::TOTAL_BACKLOG_PENALTY]);
 	printf("Production costs %.1f\n", schedule.objectives[deterministic::OBJECTIVES::TOTAL_PRODUCTION_COST]);
-	printf("Changeover costs %.1f\n", schedule.objectives[deterministic::OBJECTIVES::TOTAL_CHANGEOVER_COSTS]);
+	printf("Changeover costs %.1f\n", schedule.objectives[deterministic::OBJECTIVES::TOTAL_CHANGEOVER_COST]);
 	printf("Storage costs %.1f\n", schedule.objectives[deterministic::OBJECTIVES::TOTAL_STORAGE_COST]);
 	printf("Waste costs %.1f\n\n", schedule.objectives[deterministic::OBJECTIVES::TOTAL_WASTE_COST]);
 
@@ -41,20 +40,8 @@ void DisplaySchedule(types::SingleSiteMultiSuiteSchedule &schedule)
 		}
 	}
 
-	// printf("\nFinal p3 batches\n\n");
-	// for (int dsp_suite = num_usp_suites; dsp_suite != schedule.suites.size(); ++dsp_suite) {
-	// 	for (const auto &cmpgn : schedule.suites[dsp_suite]) {
-	// 		if (cmpgn.product_num != 3) {
-	// 			continue;
-	// 		}
-	// 		for (const auto &batch : cmpgn.batches) {
-	// 			printf("Stored at: %.1f, expires at: %.1f\n", batch.stored_at, batch.expires_at);
-	// 		}
-	// 	}
-	// }
-
 	printf("\nInventory\n\n");
-	for (const auto &row : schedule.inventory) {
+	for (const auto &row : schedule.batch_inventory) {
 		for (const auto &val : row) {
 			printf("%d  ", val);
 		}
@@ -62,7 +49,7 @@ void DisplaySchedule(types::SingleSiteMultiSuiteSchedule &schedule)
 	}
 
 	printf("\nBacklog\n\n");
-	for (const auto &row : schedule.backlog) {
+	for (const auto &row : schedule.batch_backlog) {
 		for (const auto &val : row) {
 			printf("%d  ", val);
 		}
@@ -70,7 +57,7 @@ void DisplaySchedule(types::SingleSiteMultiSuiteSchedule &schedule)
 	}
 
 	printf("\nSold\n\n");
-	for (const auto &row : schedule.supply) {
+	for (const auto &row : schedule.batch_supply) {
 		for (const auto &val : row) {
 			printf("%d  ", val);
 		}
@@ -78,7 +65,7 @@ void DisplaySchedule(types::SingleSiteMultiSuiteSchedule &schedule)
 	}
 
 	printf("\nWaste\n\n");
-	for (const auto &row : schedule.waste) {
+	for (const auto &row : schedule.batch_waste) {
 		for (const auto &val : row) {
 			printf("%d  ", val);
 		}
@@ -94,9 +81,6 @@ void Lakhdar2005Ex1_BaseCaseGlobalOptimumTest()
 	std::unordered_map<deterministic::OBJECTIVES, int> objectives;
 	objectives.emplace(deterministic::TOTAL_PROFIT, -1);
 	
-	std::unordered_map<deterministic::OBJECTIVES, std::pair<int, double>> constraints;
-	constraints.emplace(deterministic::TOTAL_KG_BACKLOG, std::make_pair(-1, 0));
-
 	std::vector<std::vector<int>> demand =
 	{
 		{ 0, 0, 0, 6, 0, 6 },
@@ -128,6 +112,8 @@ void Lakhdar2005Ex1_BaseCaseGlobalOptimumTest()
 	std::vector<int> storage_cap = { 40, 40, 40 };
 
     deterministic::SingleSiteMultiSuiteInputData input_data(
+		objectives,
+
         num_usp_suites,
         num_dsp_suites,
 
@@ -156,7 +142,7 @@ void Lakhdar2005Ex1_BaseCaseGlobalOptimumTest()
 
 	deterministic::SingleSiteMultiSuiteModel single_site_multi_suite_model(input_data);
 
-	types::SingleObjectiveIndividual i;
+	types::SingleObjectiveIndividual<types::SingleSiteMultiSuiteGene> i;
 
 	i.genes.resize(6);
 
@@ -195,6 +181,9 @@ void Lakhdar2005Ex1_BaseCaseGlobalOptimumTest()
 // The calculated profit should be 563.
 void Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest()
 {
+	std::unordered_map<deterministic::OBJECTIVES, int> objectives;
+	objectives.emplace(deterministic::TOTAL_PROFIT, -1);
+	
 	std::vector<std::vector<int>> demand =
 	{
 		{ 0, 0, 0, 6, 0, 9 },
@@ -226,6 +215,8 @@ void Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest()
 	std::vector<int> storage_cap = { 40, 40, 40 };
 
     deterministic::SingleSiteMultiSuiteInputData input_data(
+		objectives, 
+
         num_usp_suites,
         num_dsp_suites,
 
@@ -254,7 +245,7 @@ void Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest()
 
 	deterministic::SingleSiteMultiSuiteModel single_site_multi_suite_model(input_data);
 
-	types::SingleObjectiveIndividual i;
+	types::SingleObjectiveIndividual<types::SingleSiteMultiSuiteGene> i;
 
 	i.genes.resize(6);
 
@@ -290,6 +281,12 @@ void Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest()
 
 void Lakhdar2005Ex1_BaseCaseTest()
 {
+	std::unordered_map<deterministic::OBJECTIVES, int> objectives;
+	objectives.emplace(deterministic::TOTAL_PROFIT, -1);
+	
+	std::unordered_map<deterministic::OBJECTIVES, std::pair<int, double>> constraints;
+	constraints.emplace(deterministic::TOTAL_KG_BACKLOG, std::make_pair(-1, 0));
+
 	std::vector<std::vector<int>> demand =
 	{
 		{ 0, 0, 0, 6, 0, 6 },
@@ -321,6 +318,8 @@ void Lakhdar2005Ex1_BaseCaseTest()
 	std::vector<int> storage_cap = { 40, 40, 40 };
 
     deterministic::SingleSiteMultiSuiteInputData input_data(
+		objectives, 
+
         num_usp_suites,
         num_dsp_suites,
 
@@ -344,12 +343,14 @@ void Lakhdar2005Ex1_BaseCaseTest()
         dsp_changeover_cost,
 
         usp_lead_days,
-        dsp_lead_days
+        dsp_lead_days,
+
+		&constraints
     );
 
 	deterministic::SingleSiteMultiSuiteModel single_site_multi_suite_model(input_data);
 
-	algorithms::SingleObjectiveGA<types::SingleObjectiveIndividual, deterministic::SingleSiteMultiSuiteModel> simple_ga(
+	algorithms::SingleObjectiveGA<types::SingleObjectiveIndividual<types::SingleSiteMultiSuiteGene>, deterministic::SingleSiteMultiSuiteModel> simple_ga(
 		single_site_multi_suite_model,
 		seed,
 		num_threads

@@ -1,9 +1,3 @@
-#if defined(__posix) || defined(__unix) || defined(__linux) || defined(__APPLE__)
-    #pragma GCC diagnostic ignored "-Wreorder"
-	#pragma GCC diagnostic ignored "-Wsign-compare"
-	#pragma GCC diagnostic ignored "-Wunused-variable"
-#endif 
-
 #ifndef  __GENE_H__
 #define __GENE_H__
 

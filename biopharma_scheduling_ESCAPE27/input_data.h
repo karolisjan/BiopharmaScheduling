@@ -143,6 +143,7 @@ namespace deterministic
 		
 		SingleSiteSimpleInputData(
 			std::unordered_map<OBJECTIVES, int> objectives,
+
 			std::vector< std::vector<double>> kg_demand,
 			std::vector<int> days_per_period,
 
