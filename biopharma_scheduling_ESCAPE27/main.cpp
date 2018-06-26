@@ -477,7 +477,7 @@ void Lakhdar2005Ex1_IncreasedDemandTest()
 
 	deterministic::SingleSiteMultiSuiteModel single_site_multi_suite_model(input_data);
 
-	algorithms::SingleObjectiveGA<types::SingleObjectiveIndividual, deterministic::SingleSiteMultiSuiteModel> simple_ga(
+	algorithms::SingleObjectiveGA<types::SingleObjectiveIndividual<types::SingleSiteMultiSuiteGene>, deterministic::SingleSiteMultiSuiteModel> simple_ga(
 		single_site_multi_suite_model,
 		seed,
 		num_threads
