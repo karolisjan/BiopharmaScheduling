@@ -1,8 +1,3 @@
-#if defined(__posix) || defined(__unix) || defined(__linux) || defined(__APPLE__)
-    #pragma GCC diagnostic ignored "-Wreorder"
-	#pragma GCC diagnostic ignored "-Wsign-compare"
-#endif 
-
 #ifndef __BASE_INDIVIDUAL__
 #define __BASE_INDIVIDUAL__
 

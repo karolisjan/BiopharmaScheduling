@@ -1,8 +1,3 @@
-#if defined(__posix) || defined(__unix) || defined(__linux) || defined(__APPLE__)
-    #pragma GCC diagnostic ignored "-Wreorder"
-	#pragma GCC diagnostic ignored "-Wsign-compare"
-#endif 
-
 #ifndef __NSGA_INDIVIDUAL_H__
 #define __NSGA_INDIVIDUAL_H__
 
@@ -12,6 +7,7 @@
 
 namespace types
 {
+	template<class Gene>
 	struct NSGAIndividual : public BaseIndividual<Gene>
 	{
 		using BaseIndividual::BaseIndividual;
