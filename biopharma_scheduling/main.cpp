@@ -106,8 +106,17 @@ void Lakhdar2005Ex1_BaseCaseGlobalOptimumTest()
 	std::vector<double> dsp_days = { 10, 10, 10 };
     std::vector<double> production_factor = { 1, 1, 1 };
 
-    std::vector<double> usp_lead_days = { 10, 10, 10 };
-	std::vector<double> dsp_lead_days = { 10, 10, 12.5 };
+    std::vector<std::vector<double>> usp_changeovers = { 
+		{ 10, 10, 10  },
+		{ 10, 10, 10 },
+		{ 10, 10, 10 }
+	};
+
+	std::vector<std::vector<double>> dsp_changeovers = { 
+		{ 10,   10,   10   },
+		{ 10,   10,   10   },
+		{ 12.5, 12.5, 12.5 }
+	};
 
 	std::vector<int> shelf_life = { 180, 180, 180 };
 	std::vector<int> storage_cap = { 40, 40, 40 };
@@ -137,8 +146,8 @@ void Lakhdar2005Ex1_BaseCaseGlobalOptimumTest()
         usp_changeover_cost,
         dsp_changeover_cost,
 
-        usp_lead_days,
-        dsp_lead_days
+        usp_changeovers,
+        dsp_changeovers
     );
 
 	deterministic::SingleSiteMultiSuiteModel single_site_multi_suite_model(input_data);
@@ -205,8 +214,17 @@ void Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest()
 	std::vector<double> dsp_days = { 10, 10, 10 };
     std::vector<double> production_factor = { 1, 1, 1 };
 
-    std::vector<double> usp_lead_days = { 10, 10, 10 };
-	std::vector<double> dsp_lead_days = { 10, 10, 12.5 };
+	std::vector<std::vector<double>> usp_changeovers = {
+		{ 10, 10, 10 },
+		{ 10, 10, 10 },
+		{ 10, 10, 10 }
+	};
+
+	std::vector<std::vector<double>> dsp_changeovers = {
+		{ 10,   10,   10 },
+		{ 10,   10,   10 },
+		{ 12.5, 12.5, 12.5 }
+	};
 
 	std::vector<int> shelf_life = { 180, 180, 180 };
 	std::vector<int> storage_cap = { 40, 40, 40 };
@@ -236,8 +254,8 @@ void Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest()
         usp_changeover_cost,
         dsp_changeover_cost,
 
-        usp_lead_days,
-        dsp_lead_days
+        usp_changeovers,
+        dsp_changeovers
     );
 
 	deterministic::SingleSiteMultiSuiteModel single_site_multi_suite_model(input_data);
@@ -308,8 +326,17 @@ void Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest()
 	std::vector<double> dsp_days = { 10, 10, 10 };
 	std::vector<double> production_factor = { 1, 1, 1 };
 
-	std::vector<double> usp_lead_days = { 10, 10, 10 };
-	std::vector<double> dsp_lead_days = { 10, 10, 12.5 };
+	std::vector<std::vector<double>> usp_changeovers = {
+		{ 10, 10, 10 },
+		{ 10, 10, 10 },
+		{ 10, 10, 10 }
+	};
+
+	std::vector<std::vector<double>> dsp_changeovers = {
+		{ 10,   10,   10 },
+		{ 10,   10,   10 },
+		{ 12.5, 12.5, 12.5 }
+	};
 
 	std::vector<int> shelf_life = { 180, 180, 180 };
 	std::vector<int> storage_cap = { 40, 40, 40 };
@@ -339,8 +366,8 @@ void Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest()
 		usp_changeover_cost,
 		dsp_changeover_cost,
 
-		usp_lead_days,
-		dsp_lead_days,
+		usp_changeovers,
+		dsp_changeovers,
 
  		&constraints
 	);
@@ -435,8 +462,17 @@ void Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest()
 	std::vector<double> dsp_days = { 10, 10, 10 };
     std::vector<double> production_factor = { 1, 1, 1 };
 
-    std::vector<double> usp_lead_days = { 10, 10, 10 };
-	std::vector<double> dsp_lead_days = { 10, 10, 12.5 };
+	std::vector<std::vector<double>> usp_changeovers = {
+		{ 10, 10, 10 },
+		{ 10, 10, 10 },
+		{ 10, 10, 10 }
+	};
+
+	std::vector<std::vector<double>> dsp_changeovers = {
+		{ 10,   10,   10 },
+		{ 10,   10,   10 },
+		{ 12.5, 12.5, 12.5 }
+	};
 
 	std::vector<int> shelf_life = { 180, 180, 180 };
 	std::vector<int> storage_cap = { 40, 40, 40 };
@@ -466,8 +502,8 @@ void Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest()
         usp_changeover_cost,
         dsp_changeover_cost,
 
-        usp_lead_days,
-        dsp_lead_days,
+        usp_changeovers,
+        dsp_changeovers,
 
  		&constraints
      );

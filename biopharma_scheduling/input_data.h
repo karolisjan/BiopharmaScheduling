@@ -65,8 +65,8 @@ namespace deterministic
 			std::vector<double> usp_changeover_cost,
 			std::vector<double> dsp_changeover_cost,
 
-			std::vector<double> usp_lead_days,
-			std::vector<double> dsp_lead_days,
+			std::vector<std::vector<double>> usp_changeovers,
+			std::vector<std::vector<double>> dsp_changeovers,
 
             // Optional
 			std::unordered_map<OBJECTIVES, std::pair<int, double>> *constraints = NULL
@@ -96,8 +96,8 @@ namespace deterministic
 			usp_changeover_cost(usp_changeover_cost),
 			dsp_changeover_cost(dsp_changeover_cost),
 
-			usp_lead_days(usp_lead_days),
-			dsp_lead_days(dsp_lead_days)
+			usp_changeovers(usp_changeovers),
+			dsp_changeovers(dsp_changeovers)
 		{
 			int prev = 0;
 
@@ -138,12 +138,13 @@ namespace deterministic
 
 		std::vector<double> usp_days;
         std::vector<double> dsp_days;
-		std::vector<double> usp_lead_days;
-        std::vector<double> dsp_lead_days;
         std::vector<double> production_factor;
 
 		std::vector<int> shelf_life;
         std::vector<int> storage_cap;
+
+		std::vector<std::vector<double>> usp_changeovers;
+		std::vector<std::vector<double>> dsp_changeovers;
 	};
 
 
