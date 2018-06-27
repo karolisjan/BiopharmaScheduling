@@ -584,7 +584,7 @@ namespace deterministic
 		inline bool IsOverHorizon(
 			int cmpgn_num,
 			Individual &individual, 
-			types::Schedule &schedule,
+			types::SingleSiteSimpleSchedule &schedule,
 			types::Campaign &new_cmpgn,
 			types::Batch &new_batch,
 			types::Batch &prev_batch
@@ -608,7 +608,7 @@ namespace deterministic
 		template<class Individual>
 		bool AddFirstCampaign(
 			Individual &individual,
-			types::Schedule &schedule
+			types::SingleSiteSimpleSchedule &schedule
 		) 
 		{
 			types::Campaign new_cmpgn;
@@ -691,7 +691,7 @@ namespace deterministic
 		bool AddNewCampaign(
 			int cmpgn_num,
 			Individual &individual,
-			types::Schedule &schedule
+			types::SingleSiteSimpleSchedule &schedule
 		)
 		{		
 			types::Campaign new_cmpgn, &prev_cmpgn = schedule.campaigns.back();
@@ -770,7 +770,7 @@ namespace deterministic
 		bool ContinuePreviousCampaign(
 			int cmpgn_num,
 			Individual &individual,
-			types::Schedule &schedule
+			types::SingleSiteSimpleSchedule &schedule
 		)
 		{
 			types::Campaign &prev_cmpgn = schedule.campaigns.back();

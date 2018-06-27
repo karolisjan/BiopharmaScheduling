@@ -10,7 +10,6 @@
 #include <numeric>
 
 #include "base_ga.h"
-#include "utils.h"
 
 
 namespace algorithms

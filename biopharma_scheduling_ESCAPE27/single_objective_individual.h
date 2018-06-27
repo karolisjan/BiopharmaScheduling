@@ -3,7 +3,6 @@
 
 #include <vector>
 
-#include "gene.h"
 #include "base_individual.h"
 
 
@@ -12,7 +11,7 @@ namespace types
 	template<class Gene>
 	struct SingleObjectiveIndividual : public BaseIndividual<Gene>
 	{
-		using BaseIndividual::BaseIndividual;
+		using BaseIndividual<Gene>::BaseIndividual;
 
 		double objective;
         double constraints;

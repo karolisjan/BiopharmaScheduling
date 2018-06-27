@@ -10,7 +10,7 @@ namespace types
 	template<class Gene>
 	struct NSGAIndividual : public BaseIndividual<Gene>
 	{
-		using BaseIndividual::BaseIndividual;
+		using BaseIndividual<Gene>::BaseIndividual;
 
 		std::vector<double> objectives; // All objectives are minimised
 		double constraints; 

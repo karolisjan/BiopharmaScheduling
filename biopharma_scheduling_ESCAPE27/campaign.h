@@ -23,7 +23,11 @@ namespace types
 		int num_batches;
 		int	suite_num;
 
+		double kg;
 		double start;
+		double first_harvest;
+		double first_batch;
+		double last_batch;
 		double end;
 
 		std::vector<Batch> batches;
