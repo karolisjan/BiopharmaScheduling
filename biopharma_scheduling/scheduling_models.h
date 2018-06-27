@@ -71,41 +71,18 @@ namespace deterministic
 
 			if (schedule.suites[new_cmpgn.suite_num - 1].size()) {
 				types::Campaign &prev_cmpgn = schedule.suites[new_cmpgn.suite_num - 1].back();
-
-				if (new_cmpgn.product_num) {
-					new_cmpgn.start = prev_cmpgn.end + input_data.usp_lead_days[new_cmpgn.product_num - 1];
-				}
-				else {
-					new_cmpgn.start = prev_cmpgn.end;
-				}
+				new_cmpgn.start = prev_cmpgn.end + input_data.usp_changeovers[prev_cmpgn.product_num - 1][new_cmpgn.product_num - 1];
 			}
 			// First campaign in this suite
 			else {
-				if (new_cmpgn.product_num) {
-					new_cmpgn.start = input_data.usp_lead_days[new_cmpgn.product_num - 1];
-				}
-				else {
-					new_cmpgn.start = 0;
-				}
+				new_cmpgn.start = input_data.usp_changeovers[new_cmpgn.product_num - 1][new_cmpgn.product_num - 1];
 			}
 
-			// Real campaign
-			if (new_cmpgn.product_num != 0) { 
-				new_cmpgn.end = new_cmpgn.start + input_data.usp_days[new_cmpgn.product_num - 1] * new_cmpgn.num_batches;
+			new_cmpgn.end = new_cmpgn.start + input_data.usp_days[new_cmpgn.product_num - 1] * new_cmpgn.num_batches;
 
-				while (new_cmpgn.end > input_data.horizon && new_cmpgn.num_batches > 0) {
-					new_cmpgn.end -= input_data.usp_days[new_cmpgn.product_num - 1];
-					--new_cmpgn.num_batches;
-				}
-			}
-			// Dummy one
-			else {
-				new_cmpgn.end = new_cmpgn.start + new_cmpgn.num_batches;
-
-				while (new_cmpgn.end > input_data.horizon && new_cmpgn.num_batches > 0) {
-					--new_cmpgn.end;
-					--new_cmpgn.num_batches;				
-				}
+			while (new_cmpgn.end > input_data.horizon && new_cmpgn.num_batches > 0) {
+				new_cmpgn.end -= input_data.usp_days[new_cmpgn.product_num - 1];
+				--new_cmpgn.num_batches;
 			}
 
 			gene.num_batches = new_cmpgn.num_batches;	
@@ -206,8 +183,8 @@ namespace deterministic
 
 			double usp_batch_fill_date = usp_cmpgn.start + input_data.usp_days[dsp_cmpgn.product_num - 1];
 
-			dsp_cmpgn.start = (input_data.dsp_lead_days[dsp_cmpgn.product_num - 1] > usp_batch_fill_date) ?
-				input_data.dsp_lead_days[dsp_cmpgn.product_num - 1] : usp_batch_fill_date;
+			dsp_cmpgn.start = (input_data.dsp_changeovers[dsp_cmpgn.product_num - 1][dsp_cmpgn.product_num - 1] > usp_batch_fill_date) ?
+				input_data.dsp_changeovers[dsp_cmpgn.product_num - 1][dsp_cmpgn.product_num - 1] : usp_batch_fill_date;
 
 			dsp_cmpgn.end = dsp_cmpgn.start + input_data.dsp_days[dsp_cmpgn.product_num - 1];
 
@@ -305,8 +282,8 @@ namespace deterministic
 
 				auto usp_batch_fill_date = usp_cmpgn.start + input_data.usp_days[dsp_cmpgn.product_num - 1];
 
-				dsp_cmpgn.start = (prev_dsp_cmpgn.end + input_data.dsp_lead_days[dsp_cmpgn.product_num - 1] > usp_batch_fill_date) ?
-					prev_dsp_cmpgn.end + input_data.dsp_lead_days[dsp_cmpgn.product_num - 1] : usp_batch_fill_date;
+				dsp_cmpgn.start = (prev_dsp_cmpgn.end + input_data.dsp_changeovers[prev_dsp_cmpgn.product_num - 1][dsp_cmpgn.product_num - 1] > usp_batch_fill_date) ?
+					prev_dsp_cmpgn.end + input_data.dsp_changeovers[prev_dsp_cmpgn.product_num - 1][dsp_cmpgn.product_num - 1] : usp_batch_fill_date;
 
 				dsp_cmpgn.end = dsp_cmpgn.start + input_data.dsp_days[dsp_cmpgn.product_num - 1];
 
