@@ -144,7 +144,7 @@ void Lakhdar2005Ex1_BaseCaseGlobalOptimumTest()
 
 	types::SingleObjectiveIndividual<types::SingleSiteMultiSuiteGene> i;
 
-	i.genes.resize(6);
+	i.genes.resize(5);
 
 	i.genes[0].usp_suite_num = 1;
 	i.genes[0].product_num = 2;
@@ -161,10 +161,6 @@ void Lakhdar2005Ex1_BaseCaseGlobalOptimumTest()
 	i.genes[3].usp_suite_num = 2;
 	i.genes[3].product_num = 3;
 	i.genes[3].num_batches = 9;
-
-	i.genes[4].usp_suite_num = 2;
-	i.genes[4].product_num = 1;
-	i.genes[4].num_batches = 10;
 
 	i.genes[4].usp_suite_num = 2;
 	i.genes[4].product_num = 1;
