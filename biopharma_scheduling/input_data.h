@@ -51,7 +51,6 @@ namespace deterministic
 
 			std::vector<double> usp_days,
 			std::vector<double> dsp_days,
-			std::vector<double> production_factor,
 
 			std::vector<int> shelf_life,
 			std::vector<int> storage_cap,
@@ -82,7 +81,6 @@ namespace deterministic
 
 			usp_days(usp_days),
 			dsp_days(dsp_days),
-			production_factor(production_factor),
 			
 			shelf_life(shelf_life),
 			storage_cap(storage_cap),
@@ -138,7 +136,6 @@ namespace deterministic
 
 		std::vector<double> usp_days;
         std::vector<double> dsp_days;
-        std::vector<double> production_factor;
 
 		std::vector<int> shelf_life;
         std::vector<int> storage_cap;

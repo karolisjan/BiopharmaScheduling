@@ -1,4 +1,0 @@
-Product,USP rate [days],USP lead [days],USP lifetime [days],USP cap. per 60 days,DSP rate [days],DSP lead [days],DSP lifetime [days],DSP cap. per 60 days,USP storage cost,Prod. cost,Waste disp. cost,Sales price,DSP storage cost,Backlog penalty,Changeover cost
-p1,20,10,60,10,10,10,180,40,5,2,5,20,1,20,1
-p2,22.2,10,60,10,10,10,180,40,5,2,5,20,1,20,1
-p3,12.5,10,60,10,10,12.5,180,40,5,2,5,20,1,20,1

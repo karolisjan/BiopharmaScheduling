@@ -104,7 +104,6 @@ void Lakhdar2005Ex1_BaseCaseGlobalOptimumTest()
  
 	std::vector<double> usp_days = { 20, 22, 12.5 };
 	std::vector<double> dsp_days = { 10, 10, 10 };
-    std::vector<double> production_factor = { 1, 1, 1 };
 
     std::vector<std::vector<double>> usp_changeovers = { 
 		{ 10, 10, 10  },
@@ -132,7 +131,6 @@ void Lakhdar2005Ex1_BaseCaseGlobalOptimumTest()
 
         usp_days,
         dsp_days,
-        production_factor,
         
         shelf_life,
         storage_cap,
@@ -212,7 +210,6 @@ void Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest()
  
 	std::vector<double> usp_days = { 20, 22, 12.5 };
 	std::vector<double> dsp_days = { 10, 10, 10 };
-    std::vector<double> production_factor = { 1, 1, 1 };
 
 	std::vector<std::vector<double>> usp_changeovers = {
 		{ 10, 10, 10 },
@@ -240,7 +237,6 @@ void Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest()
 
         usp_days,
         dsp_days,
-        production_factor,
         
         shelf_life,
         storage_cap,
@@ -324,7 +320,6 @@ void Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest()
  
 	std::vector<double> usp_days = { 20, 22, 12.5 };
 	std::vector<double> dsp_days = { 10, 10, 10 };
-	std::vector<double> production_factor = { 1, 1, 1 };
 
 	std::vector<std::vector<double>> usp_changeovers = {
 		{ 10, 10, 10 },
@@ -352,7 +347,6 @@ void Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest()
 
 		usp_days,
 		dsp_days,
-		production_factor,
         
 		shelf_life,
 		storage_cap,
@@ -460,7 +454,6 @@ void Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest()
  
 	std::vector<double> usp_days = { 20, 22, 12.5 };
 	std::vector<double> dsp_days = { 10, 10, 10 };
-    std::vector<double> production_factor = { 1, 1, 1 };
 
 	std::vector<std::vector<double>> usp_changeovers = {
 		{ 10, 10, 10 },
@@ -488,7 +481,6 @@ void Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest()
 
         usp_days,
         dsp_days,
-        production_factor,
         
         shelf_life,
         storage_cap,
@@ -574,14 +566,17 @@ int main()
 	printf("\nLakhdar2005 Example 1 (increased demand for p1) model test...\n\n");
 	Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest();
 
-	//printf("\nLakhdar2005 Example 1 (base case) GA test...\n\n");
-	//Lakhdar2005Ex1_BaseCaseTest();
+	printf("\nLakhdar2005 Example 1 (base case) GA test...\n\n");
+	Lakhdar2005Ex1_BaseCaseTest();
 
 	printf("\nLakhdar2005 Example 1 (increased demand for p1) GA test...\n\n");
 	Lakhdar2005Ex1_IncreasedDemandTest();
 
 	printf("\n");
-	system("pause");
+
+	#if defined(_WIN32) || defined(_WIN64)
+		system("pause");
+	#endif
 
 	return 0;
 }

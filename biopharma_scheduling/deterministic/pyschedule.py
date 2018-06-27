@@ -327,9 +327,9 @@ class PySingleSiteMultiSuiteSchedule:
     def suites_gantt(self, colors: dict=None, layout: dict=None):
         df = self.__suites.reset_index()
 
-        df['Finish'] = df['Last Batch']
+        df['Finish'] = df['End']
         df['Resource'] = df['Product']
-        df['Task'] = df['Product']
+        df['Task'] = df['Suite']
         df = df.to_dict('records')
         
         gantt = ff.create_gantt(

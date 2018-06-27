@@ -478,6 +478,7 @@ namespace deterministic
 		}
 
 	public:
+		SingleSiteMultiSuiteModel() {}
 		SingleSiteMultiSuiteModel(const SingleSiteMultiSuiteInputData &input_data) : input_data(input_data) {}
 
 		template<class Individual>

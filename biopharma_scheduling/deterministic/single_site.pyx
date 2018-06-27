@@ -18,7 +18,7 @@ from gene cimport SingleSiteSimpleGene, SingleSiteMultiSuiteGene
 from single_site cimport (
     OBJECTIVES, 
     SingleSiteSimpleInputData, 
-    SingleSiteMultiSuiteData,
+    SingleSiteMultiSuiteInputData,
     SingleSiteSimpleModel,
     SingleSiteMultiSuiteModel
 )
@@ -823,6 +823,8 @@ cdef class SingleSiteMultiSuite:
         object schedules
         object start_date
         object product_labels
+        object num_usp_suites
+        object num_dsp_suites
         object due_dates
         object objectives
         object objectives_coefficients_list
@@ -838,7 +840,7 @@ cdef class SingleSiteMultiSuite:
 
         double p_xo
         double p_product_mut
-        doubpe p_usp_suite_mut
+        double p_usp_suite_mut
         double p_plus_batch_mut
         double p_minus_batch_mut
         double p_gene_swap
@@ -927,20 +929,27 @@ cdef class SingleSiteMultiSuite:
         self,
         start_date: str,
         objectives: dict,
-        demand: pd.core.frame.DataFrame,
+        num_usp_suites: int,
+        num_dsp_suites: int,
+        batch_demand: pd.core.frame.DataFrame,
         product_data: pd.core.frame.DataFrame,
-        changeover_days: pd.core.frame.DataFrame,
+        usp_changeover_days: pd.core.frame.DataFrame,
+        dsp_changeover_days: pd.core.frame.DataFrame,
         constraints: dict=None,
     ):
         self.__validate_input(
             objectives,
             constraints,
-            kg_demand,
+            batch_demand,
             product_data, 
-            changeover_days
+            usp_changeover_days,
+            dsp_changeover_days
         )
 
-        days_per_period = self.__count_days(start_date, kg_demand.index.values.tolist())
+        self.num_usp_suites = num_usp_suites
+        self.num_dsp_suites = num_dsp_suites
+
+        days_per_period = self.__count_days(start_date, batch_demand.index.values.tolist())
 
         self.objectives_coefficients_list = []
         cdef unordered_map[OBJECTIVES, int] cpp_objectives
@@ -956,43 +965,37 @@ cdef class SingleSiteMultiSuite:
                 p.second = bound
                 cpp_constraints[self.objectives[cons]] = p 
 
-        cdef vector[vector[double]] cpp_kg_inventory_target
-        if kg_inventory_target is not None:
-            cpp_kg_inventory_target = kg_inventory_target.fillna(0).transpose().values.tolist()
-
-        self.input_data = SingleSiteSimpleInputData(
+        self.input_data = SingleSiteMultiSuiteInputData(
             cpp_objectives,
-            kg_demand.fillna(0).transpose().values.tolist(),
+            
+            num_usp_suites,
+            num_dsp_suites,
+            
+            batch_demand.fillna(0).transpose().values.tolist(),
             days_per_period,
 
-            product_data.kg_opening_stock.fillna(0).values.tolist(),
-            product_data.kg_yield_per_batch.fillna(0).values,
-            product_data.kg_storage_limits.fillna(0).values.tolist(),
-
-            product_data.inventory_penalty_per_kg.fillna(0).values.tolist(),
-            product_data.backlog_penalty_per_kg.fillna(0).values.tolist(),
-            product_data.production_cost_per_kg.fillna(0).values.tolist(),
-            product_data.storage_cost_per_kg.fillna(0).values.tolist(),
-            product_data.waste_cost_per_kg.fillna(0).values.tolist(),
-            product_data.sell_price_per_kg.fillna(0).values.tolist(),
-
-            product_data.inoculation_days.fillna(0).values.tolist(),
-            product_data.seed_days.fillna(0).values.tolist(),
-            product_data.production_days.fillna(0).values.tolist(),
             product_data.usp_days.fillna(0).values.tolist(),
             product_data.dsp_days.fillna(0).values.tolist(),
-            product_data.approval_days.fillna(0).values.tolist(),
+            
             product_data.shelf_life_days.fillna(0).values.tolist(),
-            product_data.min_batches_per_campaign.fillna(0).values.tolist(),
-            product_data.max_batches_per_campaign.fillna(0).values.tolist(),
-            product_data.batches_multiples_of_per_campaign.fillna(0).values.tolist(),
-            changeover_days.drop('product', axis=1).fillna(0).values.tolist(),
+            product_data.batch_storage_limits.fillna(0).values.tolist(),
 
-            &cpp_kg_inventory_target if kg_inventory_target is not None else NULL,
+            product_data.sell_price_per_batch.fillna(0).values.tolist(),
+            product_data.storage_cost_per_batch.fillna(0).values.tolist(),
+            product_data.backlog_penalty_per_batch.fillna(0).values.tolist(),
+            product_data.waste_cost_per_batch.fillna(0).values.tolist(),
+            product_data.usp_production_cost_per_batch.fillna(0).values.tolist(),
+            product_data.dsp_production_cost_per_batch.fillna(0).values.tolist(),
+            product_data.usp_changeover_cost.fillna(0).values.tolist(),
+            product_data.dsp_changeover_cost.fillna(0).values.tolist(),
+
+            usp_changeover_days.drop('product', axis=1).fillna(0).values.tolist(),
+            dsp_changeover_days.drop('product', axis=1).fillna(0).values.tolist(),
+
             &cpp_constraints if constraints is not None else NULL 
         )
 
-        self.single_site_simple = SingleSiteSimpleModel(self.input_data)
+        self.single_site_multi_suite = SingleSiteMultiSuiteModel(self.input_data)
 
         if len(objectives) == 1:
             self.__run_single_objective_ga()
@@ -1005,10 +1008,10 @@ cdef class SingleSiteMultiSuite:
         self,
         objectives: dict, 
         constraints: dict, 
-        kg_demand: pd.core.frame.DataFrame, 
-        kg_inventory_target: pd.core.frame.DataFrame, 
+        batch_demand: pd.core.frame.DataFrame, 
         product_data: pd.core.frame.DataFrame, 
-        changeover_days: pd.core.frame.DataFrame,
+        usp_changeover_days: pd.core.frame.DataFrame,
+        dsp_changeover_days: pd.core.frame.DataFrame
     ):
         assert type(objectives) is dict, \
         "'objectives' needs to be a 'dict', is a '{}'.".format(type(objectives))
@@ -1029,65 +1032,60 @@ cdef class SingleSiteMultiSuite:
                 assert constraints[cons][0] in [-1, 1], \
                 "Constraint coefficient can only be -1 or 1."
 
-        for df in [kg_demand, product_data, changeover_days]:
+        for df in [batch_demand, product_data, usp_changeover_days, dsp_changeover_days]:
             assert type(df) is pd.core.frame.DataFrame, \
             "Input data must be a 'pd.core.frame.DataFrame', is a '{}'".format(type(df))
 
-        assert 'date' == kg_demand.index.name, \
-        "'kg_demand' must have a 'date' index." 
-
-        if kg_inventory_target is not None:
-            assert type(kg_inventory_target) is pd.core.frame.DataFrame, \
-            "Input data must be a 'pd.core.frame.DataFrame', is a '{}'".format(type(kg_inventory_target))
-            assert 'date' == kg_inventory_target.index.name, \
-            "'kg_inventory_target' must have a 'date' index." 
-            assert kg_demand.index.all() == kg_inventory_target.index.all(), \
-            "'date' indices from 'kg_demand' and 'kg_inventory_target' do not match."
-            assert set(kg_demand.columns) == set(kg_inventory_target.columns) and \
-                   len(kg_demand.columns) == len(kg_inventory_target.columns), \
-                   "Product labels from 'kg_demand' and 'kg_inventory_target' do not match."
+        assert 'date' == batch_demand.index.name, \
+        "'batch_demand' must have a 'date' index." 
 
         for col in [
             'product', 
-            'inventory_penalty_per_kg', 
-            'backlog_penalty_per_kg',
-            'production_cost_per_kg',
-            'storage_cost_per_kg',
-            'waste_cost_per_kg',
-            'sell_price_per_kg',
-            'inoculation_days',
-            'seed_days',
-            'production_days',
             'usp_days',
             'dsp_days',
-            'approval_days',
             'shelf_life_days',
-            'kg_yield_per_batch',
-            'kg_storage_limits',
-            'kg_opening_stock',
-            'min_batches_per_campaign',
-            'max_batches_per_campaign',
-            'batches_multiples_of_per_campaign'
+            'batch_storage_limits',
+            'sell_price_per_batch',
+            'usp_production_cost_per_batch',
+            'dsp_production_cost_per_batch',
+            'storage_cost_per_batch',
+            'waste_cost_per_batch',
+            'backlog_penalty_per_batch',
+            'usp_changeover_cost',
+            'dsp_changeover_cost'
         ]:
             assert col in product_data, "'product_data' is missing '{}' column.".format(col)
         
-        self.product_labels = kg_demand.columns.values.tolist()
+        self.product_labels = batch_demand.columns.values.tolist()
 
         assert len(self.product_labels) == len(product_data['product']) and \
                set(self.product_labels) == set(product_data['product']), \
-               "Product labels from 'kg_demand' and 'product_data' do not match."
+               "Product labels from 'batch_demand' and 'product_data' do not match."
 
-        assert 'product' in changeover_days, "'product' column is missing in 'changeover_days'."
-        assert len(self.product_labels) == len(changeover_days['product']) and \
-               set(self.product_labels) == set(changeover_days['product']), \
-               "Product labels from 'kg_demand' and 'changeover_days' do not match."
+        assert 'product' in usp_changeover_days, "'product' column is missing in 'usp_changeover_days'."
+        assert len(self.product_labels) == len(usp_changeover_days['product']) and \
+               set(self.product_labels) == set(usp_changeover_days['product']), \
+               "Product labels from 'batch_demand' and 'usp_changeover_days' do not match."
 
-        changeover_days_product_columns = changeover_days.columns.values.tolist()
-        changeover_days_product_columns.remove('product')
+        assert 'product' in dsp_changeover_days, "'product' column is missing in 'dsp_changeover_days'."
+        assert len(self.product_labels) == len(dsp_changeover_days['product']) and \
+               set(self.product_labels) == set(dsp_changeover_days['product']), \
+               "Product labels from 'batch_demand' and 'dsp_changeover_days' do not match."
 
-        assert len(self.product_labels) == len(changeover_days_product_columns) and \
-               set(self.product_labels) == set(changeover_days_product_columns), \
-               "Product labels in 'product' column do not match with the actual product columns in 'changeover_days_product_columns'."
+        usp_changeover_days_product_columns = usp_changeover_days.columns.values.tolist()
+        usp_changeover_days_product_columns.remove('product')
+
+        assert len(self.product_labels) == len(usp_changeover_days_product_columns) and \
+               set(self.product_labels) == set(usp_changeover_days_product_columns), \
+               "Product labels in 'product' column do not match with the actual product columns in 'usp_changeover_days_product_columns'."
+
+        dsp_changeover_days_product_columns = dsp_changeover_days.columns.values.tolist()
+        dsp_changeover_days_product_columns.remove('product')
+
+        assert len(self.product_labels) == len(dsp_changeover_days_product_columns) and \
+               set(self.product_labels) == set(dsp_changeover_days_product_columns), \
+               "Product labels in 'product' column do not match with the actual product columns in 'dsp_changeover_days_product_columns'."
+
 
     def __count_days(self, start_date: str, due_dates: list):
         self.start_date = start_date
@@ -1101,13 +1099,13 @@ cdef class SingleSiteMultiSuite:
 
     def __run_single_objective_ga(self):
         cdef:
-            SingleSiteSimpleSchedule schedule
-            SingleObjectiveIndividual[SingleSiteSimpleGene] top_solution
-            vector[SingleObjectiveIndividual[SingleSiteSimpleGene]] solutions 
+            SingleSiteMultiSuiteSchedule schedule
+            SingleObjectiveIndividual[SingleSiteMultiSuiteGene] top_solution
+            vector[SingleObjectiveIndividual[SingleSiteMultiSuiteGene]] solutions 
             
-            SingleObjectiveGA[SingleObjectiveIndividual[SingleSiteSimpleGene], SingleSiteSimpleModel] ga = \
-                SingleObjectiveGA[SingleObjectiveIndividual[SingleSiteSimpleGene], SingleSiteSimpleModel](
-                self.single_site_simple,
+            SingleObjectiveGA[SingleObjectiveIndividual[SingleSiteMultiSuiteGene], SingleSiteMultiSuiteModel] ga = \
+                SingleObjectiveGA[SingleObjectiveIndividual[SingleSiteMultiSuiteGene], SingleSiteMultiSuiteModel](
+                self.single_site_multi_suite,
                 self.random_state,
                 self.num_threads   
             )
@@ -1125,7 +1123,9 @@ cdef class SingleSiteMultiSuite:
                 self.p_xo,
                 self.p_gene_swap,
                 len(self.product_labels),
+                self.num_usp_suites,
                 self.p_product_mut,
+                self.p_usp_suite_mut,
                 self.p_plus_batch_mut,
                 self.p_minus_batch_mut,
             )
@@ -1145,8 +1145,8 @@ cdef class SingleSiteMultiSuite:
         if self.save_history:
             self.history = []
             for solution in solutions:
-                schedule = SingleSiteSimpleSchedule()
-                self.single_site_simple.CreateSchedule(solution, schedule)
+                schedule = SingleSiteMultiSuiteSchedule()
+                self.single_site_multi_suite.CreateSchedule(solution, schedule)
                 self.history.append(self.__make_pyschedule(schedule))
 
         if self.verbose:
@@ -1157,8 +1157,8 @@ cdef class SingleSiteMultiSuite:
         solutions.resize(1)
         solutions[0] = top_solution
         for solution in solutions:
-            schedule = SingleSiteSimpleSchedule()
-            self.single_site_simple.CreateSchedule(solution, schedule)
+            schedule = SingleSiteMultiSuiteSchedule()
+            self.single_site_multi_suite.CreateSchedule(solution, schedule)
             self.schedules.append(self.__make_pyschedule(schedule))
 
         if self.verbose: 
@@ -1167,13 +1167,13 @@ cdef class SingleSiteMultiSuite:
 
     def __run_nsgaii(self):
         cdef:
-            SingleSiteSimpleSchedule schedule
-            vector[vector[NSGAIndividual[SingleSiteSimpleGene]]] history
-            vector[NSGAIndividual[SingleSiteSimpleGene]] solutions, top_front
+            SingleSiteMultiSuiteSchedule schedule
+            vector[vector[NSGAIndividual[SingleSiteMultiSuiteGene]]] history
+            vector[NSGAIndividual[SingleSiteMultiSuiteGene]] solutions, top_front
             
-            NSGAII[NSGAIndividual[SingleSiteSimpleGene], SingleSiteSimpleModel] nsgaii = \
-                NSGAII[NSGAIndividual[SingleSiteSimpleGene], SingleSiteSimpleModel](
-                self.single_site_simple,
+            NSGAII[NSGAIndividual[SingleSiteMultiSuiteGene], SingleSiteMultiSuiteModel] nsgaii = \
+                NSGAII[NSGAIndividual[SingleSiteMultiSuiteGene], SingleSiteMultiSuiteModel](
+                self.single_site_multi_suite,
                 self.random_state,
                 self.num_threads   
             )
@@ -1191,7 +1191,9 @@ cdef class SingleSiteMultiSuite:
                 self.p_xo,
                 self.p_gene_swap,
                 len(self.product_labels),
+                self.num_usp_suites,
                 self.p_product_mut,
+                self.p_usp_suite_mut,
                 self.p_plus_batch_mut,
                 self.p_minus_batch_mut,
             )
@@ -1216,8 +1218,8 @@ cdef class SingleSiteMultiSuite:
             for front in history:
                 self.history.append([])
                 for solution in front:
-                    schedule = SingleSiteSimpleSchedule()
-                    self.single_site_simple.CreateSchedule(solution, schedule)
+                    schedule = SingleSiteMultiSuiteSchedule()
+                    self.single_site_multi_suite.CreateSchedule(solution, schedule)
                     self.history[-1].append(self.__make_pyschedule(schedule))
 
         if self.verbose:
@@ -1226,133 +1228,82 @@ cdef class SingleSiteMultiSuite:
         self.schedules = []
         solutions = nsgaii.TopFront(solutions)
         for solution in solutions:
-            schedule = SingleSiteSimpleSchedule()
-            self.single_site_simple.CreateSchedule(solution, schedule)
+            schedule = SingleSiteMultiSuiteSchedule()
+            self.single_site_multi_suite.CreateSchedule(solution, schedule)
             self.schedules.append(self.__make_pyschedule(schedule))
 
         if self.verbose: 
             pbar.set_description('Done')
             pbar.close()
 
-    cdef __make_pyschedule(self, SingleSiteSimpleSchedule &schedule):
+    cdef __make_pyschedule(self, SingleSiteMultiSuiteSchedule &schedule):
 
         def get_date_of(delta):
             return pd.Timedelta('%d days' % delta) + pd.to_datetime(self.start_date).date()
 
         campaigns_table = []
         batches_table = []
-        tasks_table = []
+
         
-        for campaign in schedule.campaigns: 
-            campaigns_table.append(OrderedDict([
-                ('Product', self.product_labels[campaign.product_num - 1]),
-                ('Batches', campaign.num_batches),
-                ('Kg', campaign.kg),
-                ('Start', get_date_of(campaign.start)),
-                ('First Harvest', get_date_of(campaign.first_harvest)),
-                ('First Batch', get_date_of(campaign.first_batch)),
-                ('Last Batch', get_date_of(campaign.last_batch))
-            ])) 
+        for suite in schedule.suites: 
+            for campaign in suite:
 
-            for batch in campaign.batches:
-                batches_table.append(OrderedDict([
-                    ('Product', self.product_labels[batch.product_num - 1]),
-                    ('Kg', batch.kg),
-                    ('Start', get_date_of(batch.start)),
-                    ('Harvested on', get_date_of(batch.harvested_at)),
-                    ('Stored on', get_date_of(batch.stored_at)),
-                    ('Expires on', get_date_of(batch.expires_at)),
-                    ('Approved on', get_date_of(batch.approved_at))
-                ]))
+                campaigns_table.append(OrderedDict([
+                    ('Product', self.product_labels[campaign.product_num - 1]),
+                    ('Suite', ('USP%d' if campaign.suite_num < self.num_usp_suites else 'DSP%d') % campaign.suite_num + 1),
+                    ('Batches', campaign.num_batches),
+                    ('Start', get_date_of(campaign.start)),
+                    ('End', get_date_of(campaign.end))
+                ])) 
 
-                tasks_table.append(OrderedDict([
-                    ('Product', self.product_labels[campaign.product_num - 1]),
-                    ('Task', 'Inoculation'),
-                    ('Start', batches_table[-1]['Start']),
-                    (
-                        'Finish', 
-                        batches_table[-1]['Start'] + pd.Timedelta(
-                            '%d days' % 
-                            self.input_data.inoculation_days[batch.product_num - 1]
-                        )
-                    )
-                ]))
-                tasks_table.append(OrderedDict([
-                    ('Product', self.product_labels[campaign.product_num - 1]),
-                    ('Task', 'Seed'),
-                    ('Start', tasks_table[-1]['Finish']),
-                    (
-                        'Finish', 
-                        tasks_table[-1]['Finish'] + pd.Timedelta(
-                            '%d days' % 
-                            self.input_data.seed_days[batch.product_num - 1]
-                        )
-                    )                
-                ]))
-                tasks_table.append(OrderedDict([
-                    ('Product', self.product_labels[campaign.product_num - 1]),
-                    ('Task', 'Production'),
-                    ('Start', tasks_table[-1]['Finish']),
-                    (
-                        'Finish', 
-                        tasks_table[-1]['Finish'] + pd.Timedelta(
-                            '%d days' % 
-                            self.input_data.production_days[batch.product_num - 1]
-                        )
-                    )                
-                ]))
-                tasks_table.append(OrderedDict([
-                    ('Product', self.product_labels[campaign.product_num - 1]),
-                    ('Task', 'DSP'),
-                    ('Start', tasks_table[-1]['Finish']),
-                    (
-                        'Finish', 
-                        tasks_table[-1]['Finish'] + pd.Timedelta(
-                            '%d days' % 
-                            self.input_data.dsp_days[batch.product_num - 1]
-                        )
-                    )                
-                ]))
+                for batch in campaign.batches:
 
-        kg_inventory, kg_backlog, kg_supply, kg_waste = [], [], [], []
+                    batches_table.append(OrderedDict([
+                        ('Product', self.product_labels[batch.product_num - 1]),
+                        ('Suite', ('USP%d' if campaign.suite_num < self.num_usp_suites else 'DSP%d') % campaign.suite_num + 1),
+                        ('Start', get_date_of(batch.start)),
+                        ('Stored on', get_date_of(batch.stored_at)),
+                        ('Expires on', get_date_of(batch.expires_at)),
+                    ]))
+
+        batch_inventory, batch_backlog, batch_supply, batch_waste = [], [], [], []
 
         for i, due_date in enumerate(self.due_dates):
-            kg_inventory.append({
-                product_label: schedule.kg_inventory[j][i] 
+            batch_inventory.append({
+                product_label: schedule.batch_inventory[j][i] 
                 for j, product_label in enumerate(self.product_labels)
             })
-            kg_inventory[-1].update({'date': due_date})
+            batch_inventory[-1].update({'date': due_date})
 
-            kg_backlog.append({
-                product_label: schedule.kg_backlog[j][i] 
+            batch_backlog.append({
+                product_label: schedule.batch_backlog[j][i] 
                 for j, product_label in enumerate(self.product_labels)
             })
-            kg_backlog[-1].update({'date': due_date})
+            batch_backlog[-1].update({'date': due_date})
 
-            kg_supply.append({
-                product_label: schedule.kg_supply[j][i] 
+            batch_supply.append({
+                product_label: schedule.batch_supply[j][i] 
                 for j, product_label in enumerate(self.product_labels)
             })
-            kg_supply[-1].update({'date': due_date})
+            batch_supply[-1].update({'date': due_date})
 
-            kg_waste.append({
-                product_label: schedule.kg_waste[j][i] 
+            batch_waste.append({
+                product_label: schedule.batch_waste[j][i] 
                 for j, product_label in enumerate(self.product_labels)
             })
-            kg_waste[-1].update({'date': due_date})
+            batch_waste[-1].update({'date': due_date})
 
-        return PySingleSiteSimpleSchedule(
+        return PySingleSiteMultiSuiteSchedule(
             {
                 obj: schedule.objectives[self.objectives[obj]] 
                 for obj in self.AVAILABLE_OBJECTIVES
             }, 
             campaigns_table,
             batches_table,
-            tasks_table,
-            kg_inventory,
-            kg_backlog,
-            kg_supply,
-            kg_waste
+            batch_inventory,
+            batch_backlog,
+            batch_supply,
+            batch_waste
         )
 
     @property

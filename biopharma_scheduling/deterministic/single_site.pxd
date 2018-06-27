@@ -98,7 +98,6 @@ cdef extern from "../input_data.h" namespace "deterministic":
             
             vector[double] usp_days,
             vector[double] dsp_days,
-            vector[double] production_factor,
             
             vector[int] shelf_life,
             vector[int] storage_cap,
@@ -112,8 +111,8 @@ cdef extern from "../input_data.h" namespace "deterministic":
             vector[double] usp_changeover_cost,
             vector[double] dsp_changeover_cost,
 
-            vector[double] usp_lead_days,
-            vector[double] dsp_lead_days,
+            vector[vector[double]] usp_changeovers,
+            vector[vector[double]] dsp_changeovers,
  
             unordered_map[OBJECTIVES, pair[int, double]] *constraints
         )
@@ -125,7 +124,6 @@ cdef extern from "../input_data.h" namespace "deterministic":
         vector[int] days_per_period,
         vector[double] usp_days,
         vector[double] dsp_days,
-        vector[double] production_factor,
         vector[int] shelf_life,
         vector[int] storage_cap,
         vector[double] sales_price,
@@ -136,8 +134,8 @@ cdef extern from "../input_data.h" namespace "deterministic":
         vector[double] dsp_production_cost,
         vector[double] usp_changeover_cost,
         vector[double] dsp_changeover_cost
-        vector[double] usp_lead_days,
-        vector[double] dsp_lead_days
+        vector[vector[double]] usp_changeovers,
+        vector[vector[double]] dsp_changeovers,
         unordered_map[OBJECTIVES, pair[int, double]] *constraints
 
 
