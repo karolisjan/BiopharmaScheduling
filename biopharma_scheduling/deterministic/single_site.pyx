@@ -13,18 +13,20 @@ from nsgaii cimport NSGAII
 from nsgaii_individual cimport NSGAIndividual
 from single_objective_ga cimport SingleObjectiveGA
 from single_objective_individual cimport SingleObjectiveIndividual
-from gene cimport SingleSiteSimpleGene
+from gene cimport SingleSiteSimpleGene, SingleSiteMultiSuiteGene
 
 from single_site cimport (
     OBJECTIVES, 
     SingleSiteSimpleInputData, 
-    SingleSiteSimpleModel
+    SingleSiteMultiSuiteData,
+    SingleSiteSimpleModel,
+    SingleSiteMultiSuiteModel
 )
 
-from schedule cimport SingleSiteSimpleSchedule
+from schedule cimport SingleSiteSimpleSchedule, SingleSiteMultiSuiteSchedule
 
 from pyhv import hypervolume
-from pyschedule import PySingleSiteSimpleSchedule
+from pyschedule import PySingleSiteSimpleSchedule, PySingleSiteMultiSuiteSchedule
 
 
 cdef class SingleSiteSimple:
@@ -130,7 +132,7 @@ cdef class SingleSiteSimple:
                     Probability (per chromosome) of swapping two genes within the chromosome 
                     at random [0.0 - 1.0].
 
-                num_threads: int, optional, default -1
+                num_threads: int, optional, default 1
                     Number of threads to use for evaluating the chromosome SingleSiteSimple. 
                     If num_threads = -1, all CPUs are used. If num_threads = 0 or 1, 1 CPU is used.
 
@@ -809,3 +811,555 @@ cdef class SingleSiteSimple:
             hv /= hypervolume(ideal_point, ref_point)
 
         return hv        
+
+
+
+cdef class SingleSiteMultiSuite:
+    cdef:
+        SingleSiteMultiSuiteInputData input_data
+        SingleSiteMultiSuiteModel single_site_multi_suite
+
+        object history
+        object schedules
+        object start_date
+        object product_labels
+        object due_dates
+        object objectives
+        object objectives_coefficients_list
+
+        int num_runs
+        int num_gens
+        int popsize
+        int starting_length
+        int num_threads
+        int random_state
+        int verbose
+        int save_history
+
+        double p_xo
+        double p_product_mut
+        doubpe p_usp_suite_mut
+        double p_plus_batch_mut
+        double p_minus_batch_mut
+        double p_gene_swap
+
+    AVAILABLE_OBJECTIVES = {
+        'total_backlog_penalty',
+        'total_changeover_cost',
+        'total_production_cost',
+        'total_storage_cost',
+        'total_waste_cost',
+        'total_revenue',
+        'total_profit',
+        'total_cost',
+    }
+
+    def __init__(
+        self,
+        num_runs: int=10,
+        num_gens: int=1000,
+        popsize: int=100,
+        starting_length: int=1,
+        p_xo: float=0.131266,
+        p_product_mut: float=0.131266,
+        p_usp_suite_mut: float=0.131266,
+        p_plus_batch_mut: float=0.131266,
+        p_minus_batch_mut: float=0.131266,
+        p_gene_swap: float=0.131266,
+        num_threads: int=1,
+        random_state: int=None,
+        verbose: bool=False,
+        save_history: bool=False,
+    ):
+        assert num_runs >= 1, "'num_runs' needs to be a positive integer number." 
+        self.num_runs = num_runs
+
+        assert num_gens >= 1, "'num_gens' needs to be a positive integer number." 
+        self.num_gens = num_gens
+
+        assert popsize >= 1, "'popsize' needs to be a positive integer number." 
+        self.popsize = popsize
+
+        assert starting_length >= 1, "'starting_length' needs to be a positive integer number." 
+        self.starting_length = starting_length
+
+        assert p_xo >= 0.0 and p_xo <= 1.0, \
+        "'p_xo' needs to be a positive floating point number in range [0.0 - 1.0]."
+        self.p_xo = p_xo
+
+        assert p_product_mut >= 0.0 and p_product_mut <= 1.0, \
+        "'p_product_mut' needs to be a positive floating point number in range [0.0 - 1.0]."
+        self.p_product_mut = p_product_mut
+
+        assert p_usp_suite_mut >= 0.0 and p_usp_suite_mut <= 1.0, \
+        "'p_usp_suite_mut' needs to be a positive floating point number in range [0.0 - 1.0]."
+        self.p_usp_suite_mut = p_usp_suite_mut
+
+        assert p_plus_batch_mut >= 0.0 and p_plus_batch_mut <= 1.0, \
+        "'p_plus_batch_mut' needs to be a positive floating point number in range [0.0 - 1.0]."
+        self.p_plus_batch_mut = p_plus_batch_mut
+
+        assert p_minus_batch_mut >= 0.0 and p_minus_batch_mut <= 1.0, \
+        "'p_minus_batch_mut' needs to be a positive floating point number in range [0.0 - 1.0]."
+        self.p_minus_batch_mut = p_minus_batch_mut
+
+        assert p_gene_swap >= 0.0 and p_gene_swap <= 1.0, \
+        "'p_gene_swap' needs to be a positive floating point number in range [0.0 - 1.0]."
+        self.p_gene_swap = p_gene_swap
+
+        self.num_threads = num_threads
+        self.random_state = random_state if random_state else -1
+        self.verbose = verbose
+        self.save_history = save_history
+
+        self.objectives = {
+            'total_changeover_cost': OBJECTIVES.TOTAL_CHANGEOVER_COST,
+            'total_backlog_penalty': OBJECTIVES.TOTAL_BACKLOG_PENALTY,
+            'total_production_cost': OBJECTIVES.TOTAL_PRODUCTION_COST,
+            'total_storage_cost': OBJECTIVES.TOTAL_STORAGE_COST,
+            'total_waste_cost': OBJECTIVES.TOTAL_WASTE_COST,
+            'total_revenue': OBJECTIVES.TOTAL_REVENUE,
+            'total_profit': OBJECTIVES.TOTAL_PROFIT,
+            'total_cost': OBJECTIVES.TOTAL_COST
+        }
+
+    def fit(
+        self,
+        start_date: str,
+        objectives: dict,
+        demand: pd.core.frame.DataFrame,
+        product_data: pd.core.frame.DataFrame,
+        changeover_days: pd.core.frame.DataFrame,
+        constraints: dict=None,
+    ):
+        self.__validate_input(
+            objectives,
+            constraints,
+            kg_demand,
+            kg_inventory_target,
+            product_data, 
+            changeover_days
+        )
+
+        days_per_period = self.__count_days(start_date, kg_demand.index.values.tolist())
+
+        self.objectives_coefficients_list = []
+        cdef unordered_map[OBJECTIVES, int] cpp_objectives
+        for obj, coef in objectives.items():
+            cpp_objectives[self.objectives[obj]] = coef
+            self.objectives_coefficients_list.append((obj, coef))
+
+        cdef pair[int, double] p
+        cdef unordered_map[OBJECTIVES, pair[int, double]] cpp_constraints
+        if constraints:
+            for cons, [coef, bound] in constraints.items():
+                p.first = coef
+                p.second = bound
+                cpp_constraints[self.objectives[cons]] = p 
+
+        cdef vector[vector[double]] cpp_kg_inventory_target
+        if kg_inventory_target is not None:
+            cpp_kg_inventory_target = kg_inventory_target.fillna(0).transpose().values.tolist()
+
+        self.input_data = SingleSiteSimpleInputData(
+            cpp_objectives,
+            kg_demand.fillna(0).transpose().values.tolist(),
+            days_per_period,
+
+            product_data.kg_opening_stock.fillna(0).values.tolist(),
+            product_data.kg_yield_per_batch.fillna(0).values,
+            product_data.kg_storage_limits.fillna(0).values.tolist(),
+
+            product_data.inventory_penalty_per_kg.fillna(0).values.tolist(),
+            product_data.backlog_penalty_per_kg.fillna(0).values.tolist(),
+            product_data.production_cost_per_kg.fillna(0).values.tolist(),
+            product_data.storage_cost_per_kg.fillna(0).values.tolist(),
+            product_data.waste_cost_per_kg.fillna(0).values.tolist(),
+            product_data.sell_price_per_kg.fillna(0).values.tolist(),
+
+            product_data.inoculation_days.fillna(0).values.tolist(),
+            product_data.seed_days.fillna(0).values.tolist(),
+            product_data.production_days.fillna(0).values.tolist(),
+            product_data.usp_days.fillna(0).values.tolist(),
+            product_data.dsp_days.fillna(0).values.tolist(),
+            product_data.approval_days.fillna(0).values.tolist(),
+            product_data.shelf_life_days.fillna(0).values.tolist(),
+            product_data.min_batches_per_campaign.fillna(0).values.tolist(),
+            product_data.max_batches_per_campaign.fillna(0).values.tolist(),
+            product_data.batches_multiples_of_per_campaign.fillna(0).values.tolist(),
+            changeover_days.drop('product', axis=1).fillna(0).values.tolist(),
+
+            &cpp_kg_inventory_target if kg_inventory_target is not None else NULL,
+            &cpp_constraints if constraints is not None else NULL 
+        )
+
+        self.single_site_simple = SingleSiteSimpleModel(self.input_data)
+
+        if len(objectives) == 1:
+            self.__run_single_objective_ga()
+        else:
+            self.__run_nsgaii()
+
+        return self
+
+    def __validate_input(
+        self,
+        objectives: dict, 
+        constraints: dict, 
+        kg_demand: pd.core.frame.DataFrame, 
+        kg_inventory_target: pd.core.frame.DataFrame, 
+        product_data: pd.core.frame.DataFrame, 
+        changeover_days: pd.core.frame.DataFrame,
+    ):
+        assert type(objectives) is dict, \
+        "'objectives' needs to be a 'dict', is a '{}'.".format(type(objectives))
+        for obj in objectives:
+            assert obj in self.AVAILABLE_OBJECTIVES, \
+            "'{}' is not allowed as an objective.".format(obj)
+            assert objectives[obj] in [-1, 1], \
+            "Objective coefficient can only be -1 or 1."
+
+        if constraints is not None:
+            assert type(constraints) is dict, \
+            "'constraints' needs to be a 'dict', is a '{}'.".format(type(constraints))
+            for cons in constraints:
+                assert cons in self.AVAILABLE_OBJECTIVES, \
+                "'{}' is not allowed as a constraint.".format(cons)
+                assert type(constraints[cons]) is list and len(constraints[cons]) == 2, \
+                "'constraints' are expected to hold a coeffcient and a bound."
+                assert constraints[cons][0] in [-1, 1], \
+                "Constraint coefficient can only be -1 or 1."
+
+        for df in [kg_demand, product_data, changeover_days]:
+            assert type(df) is pd.core.frame.DataFrame, \
+            "Input data must be a 'pd.core.frame.DataFrame', is a '{}'".format(type(df))
+
+        assert 'date' == kg_demand.index.name, \
+        "'kg_demand' must have a 'date' index." 
+
+        if kg_inventory_target is not None:
+            assert type(kg_inventory_target) is pd.core.frame.DataFrame, \
+            "Input data must be a 'pd.core.frame.DataFrame', is a '{}'".format(type(kg_inventory_target))
+            assert 'date' == kg_inventory_target.index.name, \
+            "'kg_inventory_target' must have a 'date' index." 
+            assert kg_demand.index.all() == kg_inventory_target.index.all(), \
+            "'date' indices from 'kg_demand' and 'kg_inventory_target' do not match."
+            assert set(kg_demand.columns) == set(kg_inventory_target.columns) and \
+                   len(kg_demand.columns) == len(kg_inventory_target.columns), \
+                   "Product labels from 'kg_demand' and 'kg_inventory_target' do not match."
+
+        for col in [
+            'product', 
+            'inventory_penalty_per_kg', 
+            'backlog_penalty_per_kg',
+            'production_cost_per_kg',
+            'storage_cost_per_kg',
+            'waste_cost_per_kg',
+            'sell_price_per_kg',
+            'inoculation_days',
+            'seed_days',
+            'production_days',
+            'usp_days',
+            'dsp_days',
+            'approval_days',
+            'shelf_life_days',
+            'kg_yield_per_batch',
+            'kg_storage_limits',
+            'kg_opening_stock',
+            'min_batches_per_campaign',
+            'max_batches_per_campaign',
+            'batches_multiples_of_per_campaign'
+        ]:
+            assert col in product_data, "'product_data' is missing '{}' column.".format(col)
+        
+        self.product_labels = kg_demand.columns.values.tolist()
+
+        assert len(self.product_labels) == len(product_data['product']) and \
+               set(self.product_labels) == set(product_data['product']), \
+               "Product labels from 'kg_demand' and 'product_data' do not match."
+
+        assert 'product' in changeover_days, "'product' column is missing in 'changeover_days'."
+        assert len(self.product_labels) == len(changeover_days['product']) and \
+               set(self.product_labels) == set(changeover_days['product']), \
+               "Product labels from 'kg_demand' and 'changeover_days' do not match."
+
+        changeover_days_product_columns = changeover_days.columns.values.tolist()
+        changeover_days_product_columns.remove('product')
+
+        assert len(self.product_labels) == len(changeover_days_product_columns) and \
+               set(self.product_labels) == set(changeover_days_product_columns), \
+               "Product labels in 'product' column do not match with the actual product columns in 'changeover_days_product_columns'."
+
+    def __count_days(self, start_date: str, due_dates: list):
+        self.start_date = start_date
+        self.due_dates = due_dates
+        start_date = pd.to_datetime(start_date)
+        due_dates = pd.to_datetime(due_dates)
+        days_per_period = [(due_dates[0] - start_date).days]
+        for i in range(1, len(due_dates), 1):
+            days_per_period.append((due_dates[i] - due_dates[i - 1]).days)
+        return days_per_period
+
+    def __run_single_objective_ga(self):
+        cdef:
+            SingleSiteSimpleSchedule schedule
+            SingleObjectiveIndividual[SingleSiteSimpleGene] top_solution
+            vector[SingleObjectiveIndividual[SingleSiteSimpleGene]] solutions 
+            
+            SingleObjectiveGA[SingleObjectiveIndividual[SingleSiteSimpleGene], SingleSiteSimpleModel] ga = \
+                SingleObjectiveGA[SingleObjectiveIndividual[SingleSiteSimpleGene], SingleSiteSimpleModel](
+                self.single_site_simple,
+                self.random_state,
+                self.num_threads   
+            )
+
+        if self.verbose: 
+            pbar = tqdm(total=self.num_runs * self.num_gens)
+
+        for run in range(self.num_runs):
+            if self.verbose: 
+                pbar.set_description('GA is running %d/%d' % (run + 1, self.num_runs))
+
+            ga.Init(
+                self.popsize,
+                self.starting_length,
+                self.p_xo,
+                self.p_gene_swap,
+                len(self.product_labels),
+                self.p_product_mut,
+                self.p_plus_batch_mut,
+                self.p_minus_batch_mut,
+            )
+
+            for gen in range(self.num_gens):
+                ga.Update()
+
+                if self.verbose: 
+                    pbar.update()
+
+            top_solution = ga.Top()
+            solutions.push_back(top_solution)
+
+        if self.verbose and self.save_history:
+            pbar.set_description('Processing history')
+
+        if self.save_history:
+            self.history = []
+            for solution in solutions:
+                schedule = SingleSiteSimpleSchedule()
+                self.single_site_simple.CreateSchedule(solution, schedule)
+                self.history.append(self.__make_pyschedule(schedule))
+
+        if self.verbose:
+            pbar.set_description('Collecting schedules')
+
+        self.schedules = []
+        top_solution = ga.Top(solutions)
+        solutions.resize(1)
+        solutions[0] = top_solution
+        for solution in solutions:
+            schedule = SingleSiteSimpleSchedule()
+            self.single_site_simple.CreateSchedule(solution, schedule)
+            self.schedules.append(self.__make_pyschedule(schedule))
+
+        if self.verbose: 
+            pbar.set_description('Done')
+            pbar.close()
+
+    def __run_nsgaii(self):
+        cdef:
+            SingleSiteSimpleSchedule schedule
+            vector[vector[NSGAIndividual[SingleSiteSimpleGene]]] history
+            vector[NSGAIndividual[SingleSiteSimpleGene]] solutions, top_front
+            
+            NSGAII[NSGAIndividual[SingleSiteSimpleGene], SingleSiteSimpleModel] nsgaii = \
+                NSGAII[NSGAIndividual[SingleSiteSimpleGene], SingleSiteSimpleModel](
+                self.single_site_simple,
+                self.random_state,
+                self.num_threads   
+            )
+
+        if self.verbose: 
+            pbar = tqdm(total=self.num_runs * self.num_gens)
+
+        for run in range(self.num_runs):
+            if self.verbose: 
+                pbar.set_description('GA is running %d/%d' % (run + 1, self.num_runs))
+
+            nsgaii.Init(
+                self.popsize,
+                self.starting_length,
+                self.p_xo,
+                self.p_gene_swap,
+                len(self.product_labels),
+                self.p_product_mut,
+                self.p_plus_batch_mut,
+                self.p_minus_batch_mut,
+            )
+
+            for gen in range(self.num_gens):
+                nsgaii.Update()
+
+                if self.verbose: 
+                    pbar.update()
+
+            top_front = nsgaii.TopFront()
+            solutions.insert(solutions.end(), top_front.begin(), top_front.end())
+
+            if self.save_history:
+                history.push_back(top_front)
+
+        if self.verbose and self.save_history:
+            pbar.set_description('Processing history')
+
+        if self.save_history:
+            self.history = []
+            for front in history:
+                self.history.append([])
+                for solution in front:
+                    schedule = SingleSiteSimpleSchedule()
+                    self.single_site_simple.CreateSchedule(solution, schedule)
+                    self.history[-1].append(self.__make_pyschedule(schedule))
+
+        if self.verbose:
+            pbar.set_description('Collecting schedules')
+
+        self.schedules = []
+        solutions = nsgaii.TopFront(solutions)
+        for solution in solutions:
+            schedule = SingleSiteSimpleSchedule()
+            self.single_site_simple.CreateSchedule(solution, schedule)
+            self.schedules.append(self.__make_pyschedule(schedule))
+
+        if self.verbose: 
+            pbar.set_description('Done')
+            pbar.close()
+
+    cdef __make_pyschedule(self, SingleSiteSimpleSchedule &schedule):
+
+        def get_date_of(delta):
+            return pd.Timedelta('%d days' % delta) + pd.to_datetime(self.start_date).date()
+
+        campaigns_table = []
+        batches_table = []
+        tasks_table = []
+        
+        for campaign in schedule.campaigns: 
+            campaigns_table.append(OrderedDict([
+                ('Product', self.product_labels[campaign.product_num - 1]),
+                ('Batches', campaign.num_batches),
+                ('Kg', campaign.kg),
+                ('Start', get_date_of(campaign.start)),
+                ('First Harvest', get_date_of(campaign.first_harvest)),
+                ('First Batch', get_date_of(campaign.first_batch)),
+                ('Last Batch', get_date_of(campaign.last_batch))
+            ])) 
+
+            for batch in campaign.batches:
+                batches_table.append(OrderedDict([
+                    ('Product', self.product_labels[batch.product_num - 1]),
+                    ('Kg', batch.kg),
+                    ('Start', get_date_of(batch.start)),
+                    ('Harvested on', get_date_of(batch.harvested_at)),
+                    ('Stored on', get_date_of(batch.stored_at)),
+                    ('Expires on', get_date_of(batch.expires_at)),
+                    ('Approved on', get_date_of(batch.approved_at))
+                ]))
+
+                tasks_table.append(OrderedDict([
+                    ('Product', self.product_labels[campaign.product_num - 1]),
+                    ('Task', 'Inoculation'),
+                    ('Start', batches_table[-1]['Start']),
+                    (
+                        'Finish', 
+                        batches_table[-1]['Start'] + pd.Timedelta(
+                            '%d days' % 
+                            self.input_data.inoculation_days[batch.product_num - 1]
+                        )
+                    )
+                ]))
+                tasks_table.append(OrderedDict([
+                    ('Product', self.product_labels[campaign.product_num - 1]),
+                    ('Task', 'Seed'),
+                    ('Start', tasks_table[-1]['Finish']),
+                    (
+                        'Finish', 
+                        tasks_table[-1]['Finish'] + pd.Timedelta(
+                            '%d days' % 
+                            self.input_data.seed_days[batch.product_num - 1]
+                        )
+                    )                
+                ]))
+                tasks_table.append(OrderedDict([
+                    ('Product', self.product_labels[campaign.product_num - 1]),
+                    ('Task', 'Production'),
+                    ('Start', tasks_table[-1]['Finish']),
+                    (
+                        'Finish', 
+                        tasks_table[-1]['Finish'] + pd.Timedelta(
+                            '%d days' % 
+                            self.input_data.production_days[batch.product_num - 1]
+                        )
+                    )                
+                ]))
+                tasks_table.append(OrderedDict([
+                    ('Product', self.product_labels[campaign.product_num - 1]),
+                    ('Task', 'DSP'),
+                    ('Start', tasks_table[-1]['Finish']),
+                    (
+                        'Finish', 
+                        tasks_table[-1]['Finish'] + pd.Timedelta(
+                            '%d days' % 
+                            self.input_data.dsp_days[batch.product_num - 1]
+                        )
+                    )                
+                ]))
+
+        kg_inventory, kg_backlog, kg_supply, kg_waste = [], [], [], []
+
+        for i, due_date in enumerate(self.due_dates):
+            kg_inventory.append({
+                product_label: schedule.kg_inventory[j][i] 
+                for j, product_label in enumerate(self.product_labels)
+            })
+            kg_inventory[-1].update({'date': due_date})
+
+            kg_backlog.append({
+                product_label: schedule.kg_backlog[j][i] 
+                for j, product_label in enumerate(self.product_labels)
+            })
+            kg_backlog[-1].update({'date': due_date})
+
+            kg_supply.append({
+                product_label: schedule.kg_supply[j][i] 
+                for j, product_label in enumerate(self.product_labels)
+            })
+            kg_supply[-1].update({'date': due_date})
+
+            kg_waste.append({
+                product_label: schedule.kg_waste[j][i] 
+                for j, product_label in enumerate(self.product_labels)
+            })
+            kg_waste[-1].update({'date': due_date})
+
+        return PySingleSiteSimpleSchedule(
+            {
+                obj: schedule.objectives[self.objectives[obj]] 
+                for obj in self.AVAILABLE_OBJECTIVES
+            }, 
+            campaigns_table,
+            batches_table,
+            tasks_table,
+            kg_inventory,
+            kg_backlog,
+            kg_supply,
+            kg_waste
+        )
+
+    @property
+    def schedules(self):
+        return self.schedules
+
+    @property
+    def history(self):
+        return self.history

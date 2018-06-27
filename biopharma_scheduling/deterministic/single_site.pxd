@@ -3,7 +3,7 @@ from libcpp.string cimport string
 from libcpp.vector cimport vector
 from libcpp.unordered_map cimport unordered_map
 
-from schedule cimport SingleSiteSimpleSchedule
+from schedule cimport SingleSiteSimpleSchedule, SingleSiteMultiSuiteSchedule
 
 
 cdef extern from "../input_data.h" namespace "deterministic":
@@ -81,11 +81,74 @@ cdef extern from "../input_data.h" namespace "deterministic":
         vector[int] min_batches_per_campaign,
         vector[int] max_batches_per_campaign,
         vector[vector[int]] changeover_days,
-        vector[vector[double]] *kg_inventory_target,
-        
+        vector[vector[double]] *kg_inventory_target
+
+
+    cdef cppclass SingleSiteMultiSuiteInputData:
+        SingleSiteMultiSuiteInputData()
+
+        SingleSiteMultiSuiteInputData(
+            unordered_map[OBJECTIVES, int] objectives,
+
+            int num_usp_suites,
+            int num_dsp_suites,
+
+            vector[vector[int]] demand,
+            vector[int] days_per_period,
+            
+            vector[double] usp_days,
+            vector[double] dsp_days,
+            vector[double] production_factor,
+            
+            vector[int] shelf_life,
+            vector[int] storage_cap,
+
+            vector[double] sales_price,
+            vector[double] storage_cost,
+            vector[double] backlog_penalty,
+            vector[double] waste_disposal_cost,
+            vector[double] usp_production_cost,
+            vector[double] dsp_production_cost,
+            vector[double] usp_changeover_cost,
+            vector[double] dsp_changeover_cost,
+
+            vector[double] usp_lead_days,
+            vector[double] dsp_lead_days,
+ 
+            unordered_map[OBJECTIVES, pair[int, double]] *constraints
+        )
+
+        unordered_map[OBJECTIVES, int] objectives,
+        int num_usp_suites,
+        int num_dsp_suites,
+        vector[vector[int]] demand,
+        vector[int] days_per_period,
+        vector[double] usp_days,
+        vector[double] dsp_days,
+        vector[double] production_factor,
+        vector[int] shelf_life,
+        vector[int] storage_cap,
+        vector[double] sales_price,
+        vector[double] storage_cost,
+        vector[double] backlog_penalty,
+        vector[double] waste_disposal_cost,
+        vector[double] usp_production_cost,
+        vector[double] dsp_production_cost,
+        vector[double] usp_changeover_cost,
+        vector[double] dsp_changeover_cost
+        vector[double] usp_lead_days,
+        vector[double] dsp_lead_days
+        unordered_map[OBJECTIVES, pair[int, double]] *constraints
+
 
 cdef extern from "../scheduling_models.h" namespace "deterministic" nogil:
     cdef cppclass SingleSiteSimpleModel:
         SingleSiteSimpleModel()
         SingleSiteSimpleModel(SingleSiteSimpleInputData input_data)
         void CreateSchedule[Individual](Individual &individual, SingleSiteSimpleSchedule &schedule)
+
+
+    cdef cppclass SingleSiteMultiSuiteModel:
+        SingleSiteMultiSuiteModel()
+        SingleSiteMultiSuiteModel(SingleSiteMultiSuiteInputData input_data)
+        void CreateSchedule[Individual](Individual &individual, SingleSiteMultiSuiteSchedule &schedule)
