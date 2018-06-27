@@ -531,10 +531,10 @@ void Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest()
 
 int main()
 {
-	printf("Lakhdar2005 Example 1 (base case) model test...\n\n");
+	printf("\nLakhdar2005 Example 1 (base case) model test...\n\n");
 	Lakhdar2005Ex1_BaseCaseGlobalOptimumTest();
 
-	printf("Lakhdar2005 Example 1 (increased demand for p1) model test...\n\n");
+	printf("\nLakhdar2005 Example 1 (increased demand for p1) model test...\n\n");
 	Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest();
 
 	// printf("\nLakhdar2005 Example 1 (base case) GA test...\n\n");
@@ -542,4 +542,8 @@ int main()
 
 	// printf("\nLakhdar2005 Example 1 (increased demand for p1) GA test...\n\n");
 	// Lakhdar2005Ex1_IncreasedDemandTest();
+
+	system("pause");
+
+	return 0;
 }
