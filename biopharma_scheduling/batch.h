@@ -1,3 +1,10 @@
+#if defined(__posix) || defined(__unix) || defined(__linux) || defined(__APPLE__)
+    #pragma GCC diagnostic ignored "-Wreorder"
+	#pragma GCC diagnostic ignored "-Wsign-compare"
+	#pragma GCC diagnostic ignored "-Wunused-variable"
+	#pragma GCC diagnostic ignored "-Wformat="
+#endif 
+
 #ifndef __BATCH_H__
 #define __BATCH_H__
 
@@ -8,7 +15,7 @@ namespace types
 	{
 		Batch() : 
 			product_num(-1),
-            kg(-1),
+            kg(0),
 			start(-1),
 			harvested_at(-1),
 			stored_at(-1),

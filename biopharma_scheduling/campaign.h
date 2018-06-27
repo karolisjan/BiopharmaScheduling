@@ -12,10 +12,12 @@ namespace types
 	{		
 		Campaign() :
 			product_num(-1),
-			num_batches(-1),
-			suite_num(-1),
+			num_batches(0),
+			kg(0.0),
 			start(-1),
-			end(-1)
+			first_harvest(-1),
+			first_batch(-1),
+			last_batch(-1)
 		{}
 
 

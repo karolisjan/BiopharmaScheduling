@@ -8,8 +8,9 @@
 namespace types
 {
 	template<class Gene>
-	struct NSGAIndividual : public BaseIndividual<Gene>
+	class NSGAIndividual : public BaseIndividual<Gene>
 	{
+	public:
 		using BaseIndividual<Gene>::BaseIndividual;
 
 		std::vector<double> objectives; // All objectives are minimised

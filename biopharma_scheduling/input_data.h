@@ -1,3 +1,13 @@
+#if defined(__posix) || defined(__unix) || defined(__linux) || defined(__APPLE__)
+    #pragma GCC diagnostic ignored "-Wreorder"
+	#pragma GCC diagnostic ignored "-Wsign-compare"
+	#pragma GCC diagnostic ignored "-Wunused-variable"
+	#pragma GCC diagnostic ignored "-Wformat="
+#endif 
+
+#ifndef __INPUT_DATA_H__
+#define __INPUT_DATA_H__
+
 #include <queue>
 #include <vector>
 #include <unordered_map>
@@ -260,3 +270,5 @@ namespace deterministic
         std::vector<int> batches_multiples_of_per_campaign;
 	};
 }
+
+#endif

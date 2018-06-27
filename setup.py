@@ -37,7 +37,7 @@ if __name__ == "__main__":
             Extension(
                 '*',
                 [
-                    'biopharma_scheduling/deterministic/single_site_simple.pyx'
+                    'biopharma_scheduling/deterministic/single_site.pyx'
                 ],
                 language='c++',
                 extra_compile_args=extra_compile_args
@@ -48,7 +48,10 @@ if __name__ == "__main__":
 
     setup(
         name='biopharma-scheduling',
-        packages=['biopharma_scheduling'],
+        packages=[
+            'biopharma_scheduling', 
+            'biopharma_scheduling/deterministic'
+        ],
         version='1.0',
         description='''
             Experimental tool for capacity planning and scheduling of biopharmaceutical facilities.
