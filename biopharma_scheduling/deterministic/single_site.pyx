@@ -936,7 +936,6 @@ cdef class SingleSiteMultiSuite:
             objectives,
             constraints,
             kg_demand,
-            kg_inventory_target,
             product_data, 
             changeover_days
         )
