@@ -2,10 +2,11 @@
 #include <iostream>
 
 #include "scheduling_models.h"
+#include "single_objective_ga.h"
 
 
 bool display_schedules = false;
-int seed = 0, num_threads = -1;
+int seed = 0, num_threads = 1;
 int runs = 10, gens = 1000, popsize = 200; 
 
 int starting_length = 1;
@@ -275,259 +276,259 @@ void Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest()
 	DisplaySchedule(schedule);
 }
 
-// void Lakhdar2005Ex1_BaseCaseTest()
-// {
-// 	std::unordered_map<deterministic::OBJECTIVES, int> objectives;
-// 	objectives.emplace(deterministic::TOTAL_PROFIT, -1);
+ void Lakhdar2005Ex1_BaseCaseTest()
+ {
+ 	std::unordered_map<deterministic::OBJECTIVES, int> objectives;
+ 	objectives.emplace(deterministic::TOTAL_PROFIT, 1);
 	
-// 	std::unordered_map<deterministic::OBJECTIVES, std::pair<int, double>> constraints;
-// 	constraints.emplace(deterministic::TOTAL_KG_BACKLOG, std::make_pair(-1, 0));
+ 	std::unordered_map<deterministic::OBJECTIVES, std::pair<int, double>> constraints;
+ 	constraints.emplace(deterministic::TOTAL_KG_BACKLOG, std::make_pair(-1, 0));
 
-// 	std::vector<std::vector<int>> demand =
-// 	{
-// 		{ 0, 0, 0, 6, 0, 6 },
-// 		{ 0, 0, 6, 0, 0, 0 },
-// 		{ 0, 8, 0, 0, 8, 0 }
-// 	};
+ 	std::vector<std::vector<int>> demand =
+ 	{
+ 		{ 0, 0, 0, 6, 0, 6 },
+ 		{ 0, 0, 6, 0, 0, 0 },
+ 		{ 0, 8, 0, 0, 8, 0 }
+ 	};
 
-// 	std::vector<int> days_per_period = { 60, 60, 60, 60, 60, 60 };
+ 	std::vector<int> days_per_period = { 60, 60, 60, 60, 60, 60 };
 
-//     int num_usp_suites = 2, num_dsp_suites = 2, num_products = demand.size();
+     int num_usp_suites = 2, num_dsp_suites = 2, num_products = demand.size();
 
-// 	std::vector<double> sales_price = { 20, 20, 20 };
-// 	std::vector<double> usp_production_cost = { 2, 2, 2 };
-//     std::vector<double> dsp_production_cost = { 2, 2, 2 };
-// 	std::vector<double> waste_disposal_cost = { 1, 1, 1 };
-// 	std::vector<double> storage_cost = { 1, 1, 1 };
-// 	std::vector<double> backlog_penalty = { 20, 20, 20 };
-// 	std::vector<double> usp_changeover_cost = { 1, 1, 1 };
-//     std::vector<double> dsp_changeover_cost = { 1, 1, 1 };
+	std::vector<double> sales_price = { 20, 20, 20 };
+	std::vector<double> usp_production_cost = { 2, 2, 2 };
+	std::vector<double> dsp_production_cost = { 2, 2, 2 };
+	std::vector<double> waste_disposal_cost = { 1, 1, 1 };
+	std::vector<double> storage_cost = { 1, 1, 1 };
+	std::vector<double> backlog_penalty = { 20, 20, 20 };
+	std::vector<double> usp_changeover_cost = { 1, 1, 1 };
+	std::vector<double> dsp_changeover_cost = { 1, 1, 1 };
  
-// 	std::vector<double> usp_days = { 20, 22, 12.5 };
-// 	std::vector<double> dsp_days = { 10, 10, 10 };
-//     std::vector<double> production_factor = { 1, 1, 1 };
+	std::vector<double> usp_days = { 20, 22, 12.5 };
+	std::vector<double> dsp_days = { 10, 10, 10 };
+	std::vector<double> production_factor = { 1, 1, 1 };
 
-//     std::vector<double> usp_lead_days = { 10, 10, 10 };
-// 	std::vector<double> dsp_lead_days = { 10, 10, 12.5 };
+	std::vector<double> usp_lead_days = { 10, 10, 10 };
+	std::vector<double> dsp_lead_days = { 10, 10, 12.5 };
 
-// 	std::vector<int> shelf_life = { 180, 180, 180 };
-// 	std::vector<int> storage_cap = { 40, 40, 40 };
+	std::vector<int> shelf_life = { 180, 180, 180 };
+	std::vector<int> storage_cap = { 40, 40, 40 };
 
-//     deterministic::SingleSiteMultiSuiteInputData input_data(
-// 		objectives, 
+	deterministic::SingleSiteMultiSuiteInputData input_data(
+ 		objectives, 
 
-//         num_usp_suites,
-//         num_dsp_suites,
+		num_usp_suites,
+		num_dsp_suites,
 
-//         demand,
-//         days_per_period,
+		demand,
+		days_per_period,
 
-//         usp_days,
-//         dsp_days,
-//         production_factor,
+		usp_days,
+		dsp_days,
+		production_factor,
         
-//         shelf_life,
-//         storage_cap,
+		shelf_life,
+		storage_cap,
 
-//         sales_price,
-//         storage_cost,
-//         backlog_penalty,
-//         waste_disposal_cost,
-//         usp_production_cost,
-//         dsp_production_cost,
-//         usp_changeover_cost,
-//         dsp_changeover_cost,
+		sales_price,
+		storage_cost,
+		backlog_penalty,
+		waste_disposal_cost,
+		usp_production_cost,
+		dsp_production_cost,
+		usp_changeover_cost,
+		dsp_changeover_cost,
 
-//         usp_lead_days,
-//         dsp_lead_days,
+		usp_lead_days,
+		dsp_lead_days,
 
-// 		&constraints
-//     );
+ 		&constraints
+	);
 
-// 	deterministic::SingleSiteMultiSuiteModel single_site_multi_suite_model(input_data);
+ 	deterministic::SingleSiteMultiSuiteModel single_site_multi_suite_model(input_data);
 
-// 	algorithms::SingleObjectiveGA<types::SingleObjectiveIndividual<types::SingleSiteMultiSuiteGene>, deterministic::SingleSiteMultiSuiteModel> simple_ga(
-// 		single_site_multi_suite_model,
-// 		seed,
-// 		num_threads
-// 	);
+ 	algorithms::SingleObjectiveGA<types::SingleObjectiveIndividual<types::SingleSiteMultiSuiteGene>, deterministic::SingleSiteMultiSuiteModel> simple_ga(
+ 		single_site_multi_suite_model,
+ 		seed,
+ 		num_threads
+ 	);
 
-// 	for (int run = 0; run != runs; ++run) {
-// 		simple_ga.Init(
-// 			popsize,
-// 			starting_length,
-// 			p_xo,
-// 			p_gene_swap,
-// 			num_products,
-// 			num_usp_suites,
-// 			p_product_mut,
-// 			p_usp_suite_mut,
-// 			p_plus_batch_mut,
-// 			p_minus_batch_mut
-// 		);
+ 	for (int run = 0; run != runs; ++run) {
+ 		simple_ga.Init(
+ 			popsize,
+ 			starting_length,
+ 			p_xo,
+ 			p_gene_swap,
+ 			num_products,
+ 			num_usp_suites,
+ 			p_product_mut,
+ 			p_usp_suite_mut,
+ 			p_plus_batch_mut,
+ 			p_minus_batch_mut
+ 		);
 
-// 		for (int gen = 0; gen < gens; ++gen) {
-// 			simple_ga.Update();
+ 		for (int gen = 0; gen != gens; ++gen) {
+ 			simple_ga.Update();
 
-// 			printf(
-// 				"\rRun %d, Gen: %d, Best: %.1f, Constraint: %.1f, Length: %d",
-// 				run + 1, gen + 1, simple_ga.Top().objective, simple_ga.Top().constraints, simple_ga.Top().genes.size()
-// 			);
+ 			printf(
+ 				"\rRun %d, Gen: %d, Best: %.1f, Constraint: %.1f, Length: %d",
+ 				run + 1, gen + 1, simple_ga.Top().objective, simple_ga.Top().constraints, simple_ga.Top().genes.size()
+ 			);
 
-// 			std::cout << std::flush;
-// 		}
+ 			std::cout << std::flush;
+ 		}
 
-// 		auto best = simple_ga.Top();
+ 		auto best = simple_ga.Top();
 
-// 		types::SingleSiteMultiSuiteSchedule schedule;
-// 		single_site_multi_suite_model.CreateSchedule(best, schedule);
+ 		types::SingleSiteMultiSuiteSchedule schedule;
+ 		single_site_multi_suite_model.CreateSchedule(best, schedule);
 
-// 		int total_num_usp_campaigns = 0;
+ 		int total_num_usp_campaigns = 0;
 
-// 		for (int usp_suite = 0; usp_suite != num_usp_suites; ++usp_suite) {
-// 			total_num_usp_campaigns += schedule.suites[usp_suite].size();
-// 		}
+ 		for (int usp_suite = 0; usp_suite != num_usp_suites; ++usp_suite) {
+ 			total_num_usp_campaigns += schedule.suites[usp_suite].size();
+ 		}
 
-// 		printf(
-// 			", (%.1f, %.1f, %d)\n", 
-// 			schedule.objectives[deterministic::OBJECTIVES::TOTAL_PROFIT], 
-// 			schedule.objectives[deterministic::OBJECTIVES::TOTAL_BACKLOG_PENALTY],
-// 			total_num_usp_campaigns
-// 		);
-// 		std::cout << std::flush;
+ 		printf(
+ 			", (%.1f, %.1f, %d)\n", 
+ 			schedule.objectives[deterministic::OBJECTIVES::TOTAL_PROFIT], 
+ 			schedule.objectives[deterministic::OBJECTIVES::TOTAL_BACKLOG_PENALTY],
+ 			total_num_usp_campaigns
+ 		);
+ 		std::cout << std::flush;
 
-// 		if (display_schedules) {
-// 			DisplaySchedule(schedule);
-// 		}
-// 	}
-// }
+ 		if (display_schedules) {
+ 			DisplaySchedule(schedule);
+ 		}
+ 	}
+ }
 
-// void Lakhdar2005Ex1_IncreasedDemandTest()
-// {
-// 	std::unordered_map<deterministic::OBJECTIVES, int> objectives;
-// 	objectives.emplace(deterministic::TOTAL_PROFIT, -1);
+ void Lakhdar2005Ex1_IncreasedDemandTest()
+ {
+ 	std::unordered_map<deterministic::OBJECTIVES, int> objectives;
+ 	objectives.emplace(deterministic::TOTAL_PROFIT, 1);
 	
-// 	std::unordered_map<deterministic::OBJECTIVES, std::pair<int, double>> constraints;
-// 	constraints.emplace(deterministic::TOTAL_KG_BACKLOG, std::make_pair(-1, 0));
+ 	std::unordered_map<deterministic::OBJECTIVES, std::pair<int, double>> constraints;
+ 	constraints.emplace(deterministic::TOTAL_KG_BACKLOG, std::make_pair(-1, 0));
 
-// 	std::vector<std::vector<int>> demand =
-// 	{
-// 		{ 0, 0, 0, 6, 0, 9 },
-// 		{ 0, 0, 6, 0, 0, 0 },
-// 		{ 0, 8, 0, 0, 8, 0 }
-// 	};
+ 	std::vector<std::vector<int>> demand =
+ 	{
+ 		{ 0, 0, 0, 6, 0, 9 },
+ 		{ 0, 0, 6, 0, 0, 0 },
+ 		{ 0, 8, 0, 0, 8, 0 }
+ 	};
 
-// 	std::vector<int> days_per_period = { 60, 60, 60, 60, 60, 60 };
+ 	std::vector<int> days_per_period = { 60, 60, 60, 60, 60, 60 };
 
-//     int num_usp_suites = 2, num_dsp_suites = 2, num_products = demand.size();
+     int num_usp_suites = 2, num_dsp_suites = 2, num_products = demand.size();
 
-// 	std::vector<double> sales_price = { 20, 20, 20 };
-// 	std::vector<double> usp_production_cost = { 2, 2, 2 };
-//     std::vector<double> dsp_production_cost = { 2, 2, 2 };
-// 	std::vector<double> waste_disposal_cost = { 1, 1, 1 };
-// 	std::vector<double> storage_cost = { 1, 1, 1 };
-// 	std::vector<double> backlog_penalty = { 20, 20, 20 };
-// 	std::vector<double> usp_changeover_cost = { 1, 1, 1 };
-//     std::vector<double> dsp_changeover_cost = { 1, 1, 1 };
+ 	std::vector<double> sales_price = { 20, 20, 20 };
+ 	std::vector<double> usp_production_cost = { 2, 2, 2 };
+    std::vector<double> dsp_production_cost = { 2, 2, 2 };
+	std::vector<double> waste_disposal_cost = { 1, 1, 1 };
+	std::vector<double> storage_cost = { 1, 1, 1 };
+	std::vector<double> backlog_penalty = { 20, 20, 20 };
+	std::vector<double> usp_changeover_cost = { 1, 1, 1 };
+    std::vector<double> dsp_changeover_cost = { 1, 1, 1 };
  
-// 	std::vector<double> usp_days = { 20, 22, 12.5 };
-// 	std::vector<double> dsp_days = { 10, 10, 10 };
-//     std::vector<double> production_factor = { 1, 1, 1 };
+	std::vector<double> usp_days = { 20, 22, 12.5 };
+	std::vector<double> dsp_days = { 10, 10, 10 };
+    std::vector<double> production_factor = { 1, 1, 1 };
 
-//     std::vector<double> usp_lead_days = { 10, 10, 10 };
-// 	std::vector<double> dsp_lead_days = { 10, 10, 12.5 };
+    std::vector<double> usp_lead_days = { 10, 10, 10 };
+	std::vector<double> dsp_lead_days = { 10, 10, 12.5 };
 
-// 	std::vector<int> shelf_life = { 180, 180, 180 };
-// 	std::vector<int> storage_cap = { 40, 40, 40 };
+	std::vector<int> shelf_life = { 180, 180, 180 };
+	std::vector<int> storage_cap = { 40, 40, 40 };
 
-//     deterministic::SingleSiteMultiSuiteInputData input_data(
-// 		objectives, 
+     deterministic::SingleSiteMultiSuiteInputData input_data(
+ 		objectives, 
 
-//         num_usp_suites,
-//         num_dsp_suites,
+        num_usp_suites,
+        num_dsp_suites,
 
-//         demand,
-//         days_per_period,
+        demand,
+        days_per_period,
 
-//         usp_days,
-//         dsp_days,
-//         production_factor,
+        usp_days,
+        dsp_days,
+        production_factor,
         
-//         shelf_life,
-//         storage_cap,
+        shelf_life,
+        storage_cap,
 
-//         sales_price,
-//         storage_cost,
-//         backlog_penalty,
-//         waste_disposal_cost,
-//         usp_production_cost,
-//         dsp_production_cost,
-//         usp_changeover_cost,
-//         dsp_changeover_cost,
+        sales_price,
+        storage_cost,
+        backlog_penalty,
+        waste_disposal_cost,
+        usp_production_cost,
+        dsp_production_cost,
+        usp_changeover_cost,
+        dsp_changeover_cost,
 
-//         usp_lead_days,
-//         dsp_lead_days,
+        usp_lead_days,
+        dsp_lead_days,
 
-// 		&constraints
-//     );
+ 		&constraints
+     );
 
-// 	deterministic::SingleSiteMultiSuiteModel single_site_multi_suite_model(input_data);
+ 	deterministic::SingleSiteMultiSuiteModel single_site_multi_suite_model(input_data);
 
-// 	algorithms::SingleObjectiveGA<types::SingleObjectiveIndividual<types::SingleSiteMultiSuiteGene>, deterministic::SingleSiteMultiSuiteModel> simple_ga(
-// 		single_site_multi_suite_model,
-// 		seed,
-// 		num_threads
-// 	);
+ 	algorithms::SingleObjectiveGA<types::SingleObjectiveIndividual<types::SingleSiteMultiSuiteGene>, deterministic::SingleSiteMultiSuiteModel> simple_ga(
+ 		single_site_multi_suite_model,
+ 		seed,
+ 		num_threads
+ 	);
 
-// 	for (int run = 0; run != runs; ++run) {
-// 		simple_ga.Init(
-// 			popsize,
-// 			starting_length,
-// 			p_xo,
-// 			p_gene_swap,
-// 			num_products,
-// 			num_usp_suites,
-// 			p_product_mut,
-// 			p_usp_suite_mut,
-// 			p_plus_batch_mut,
-// 			p_minus_batch_mut
-// 		);
+ 	for (int run = 0; run != runs; ++run) {
+ 		simple_ga.Init(
+ 			popsize,
+ 			starting_length,
+ 			p_xo,
+ 			p_gene_swap,
+ 			num_products,
+ 			num_usp_suites,
+ 			p_product_mut,
+ 			p_usp_suite_mut,
+ 			p_plus_batch_mut,
+ 			p_minus_batch_mut
+ 		);
 
-// 		for (int gen = 0; gen < gens; ++gen) {
-// 			simple_ga.Update();
+ 		for (int gen = 0; gen != gens; ++gen) {
+ 			simple_ga.Update();
 
-// 			printf(
-// 				"\rRun %d, Gen: %d, Best: %.1f, Constraint: %.1f, Length: %d",
-// 				run + 1, gen + 1, simple_ga.Top().objective, simple_ga.Top().constraints, simple_ga.Top().genes.size()
-// 			);
+ 			printf(
+ 				"\rRun %d, Gen: %d, Best: %.1f, Constraint: %.1f, Length: %d",
+ 				run + 1, gen + 1, simple_ga.Top().objective, simple_ga.Top().constraints, simple_ga.Top().genes.size()
+ 			);
 
-// 			std::cout << std::flush;
-// 		}
+ 			std::cout << std::flush;
+ 		}
 
-// 		auto best = simple_ga.Top();
+ 		auto best = simple_ga.Top();
 
-// 		types::SingleSiteMultiSuiteSchedule schedule;
-// 		single_site_multi_suite_model.CreateSchedule(best, schedule);
+ 		types::SingleSiteMultiSuiteSchedule schedule;
+ 		single_site_multi_suite_model.CreateSchedule(best, schedule);
 
-// 		int total_num_usp_campaigns = 0;
+ 		int total_num_usp_campaigns = 0;
 
-// 		for (int usp_suite = 0; usp_suite != num_usp_suites; ++usp_suite) {
-// 			total_num_usp_campaigns += schedule.suites[usp_suite].size();
-// 		}
+ 		for (int usp_suite = 0; usp_suite != num_usp_suites; ++usp_suite) {
+ 			total_num_usp_campaigns += schedule.suites[usp_suite].size();
+ 		}
 
-// 		printf(
-// 			", (%.1f, %.1f, %d)\n", 
-// 			schedule.objectives[deterministic::OBJECTIVES::TOTAL_PROFIT], 
-// 			schedule.objectives[deterministic::OBJECTIVES::TOTAL_BACKLOG_PENALTY],
-// 			total_num_usp_campaigns
-// 		);
-// 		std::cout << std::flush;
+ 		printf(
+ 			", (%.1f, %.1f, %d)\n", 
+ 			schedule.objectives[deterministic::OBJECTIVES::TOTAL_PROFIT], 
+ 			schedule.objectives[deterministic::OBJECTIVES::TOTAL_BACKLOG_PENALTY],
+ 			total_num_usp_campaigns
+ 		);
+ 		std::cout << std::flush;
 
-// 		if (display_schedules) {
-// 			DisplaySchedule(schedule);
-// 		}
-// 	}
-// }
+ 		if (display_schedules) {
+ 			DisplaySchedule(schedule);
+ 		}
+ 	}
+ }
 
 int main()
 {
@@ -537,12 +538,13 @@ int main()
 	printf("\nLakhdar2005 Example 1 (increased demand for p1) model test...\n\n");
 	Lakhdar2005Ex1_IncreasedDemandGlobalOptimumTest();
 
-	// printf("\nLakhdar2005 Example 1 (base case) GA test...\n\n");
-	// Lakhdar2005Ex1_BaseCaseTest();
+	//printf("\nLakhdar2005 Example 1 (base case) GA test...\n\n");
+	//Lakhdar2005Ex1_BaseCaseTest();
 
-	// printf("\nLakhdar2005 Example 1 (increased demand for p1) GA test...\n\n");
-	// Lakhdar2005Ex1_IncreasedDemandTest();
+	printf("\nLakhdar2005 Example 1 (increased demand for p1) GA test...\n\n");
+	Lakhdar2005Ex1_IncreasedDemandTest();
 
+	printf("\n");
 	system("pause");
 
 	return 0;

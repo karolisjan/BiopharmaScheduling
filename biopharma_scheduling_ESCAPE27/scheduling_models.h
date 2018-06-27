@@ -71,11 +71,22 @@ namespace deterministic
 
 			if (schedule.suites[new_cmpgn.suite_num - 1].size()) {
 				types::Campaign &prev_cmpgn = schedule.suites[new_cmpgn.suite_num - 1].back();
-				new_cmpgn.start = prev_cmpgn.end + input_data.usp_lead_days[new_cmpgn.product_num - 1];
+
+				if (new_cmpgn.product_num) {
+					new_cmpgn.start = prev_cmpgn.end + input_data.usp_lead_days[new_cmpgn.product_num - 1];
+				}
+				else {
+					new_cmpgn.start = prev_cmpgn.end;
+				}
 			}
 			// First campaign in this suite
 			else {
-				new_cmpgn.start = input_data.usp_lead_days[new_cmpgn.product_num - 1];
+				if (new_cmpgn.product_num) {
+					new_cmpgn.start = input_data.usp_lead_days[new_cmpgn.product_num - 1];
+				}
+				else {
+					new_cmpgn.start = 0;
+				}
 			}
 
 			// Real campaign
