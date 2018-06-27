@@ -1,15 +1,11 @@
 '''
-    Install Cython v0.26 first!
-    
-    Run `python setup.py` to build C++ extensions, Python package, and Python wheel.
-
-    In order to make `biopharma-scheduling-ESCAPE27` available globally, install it from the wheel
-    by running `pip install dist/*whl`.
+    Run `python setup.py` to build the whl package
+    Install with `pip install dist/*whl`
 '''
 import os
-from pip._internal.req import parse_requirements
 from setuptools import setup, Extension
 from setuptools.dist import Distribution
+from pip._internal.req import parse_requirements
 
 
 class BinaryDistribution(Distribution):
@@ -41,7 +37,7 @@ if __name__ == "__main__":
             Extension(
                 '*',
                 [
-                    'biopharma_scheduling_ESCAPE27/scheduling_models.pyx'
+                    'biopharma_scheduling/deterministic/single_site_simple.pyx'
                 ],
                 language='c++',
                 extra_compile_args=extra_compile_args
@@ -51,12 +47,11 @@ if __name__ == "__main__":
         raise ImportError("Cython v0.26 is required. Install it with `pip install Cython==0.26`.")
 
     setup(
-        name='biopharma-scheduling-ESCAPE27',
-        packages=['biopharma_scheduling_ESCAPE27'],
+        name='biopharma-scheduling',
+        packages=['biopharma_scheduling'],
         version='1.0',
         description='''
-            Experimental tool for capacity planning and scheduling of biopharmaceutical facilities. 
-            Presented at the ESCAPE 27.
+            Experimental tool for capacity planning and scheduling of biopharmaceutical facilities.
             ''',
         author='Karolis Jankauskas',
         author_email='karolis.jankauskas@gmail.com',
