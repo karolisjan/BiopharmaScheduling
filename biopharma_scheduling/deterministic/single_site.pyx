@@ -1249,7 +1249,7 @@ cdef class SingleSiteMultiSuite:
 
                 campaigns_table.append(OrderedDict([
                     ('Product', self.product_labels[campaign.product_num - 1]),
-                    ('Suite', 'USP%d' % campaign.suite_num if campaign.suite_num < self.num_usp_suites else 'DSP%d' % (campaign.suite_num - self.num_usp_suites)),
+                    ('Suite', 'USP%d' % campaign.suite_num if campaign.suite_num <= self.num_usp_suites else 'DSP%d' % (campaign.suite_num - self.num_usp_suites)),
                     ('Batches', campaign.num_batches),
                     ('Start', get_date_of(campaign.start)),
                     ('End', get_date_of(campaign.end))
@@ -1259,7 +1259,7 @@ cdef class SingleSiteMultiSuite:
 
                     batches_table.append(OrderedDict([
                         ('Product', self.product_labels[batch.product_num - 1]),
-                        ('Suite', 'USP%d' % campaign.suite_num if campaign.suite_num < self.num_usp_suites else 'DSP%d' % (campaign.suite_num - self.num_usp_suites)),
+                        ('Suite', 'USP%d' % campaign.suite_num if campaign.suite_num <= self.num_usp_suites else 'DSP%d' % (campaign.suite_num - self.num_usp_suites)),
                         ('Start', get_date_of(batch.start)),
                         ('Stored on', get_date_of(batch.stored_at)),
                         ('Expires on', get_date_of(batch.expires_at)),
