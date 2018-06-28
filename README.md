@@ -125,8 +125,8 @@ This approach has been presented during a keynote lecture at the 27th European S
         pip install ipykernel
         python -m ipykernel install --user --name <environment-name> --display-name "<display-name>"
         ```
-    * Install [Node.js](https://nodejs.org/en/)
     * Create and activate a separate Python enviroment, and run `pip install jupyter jupyterlab`
+    * Install [Node.js](https://nodejs.org/en/)
     * Set-up [Plotly extension](https://github.com/jupyterlab/jupyter-renderers/tree/master/packages/plotly-extension) with `jupyter labextension install @jupyterlab/plotly-extension`
     * Launch `jupyter lab` and navigate to `examples` folder
 
