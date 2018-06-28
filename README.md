@@ -1,3 +1,3 @@
-# BiopharmaScheduling
+# Project
 
 Work in progress...
