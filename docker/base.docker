@@ -9,15 +9,15 @@ WORKDIR /BiopharmaScheduling
 
 # Get g++
 RUN echo "deb http://ftp.de.debian.org/debian testing main" >> /etc/apt/sources.list
-RUN apt-get --force-yes update && apt-get --assume-yes install g++
+RUN apt-get --force-yes update && apt-get --assume-yes install g++-8
 
 # Get Jupyter
 RUN pip install jupyter
 
 # Get R and its dependencies, and setup a kernel for Jupyter
-RUN apt-get --force-yes update && apt-get --assume-yes install r-base-core
-COPY ./requirements.R /BiopharmaScheduling/requirements.R
-RUN Rscript /BiopharmaScheduling/requirements.R
+# RUN apt-get --force-yes update && apt-get --assume-yes install r-base-core
+# COPY ./requirements.R /BiopharmaScheduling/requirements.R
+# RUN Rscript /BiopharmaScheduling/requirements.R
 
 # Install Cython
 RUN pip install Cython==0.26
