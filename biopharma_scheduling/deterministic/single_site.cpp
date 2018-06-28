@@ -18028,15 +18028,15 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
  *         campaigns_table = []
  *         batches_table = []             # <<<<<<<<<<<<<<
  * 
- * 
+ *         for suite in schedule.suites:
  */
   __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1245, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_batches_table = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "biopharma_scheduling/deterministic/single_site.pyx":1248
- * 
+  /* "biopharma_scheduling/deterministic/single_site.pyx":1247
+ *         batches_table = []
  * 
  *         for suite in schedule.suites:             # <<<<<<<<<<<<<<
  *             for campaign in suite:
@@ -18050,7 +18050,7 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
     ++__pyx_t_2;
     __pyx_v_suite = __pyx_t_4;
 
-    /* "biopharma_scheduling/deterministic/single_site.pyx":1249
+    /* "biopharma_scheduling/deterministic/single_site.pyx":1248
  * 
  *         for suite in schedule.suites:
  *             for campaign in suite:             # <<<<<<<<<<<<<<
@@ -18064,27 +18064,27 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
       ++__pyx_t_5;
       __pyx_v_campaign = __pyx_t_6;
 
-      /* "biopharma_scheduling/deterministic/single_site.pyx":1251
+      /* "biopharma_scheduling/deterministic/single_site.pyx":1250
  *             for campaign in suite:
  * 
  *                 campaigns_table.append(OrderedDict([             # <<<<<<<<<<<<<<
  *                     ('Product', self.product_labels[campaign.product_num - 1]),
- *                     ('Suite', ('USP%d' if campaign.suite_num < self.num_usp_suites else 'DSP%d') % campaign.suite_num + 1),
+ *                     ('Suite', 'USP%d' % campaign.suite_num if campaign.suite_num < self.num_usp_suites else 'DSP%d' % (campaign.suite_num - self.num_usp_suites)),
  */
-      __pyx_t_7 = __Pyx_GetModuleGlobalName(__pyx_n_s_OrderedDict); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1251, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_GetModuleGlobalName(__pyx_n_s_OrderedDict); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1250, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
 
-      /* "biopharma_scheduling/deterministic/single_site.pyx":1252
+      /* "biopharma_scheduling/deterministic/single_site.pyx":1251
  * 
  *                 campaigns_table.append(OrderedDict([
  *                     ('Product', self.product_labels[campaign.product_num - 1]),             # <<<<<<<<<<<<<<
- *                     ('Suite', ('USP%d' if campaign.suite_num < self.num_usp_suites else 'DSP%d') % campaign.suite_num + 1),
+ *                     ('Suite', 'USP%d' % campaign.suite_num if campaign.suite_num < self.num_usp_suites else 'DSP%d' % (campaign.suite_num - self.num_usp_suites)),
  *                     ('Batches', campaign.num_batches),
  */
       __pyx_t_8 = (__pyx_v_campaign.product_num - 1);
-      __pyx_t_9 = __Pyx_GetItemInt(__pyx_cur_scope->__pyx_v_self->product_labels, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1252, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_GetItemInt(__pyx_cur_scope->__pyx_v_self->product_labels, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1251, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
-      __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 1252, __pyx_L1_error)
+      __pyx_t_10 = PyTuple_New(2); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 1251, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
       __Pyx_INCREF(__pyx_n_s_Product);
       __Pyx_GIVEREF(__pyx_n_s_Product);
@@ -18093,96 +18093,100 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
       PyTuple_SET_ITEM(__pyx_t_10, 1, __pyx_t_9);
       __pyx_t_9 = 0;
 
-      /* "biopharma_scheduling/deterministic/single_site.pyx":1253
+      /* "biopharma_scheduling/deterministic/single_site.pyx":1252
  *                 campaigns_table.append(OrderedDict([
  *                     ('Product', self.product_labels[campaign.product_num - 1]),
- *                     ('Suite', ('USP%d' if campaign.suite_num < self.num_usp_suites else 'DSP%d') % campaign.suite_num + 1),             # <<<<<<<<<<<<<<
+ *                     ('Suite', 'USP%d' % campaign.suite_num if campaign.suite_num < self.num_usp_suites else 'DSP%d' % (campaign.suite_num - self.num_usp_suites)),             # <<<<<<<<<<<<<<
  *                     ('Batches', campaign.num_batches),
  *                     ('Start', get_date_of(campaign.start)),
  */
-      __pyx_t_11 = __Pyx_PyInt_From_int(__pyx_v_campaign.suite_num); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1253, __pyx_L1_error)
+      __pyx_t_11 = __Pyx_PyInt_From_int(__pyx_v_campaign.suite_num); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1252, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
-      __pyx_t_12 = PyObject_RichCompare(__pyx_t_11, __pyx_cur_scope->__pyx_v_self->num_usp_suites, Py_LT); __Pyx_XGOTREF(__pyx_t_12); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1253, __pyx_L1_error)
+      __pyx_t_12 = PyObject_RichCompare(__pyx_t_11, __pyx_cur_scope->__pyx_v_self->num_usp_suites, Py_LT); __Pyx_XGOTREF(__pyx_t_12); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1252, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-      __pyx_t_13 = __Pyx_PyObject_IsTrue(__pyx_t_12); if (unlikely(__pyx_t_13 < 0)) __PYX_ERR(0, 1253, __pyx_L1_error)
+      __pyx_t_13 = __Pyx_PyObject_IsTrue(__pyx_t_12); if (unlikely(__pyx_t_13 < 0)) __PYX_ERR(0, 1252, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
       if (__pyx_t_13) {
-        __Pyx_INCREF(__pyx_kp_s_USP_d);
-        __pyx_t_9 = __pyx_kp_s_USP_d;
+        __pyx_t_12 = __Pyx_PyInt_From_int(__pyx_v_campaign.suite_num); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1252, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_12);
+        __pyx_t_11 = __Pyx_PyString_Format(__pyx_kp_s_USP_d, __pyx_t_12); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1252, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_11);
+        __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+        __pyx_t_9 = __pyx_t_11;
+        __pyx_t_11 = 0;
       } else {
-        __Pyx_INCREF(__pyx_kp_s_DSP_d);
-        __pyx_t_9 = __pyx_kp_s_DSP_d;
+        __pyx_t_11 = __Pyx_PyInt_From_int(__pyx_v_campaign.suite_num); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1252, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_11);
+        __pyx_t_12 = PyNumber_Subtract(__pyx_t_11, __pyx_cur_scope->__pyx_v_self->num_usp_suites); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1252, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_12);
+        __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+        __pyx_t_11 = __Pyx_PyString_Format(__pyx_kp_s_DSP_d, __pyx_t_12); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1252, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_11);
+        __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+        __pyx_t_9 = __pyx_t_11;
+        __pyx_t_11 = 0;
       }
-      __pyx_t_12 = __Pyx_PyInt_From_int(__pyx_v_campaign.suite_num); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1253, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_12);
-      __pyx_t_11 = __Pyx_PyString_FormatSafe(__pyx_t_9, __pyx_t_12); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1253, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_11);
-      __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-      __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-      __pyx_t_12 = PyNumber_Add(__pyx_t_11, __pyx_int_1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1253, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_12);
-      __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-      __pyx_t_11 = PyTuple_New(2); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1253, __pyx_L1_error)
+      __pyx_t_11 = PyTuple_New(2); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1252, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
       __Pyx_INCREF(__pyx_n_s_Suite);
       __Pyx_GIVEREF(__pyx_n_s_Suite);
       PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_n_s_Suite);
-      __Pyx_GIVEREF(__pyx_t_12);
-      PyTuple_SET_ITEM(__pyx_t_11, 1, __pyx_t_12);
-      __pyx_t_12 = 0;
+      __Pyx_GIVEREF(__pyx_t_9);
+      PyTuple_SET_ITEM(__pyx_t_11, 1, __pyx_t_9);
+      __pyx_t_9 = 0;
 
-      /* "biopharma_scheduling/deterministic/single_site.pyx":1254
+      /* "biopharma_scheduling/deterministic/single_site.pyx":1253
  *                     ('Product', self.product_labels[campaign.product_num - 1]),
- *                     ('Suite', ('USP%d' if campaign.suite_num < self.num_usp_suites else 'DSP%d') % campaign.suite_num + 1),
+ *                     ('Suite', 'USP%d' % campaign.suite_num if campaign.suite_num < self.num_usp_suites else 'DSP%d' % (campaign.suite_num - self.num_usp_suites)),
  *                     ('Batches', campaign.num_batches),             # <<<<<<<<<<<<<<
  *                     ('Start', get_date_of(campaign.start)),
  *                     ('End', get_date_of(campaign.end))
  */
-      __pyx_t_12 = __Pyx_PyInt_From_int(__pyx_v_campaign.num_batches); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1254, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_12);
-      __pyx_t_9 = PyTuple_New(2); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1254, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyInt_From_int(__pyx_v_campaign.num_batches); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1253, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
+      __pyx_t_12 = PyTuple_New(2); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1253, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_12);
       __Pyx_INCREF(__pyx_n_s_Batches);
       __Pyx_GIVEREF(__pyx_n_s_Batches);
-      PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_n_s_Batches);
-      __Pyx_GIVEREF(__pyx_t_12);
-      PyTuple_SET_ITEM(__pyx_t_9, 1, __pyx_t_12);
-      __pyx_t_12 = 0;
+      PyTuple_SET_ITEM(__pyx_t_12, 0, __pyx_n_s_Batches);
+      __Pyx_GIVEREF(__pyx_t_9);
+      PyTuple_SET_ITEM(__pyx_t_12, 1, __pyx_t_9);
+      __pyx_t_9 = 0;
 
-      /* "biopharma_scheduling/deterministic/single_site.pyx":1255
- *                     ('Suite', ('USP%d' if campaign.suite_num < self.num_usp_suites else 'DSP%d') % campaign.suite_num + 1),
+      /* "biopharma_scheduling/deterministic/single_site.pyx":1254
+ *                     ('Suite', 'USP%d' % campaign.suite_num if campaign.suite_num < self.num_usp_suites else 'DSP%d' % (campaign.suite_num - self.num_usp_suites)),
  *                     ('Batches', campaign.num_batches),
  *                     ('Start', get_date_of(campaign.start)),             # <<<<<<<<<<<<<<
  *                     ('End', get_date_of(campaign.end))
  *                 ]))
  */
-      __pyx_t_12 = PyFloat_FromDouble(__pyx_v_campaign.start); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1255, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_12);
-      __pyx_t_14 = __pyx_pf_20biopharma_scheduling_13deterministic_11single_site_20SingleSiteMultiSuite_17__make_pyschedule_get_date_of(__pyx_v_get_date_of, __pyx_t_12); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1255, __pyx_L1_error)
+      __pyx_t_9 = PyFloat_FromDouble(__pyx_v_campaign.start); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1254, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_9);
+      __pyx_t_14 = __pyx_pf_20biopharma_scheduling_13deterministic_11single_site_20SingleSiteMultiSuite_17__make_pyschedule_get_date_of(__pyx_v_get_date_of, __pyx_t_9); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1254, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_14);
-      __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-      __pyx_t_12 = PyTuple_New(2); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1255, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_12);
+      __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+      __pyx_t_9 = PyTuple_New(2); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1254, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_9);
       __Pyx_INCREF(__pyx_n_s_Start);
       __Pyx_GIVEREF(__pyx_n_s_Start);
-      PyTuple_SET_ITEM(__pyx_t_12, 0, __pyx_n_s_Start);
+      PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_n_s_Start);
       __Pyx_GIVEREF(__pyx_t_14);
-      PyTuple_SET_ITEM(__pyx_t_12, 1, __pyx_t_14);
+      PyTuple_SET_ITEM(__pyx_t_9, 1, __pyx_t_14);
       __pyx_t_14 = 0;
 
-      /* "biopharma_scheduling/deterministic/single_site.pyx":1256
+      /* "biopharma_scheduling/deterministic/single_site.pyx":1255
  *                     ('Batches', campaign.num_batches),
  *                     ('Start', get_date_of(campaign.start)),
  *                     ('End', get_date_of(campaign.end))             # <<<<<<<<<<<<<<
  *                 ]))
  * 
  */
-      __pyx_t_14 = PyFloat_FromDouble(__pyx_v_campaign.end); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1256, __pyx_L1_error)
+      __pyx_t_14 = PyFloat_FromDouble(__pyx_v_campaign.end); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1255, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_14);
-      __pyx_t_15 = __pyx_pf_20biopharma_scheduling_13deterministic_11single_site_20SingleSiteMultiSuite_17__make_pyschedule_get_date_of(__pyx_v_get_date_of, __pyx_t_14); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 1256, __pyx_L1_error)
+      __pyx_t_15 = __pyx_pf_20biopharma_scheduling_13deterministic_11single_site_20SingleSiteMultiSuite_17__make_pyschedule_get_date_of(__pyx_v_get_date_of, __pyx_t_14); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 1255, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_15);
       __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-      __pyx_t_14 = PyTuple_New(2); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1256, __pyx_L1_error)
+      __pyx_t_14 = PyTuple_New(2); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1255, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_14);
       __Pyx_INCREF(__pyx_n_s_End);
       __Pyx_GIVEREF(__pyx_n_s_End);
@@ -18191,29 +18195,29 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
       PyTuple_SET_ITEM(__pyx_t_14, 1, __pyx_t_15);
       __pyx_t_15 = 0;
 
-      /* "biopharma_scheduling/deterministic/single_site.pyx":1251
+      /* "biopharma_scheduling/deterministic/single_site.pyx":1250
  *             for campaign in suite:
  * 
  *                 campaigns_table.append(OrderedDict([             # <<<<<<<<<<<<<<
  *                     ('Product', self.product_labels[campaign.product_num - 1]),
- *                     ('Suite', ('USP%d' if campaign.suite_num < self.num_usp_suites else 'DSP%d') % campaign.suite_num + 1),
+ *                     ('Suite', 'USP%d' % campaign.suite_num if campaign.suite_num < self.num_usp_suites else 'DSP%d' % (campaign.suite_num - self.num_usp_suites)),
  */
-      __pyx_t_15 = PyList_New(5); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 1251, __pyx_L1_error)
+      __pyx_t_15 = PyList_New(5); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 1250, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_15);
       __Pyx_GIVEREF(__pyx_t_10);
       PyList_SET_ITEM(__pyx_t_15, 0, __pyx_t_10);
       __Pyx_GIVEREF(__pyx_t_11);
       PyList_SET_ITEM(__pyx_t_15, 1, __pyx_t_11);
-      __Pyx_GIVEREF(__pyx_t_9);
-      PyList_SET_ITEM(__pyx_t_15, 2, __pyx_t_9);
       __Pyx_GIVEREF(__pyx_t_12);
-      PyList_SET_ITEM(__pyx_t_15, 3, __pyx_t_12);
+      PyList_SET_ITEM(__pyx_t_15, 2, __pyx_t_12);
+      __Pyx_GIVEREF(__pyx_t_9);
+      PyList_SET_ITEM(__pyx_t_15, 3, __pyx_t_9);
       __Pyx_GIVEREF(__pyx_t_14);
       PyList_SET_ITEM(__pyx_t_15, 4, __pyx_t_14);
       __pyx_t_10 = 0;
       __pyx_t_11 = 0;
-      __pyx_t_9 = 0;
       __pyx_t_12 = 0;
+      __pyx_t_9 = 0;
       __pyx_t_14 = 0;
       __pyx_t_14 = NULL;
       if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_7))) {
@@ -18226,14 +18230,14 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
         }
       }
       if (!__pyx_t_14) {
-        __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_15); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1251, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_15); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1250, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
         __Pyx_GOTREF(__pyx_t_1);
       } else {
         #if CYTHON_FAST_PYCALL
         if (PyFunction_Check(__pyx_t_7)) {
           PyObject *__pyx_temp[2] = {__pyx_t_14, __pyx_t_15};
-          __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_7, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1251, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_7, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1250, __pyx_L1_error)
           __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
           __Pyx_GOTREF(__pyx_t_1);
           __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
@@ -18242,29 +18246,29 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
         #if CYTHON_FAST_PYCCALL
         if (__Pyx_PyFastCFunction_Check(__pyx_t_7)) {
           PyObject *__pyx_temp[2] = {__pyx_t_14, __pyx_t_15};
-          __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_7, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1251, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_7, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1250, __pyx_L1_error)
           __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
           __Pyx_GOTREF(__pyx_t_1);
           __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
         } else
         #endif
         {
-          __pyx_t_12 = PyTuple_New(1+1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1251, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_12);
-          __Pyx_GIVEREF(__pyx_t_14); PyTuple_SET_ITEM(__pyx_t_12, 0, __pyx_t_14); __pyx_t_14 = NULL;
+          __pyx_t_9 = PyTuple_New(1+1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1250, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_9);
+          __Pyx_GIVEREF(__pyx_t_14); PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_14); __pyx_t_14 = NULL;
           __Pyx_GIVEREF(__pyx_t_15);
-          PyTuple_SET_ITEM(__pyx_t_12, 0+1, __pyx_t_15);
+          PyTuple_SET_ITEM(__pyx_t_9, 0+1, __pyx_t_15);
           __pyx_t_15 = 0;
-          __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_12, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1251, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_9, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1250, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
-          __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+          __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
         }
       }
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      __pyx_t_16 = __Pyx_PyList_Append(__pyx_v_campaigns_table, __pyx_t_1); if (unlikely(__pyx_t_16 == -1)) __PYX_ERR(0, 1251, __pyx_L1_error)
+      __pyx_t_16 = __Pyx_PyList_Append(__pyx_v_campaigns_table, __pyx_t_1); if (unlikely(__pyx_t_16 == -1)) __PYX_ERR(0, 1250, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-      /* "biopharma_scheduling/deterministic/single_site.pyx":1259
+      /* "biopharma_scheduling/deterministic/single_site.pyx":1258
  *                 ]))
  * 
  *                 for batch in campaign.batches:             # <<<<<<<<<<<<<<
@@ -18279,65 +18283,69 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
         ++__pyx_t_17;
         __pyx_v_batch = __pyx_t_19;
 
-        /* "biopharma_scheduling/deterministic/single_site.pyx":1261
+        /* "biopharma_scheduling/deterministic/single_site.pyx":1260
  *                 for batch in campaign.batches:
  * 
  *                     batches_table.append(OrderedDict([             # <<<<<<<<<<<<<<
  *                         ('Product', self.product_labels[batch.product_num - 1]),
- *                         ('Suite', ('USP%d' if campaign.suite_num < self.num_usp_suites else 'DSP%d') % campaign.suite_num + 1),
+ *                         ('Suite', 'USP%d' % campaign.suite_num if campaign.suite_num < self.num_usp_suites else 'DSP%d' % (campaign.suite_num - self.num_usp_suites)),
  */
-        __pyx_t_7 = __Pyx_GetModuleGlobalName(__pyx_n_s_OrderedDict); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1261, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_GetModuleGlobalName(__pyx_n_s_OrderedDict); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1260, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_7);
 
-        /* "biopharma_scheduling/deterministic/single_site.pyx":1262
+        /* "biopharma_scheduling/deterministic/single_site.pyx":1261
  * 
  *                     batches_table.append(OrderedDict([
  *                         ('Product', self.product_labels[batch.product_num - 1]),             # <<<<<<<<<<<<<<
- *                         ('Suite', ('USP%d' if campaign.suite_num < self.num_usp_suites else 'DSP%d') % campaign.suite_num + 1),
+ *                         ('Suite', 'USP%d' % campaign.suite_num if campaign.suite_num < self.num_usp_suites else 'DSP%d' % (campaign.suite_num - self.num_usp_suites)),
  *                         ('Start', get_date_of(batch.start)),
  */
         __pyx_t_8 = (__pyx_v_batch.product_num - 1);
-        __pyx_t_12 = __Pyx_GetItemInt(__pyx_cur_scope->__pyx_v_self->product_labels, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1262, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_12);
-        __pyx_t_15 = PyTuple_New(2); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 1262, __pyx_L1_error)
+        __pyx_t_9 = __Pyx_GetItemInt(__pyx_cur_scope->__pyx_v_self->product_labels, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1261, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_9);
+        __pyx_t_15 = PyTuple_New(2); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 1261, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_15);
         __Pyx_INCREF(__pyx_n_s_Product);
         __Pyx_GIVEREF(__pyx_n_s_Product);
         PyTuple_SET_ITEM(__pyx_t_15, 0, __pyx_n_s_Product);
-        __Pyx_GIVEREF(__pyx_t_12);
-        PyTuple_SET_ITEM(__pyx_t_15, 1, __pyx_t_12);
-        __pyx_t_12 = 0;
+        __Pyx_GIVEREF(__pyx_t_9);
+        PyTuple_SET_ITEM(__pyx_t_15, 1, __pyx_t_9);
+        __pyx_t_9 = 0;
 
-        /* "biopharma_scheduling/deterministic/single_site.pyx":1263
+        /* "biopharma_scheduling/deterministic/single_site.pyx":1262
  *                     batches_table.append(OrderedDict([
  *                         ('Product', self.product_labels[batch.product_num - 1]),
- *                         ('Suite', ('USP%d' if campaign.suite_num < self.num_usp_suites else 'DSP%d') % campaign.suite_num + 1),             # <<<<<<<<<<<<<<
+ *                         ('Suite', 'USP%d' % campaign.suite_num if campaign.suite_num < self.num_usp_suites else 'DSP%d' % (campaign.suite_num - self.num_usp_suites)),             # <<<<<<<<<<<<<<
  *                         ('Start', get_date_of(batch.start)),
  *                         ('Stored on', get_date_of(batch.stored_at)),
  */
-        __pyx_t_14 = __Pyx_PyInt_From_int(__pyx_v_campaign.suite_num); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1263, __pyx_L1_error)
+        __pyx_t_14 = __Pyx_PyInt_From_int(__pyx_v_campaign.suite_num); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1262, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_14);
-        __pyx_t_9 = PyObject_RichCompare(__pyx_t_14, __pyx_cur_scope->__pyx_v_self->num_usp_suites, Py_LT); __Pyx_XGOTREF(__pyx_t_9); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1263, __pyx_L1_error)
+        __pyx_t_12 = PyObject_RichCompare(__pyx_t_14, __pyx_cur_scope->__pyx_v_self->num_usp_suites, Py_LT); __Pyx_XGOTREF(__pyx_t_12); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1262, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-        __pyx_t_13 = __Pyx_PyObject_IsTrue(__pyx_t_9); if (unlikely(__pyx_t_13 < 0)) __PYX_ERR(0, 1263, __pyx_L1_error)
-        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-        if (__pyx_t_13) {
-          __Pyx_INCREF(__pyx_kp_s_USP_d);
-          __pyx_t_12 = __pyx_kp_s_USP_d;
-        } else {
-          __Pyx_INCREF(__pyx_kp_s_DSP_d);
-          __pyx_t_12 = __pyx_kp_s_DSP_d;
-        }
-        __pyx_t_9 = __Pyx_PyInt_From_int(__pyx_v_campaign.suite_num); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1263, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_9);
-        __pyx_t_14 = __Pyx_PyString_FormatSafe(__pyx_t_12, __pyx_t_9); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1263, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_14);
+        __pyx_t_13 = __Pyx_PyObject_IsTrue(__pyx_t_12); if (unlikely(__pyx_t_13 < 0)) __PYX_ERR(0, 1262, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-        __pyx_t_9 = PyNumber_Add(__pyx_t_14, __pyx_int_1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1263, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_9);
-        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-        __pyx_t_14 = PyTuple_New(2); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1263, __pyx_L1_error)
+        if (__pyx_t_13) {
+          __pyx_t_12 = __Pyx_PyInt_From_int(__pyx_v_campaign.suite_num); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1262, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_12);
+          __pyx_t_14 = __Pyx_PyString_Format(__pyx_kp_s_USP_d, __pyx_t_12); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1262, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_14);
+          __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+          __pyx_t_9 = __pyx_t_14;
+          __pyx_t_14 = 0;
+        } else {
+          __pyx_t_14 = __Pyx_PyInt_From_int(__pyx_v_campaign.suite_num); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1262, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_14);
+          __pyx_t_12 = PyNumber_Subtract(__pyx_t_14, __pyx_cur_scope->__pyx_v_self->num_usp_suites); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1262, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_12);
+          __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
+          __pyx_t_14 = __Pyx_PyString_Format(__pyx_kp_s_DSP_d, __pyx_t_12); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1262, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_14);
+          __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+          __pyx_t_9 = __pyx_t_14;
+          __pyx_t_14 = 0;
+        }
+        __pyx_t_14 = PyTuple_New(2); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1262, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_14);
         __Pyx_INCREF(__pyx_n_s_Suite);
         __Pyx_GIVEREF(__pyx_n_s_Suite);
@@ -18346,19 +18354,19 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
         PyTuple_SET_ITEM(__pyx_t_14, 1, __pyx_t_9);
         __pyx_t_9 = 0;
 
-        /* "biopharma_scheduling/deterministic/single_site.pyx":1264
+        /* "biopharma_scheduling/deterministic/single_site.pyx":1263
  *                         ('Product', self.product_labels[batch.product_num - 1]),
- *                         ('Suite', ('USP%d' if campaign.suite_num < self.num_usp_suites else 'DSP%d') % campaign.suite_num + 1),
+ *                         ('Suite', 'USP%d' % campaign.suite_num if campaign.suite_num < self.num_usp_suites else 'DSP%d' % (campaign.suite_num - self.num_usp_suites)),
  *                         ('Start', get_date_of(batch.start)),             # <<<<<<<<<<<<<<
  *                         ('Stored on', get_date_of(batch.stored_at)),
  *                         ('Expires on', get_date_of(batch.expires_at)),
  */
-        __pyx_t_9 = __Pyx_PyInt_From_int(__pyx_v_batch.start); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1264, __pyx_L1_error)
+        __pyx_t_9 = __Pyx_PyInt_From_int(__pyx_v_batch.start); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1263, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_9);
-        __pyx_t_12 = __pyx_pf_20biopharma_scheduling_13deterministic_11single_site_20SingleSiteMultiSuite_17__make_pyschedule_get_date_of(__pyx_v_get_date_of, __pyx_t_9); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1264, __pyx_L1_error)
+        __pyx_t_12 = __pyx_pf_20biopharma_scheduling_13deterministic_11single_site_20SingleSiteMultiSuite_17__make_pyschedule_get_date_of(__pyx_v_get_date_of, __pyx_t_9); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1263, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_12);
         __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-        __pyx_t_9 = PyTuple_New(2); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1264, __pyx_L1_error)
+        __pyx_t_9 = PyTuple_New(2); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1263, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_9);
         __Pyx_INCREF(__pyx_n_s_Start);
         __Pyx_GIVEREF(__pyx_n_s_Start);
@@ -18367,19 +18375,19 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
         PyTuple_SET_ITEM(__pyx_t_9, 1, __pyx_t_12);
         __pyx_t_12 = 0;
 
-        /* "biopharma_scheduling/deterministic/single_site.pyx":1265
- *                         ('Suite', ('USP%d' if campaign.suite_num < self.num_usp_suites else 'DSP%d') % campaign.suite_num + 1),
+        /* "biopharma_scheduling/deterministic/single_site.pyx":1264
+ *                         ('Suite', 'USP%d' % campaign.suite_num if campaign.suite_num < self.num_usp_suites else 'DSP%d' % (campaign.suite_num - self.num_usp_suites)),
  *                         ('Start', get_date_of(batch.start)),
  *                         ('Stored on', get_date_of(batch.stored_at)),             # <<<<<<<<<<<<<<
  *                         ('Expires on', get_date_of(batch.expires_at)),
  *                     ]))
  */
-        __pyx_t_12 = __Pyx_PyInt_From_int(__pyx_v_batch.stored_at); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1265, __pyx_L1_error)
+        __pyx_t_12 = __Pyx_PyInt_From_int(__pyx_v_batch.stored_at); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1264, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_12);
-        __pyx_t_11 = __pyx_pf_20biopharma_scheduling_13deterministic_11single_site_20SingleSiteMultiSuite_17__make_pyschedule_get_date_of(__pyx_v_get_date_of, __pyx_t_12); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1265, __pyx_L1_error)
+        __pyx_t_11 = __pyx_pf_20biopharma_scheduling_13deterministic_11single_site_20SingleSiteMultiSuite_17__make_pyschedule_get_date_of(__pyx_v_get_date_of, __pyx_t_12); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1264, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
         __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-        __pyx_t_12 = PyTuple_New(2); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1265, __pyx_L1_error)
+        __pyx_t_12 = PyTuple_New(2); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1264, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_12);
         __Pyx_INCREF(__pyx_kp_s_Stored_on);
         __Pyx_GIVEREF(__pyx_kp_s_Stored_on);
@@ -18388,19 +18396,19 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
         PyTuple_SET_ITEM(__pyx_t_12, 1, __pyx_t_11);
         __pyx_t_11 = 0;
 
-        /* "biopharma_scheduling/deterministic/single_site.pyx":1266
+        /* "biopharma_scheduling/deterministic/single_site.pyx":1265
  *                         ('Start', get_date_of(batch.start)),
  *                         ('Stored on', get_date_of(batch.stored_at)),
  *                         ('Expires on', get_date_of(batch.expires_at)),             # <<<<<<<<<<<<<<
  *                     ]))
  * 
  */
-        __pyx_t_11 = __Pyx_PyInt_From_int(__pyx_v_batch.expires_at); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1266, __pyx_L1_error)
+        __pyx_t_11 = __Pyx_PyInt_From_int(__pyx_v_batch.expires_at); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1265, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
-        __pyx_t_10 = __pyx_pf_20biopharma_scheduling_13deterministic_11single_site_20SingleSiteMultiSuite_17__make_pyschedule_get_date_of(__pyx_v_get_date_of, __pyx_t_11); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 1266, __pyx_L1_error)
+        __pyx_t_10 = __pyx_pf_20biopharma_scheduling_13deterministic_11single_site_20SingleSiteMultiSuite_17__make_pyschedule_get_date_of(__pyx_v_get_date_of, __pyx_t_11); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 1265, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-        __pyx_t_11 = PyTuple_New(2); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1266, __pyx_L1_error)
+        __pyx_t_11 = PyTuple_New(2); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1265, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
         __Pyx_INCREF(__pyx_kp_s_Expires_on);
         __Pyx_GIVEREF(__pyx_kp_s_Expires_on);
@@ -18409,14 +18417,14 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
         PyTuple_SET_ITEM(__pyx_t_11, 1, __pyx_t_10);
         __pyx_t_10 = 0;
 
-        /* "biopharma_scheduling/deterministic/single_site.pyx":1261
+        /* "biopharma_scheduling/deterministic/single_site.pyx":1260
  *                 for batch in campaign.batches:
  * 
  *                     batches_table.append(OrderedDict([             # <<<<<<<<<<<<<<
  *                         ('Product', self.product_labels[batch.product_num - 1]),
- *                         ('Suite', ('USP%d' if campaign.suite_num < self.num_usp_suites else 'DSP%d') % campaign.suite_num + 1),
+ *                         ('Suite', 'USP%d' % campaign.suite_num if campaign.suite_num < self.num_usp_suites else 'DSP%d' % (campaign.suite_num - self.num_usp_suites)),
  */
-        __pyx_t_10 = PyList_New(5); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 1261, __pyx_L1_error)
+        __pyx_t_10 = PyList_New(5); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 1260, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
         __Pyx_GIVEREF(__pyx_t_15);
         PyList_SET_ITEM(__pyx_t_10, 0, __pyx_t_15);
@@ -18444,14 +18452,14 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
           }
         }
         if (!__pyx_t_11) {
-          __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_10); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1261, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_10); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1260, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
           __Pyx_GOTREF(__pyx_t_1);
         } else {
           #if CYTHON_FAST_PYCALL
           if (PyFunction_Check(__pyx_t_7)) {
             PyObject *__pyx_temp[2] = {__pyx_t_11, __pyx_t_10};
-            __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_7, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1261, __pyx_L1_error)
+            __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_7, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1260, __pyx_L1_error)
             __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
             __Pyx_GOTREF(__pyx_t_1);
             __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
@@ -18460,29 +18468,29 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
           #if CYTHON_FAST_PYCCALL
           if (__Pyx_PyFastCFunction_Check(__pyx_t_7)) {
             PyObject *__pyx_temp[2] = {__pyx_t_11, __pyx_t_10};
-            __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_7, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1261, __pyx_L1_error)
+            __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_7, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1260, __pyx_L1_error)
             __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
             __Pyx_GOTREF(__pyx_t_1);
             __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
           } else
           #endif
           {
-            __pyx_t_12 = PyTuple_New(1+1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1261, __pyx_L1_error)
+            __pyx_t_12 = PyTuple_New(1+1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1260, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_12);
             __Pyx_GIVEREF(__pyx_t_11); PyTuple_SET_ITEM(__pyx_t_12, 0, __pyx_t_11); __pyx_t_11 = NULL;
             __Pyx_GIVEREF(__pyx_t_10);
             PyTuple_SET_ITEM(__pyx_t_12, 0+1, __pyx_t_10);
             __pyx_t_10 = 0;
-            __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_12, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1261, __pyx_L1_error)
+            __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_12, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1260, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_1);
             __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
           }
         }
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-        __pyx_t_16 = __Pyx_PyList_Append(__pyx_v_batches_table, __pyx_t_1); if (unlikely(__pyx_t_16 == -1)) __PYX_ERR(0, 1261, __pyx_L1_error)
+        __pyx_t_16 = __Pyx_PyList_Append(__pyx_v_batches_table, __pyx_t_1); if (unlikely(__pyx_t_16 == -1)) __PYX_ERR(0, 1260, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-        /* "biopharma_scheduling/deterministic/single_site.pyx":1259
+        /* "biopharma_scheduling/deterministic/single_site.pyx":1258
  *                 ]))
  * 
  *                 for batch in campaign.batches:             # <<<<<<<<<<<<<<
@@ -18491,7 +18499,7 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
  */
       }
 
-      /* "biopharma_scheduling/deterministic/single_site.pyx":1249
+      /* "biopharma_scheduling/deterministic/single_site.pyx":1248
  * 
  *         for suite in schedule.suites:
  *             for campaign in suite:             # <<<<<<<<<<<<<<
@@ -18500,8 +18508,8 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
  */
     }
 
-    /* "biopharma_scheduling/deterministic/single_site.pyx":1248
- * 
+    /* "biopharma_scheduling/deterministic/single_site.pyx":1247
+ *         batches_table = []
  * 
  *         for suite in schedule.suites:             # <<<<<<<<<<<<<<
  *             for campaign in suite:
@@ -18509,20 +18517,20 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
  */
   }
 
-  /* "biopharma_scheduling/deterministic/single_site.pyx":1269
+  /* "biopharma_scheduling/deterministic/single_site.pyx":1268
  *                     ]))
  * 
  *         batch_inventory, batch_backlog, batch_supply, batch_waste = [], [], [], []             # <<<<<<<<<<<<<<
  * 
  *         for i, due_date in enumerate(self.due_dates):
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1269, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1268, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_7 = PyList_New(0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1269, __pyx_L1_error)
+  __pyx_t_7 = PyList_New(0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1268, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  __pyx_t_12 = PyList_New(0); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1269, __pyx_L1_error)
+  __pyx_t_12 = PyList_New(0); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1268, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_12);
-  __pyx_t_10 = PyList_New(0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 1269, __pyx_L1_error)
+  __pyx_t_10 = PyList_New(0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 1268, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_10);
   __pyx_v_batch_inventory = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
@@ -18533,7 +18541,7 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
   __pyx_v_batch_waste = ((PyObject*)__pyx_t_10);
   __pyx_t_10 = 0;
 
-  /* "biopharma_scheduling/deterministic/single_site.pyx":1271
+  /* "biopharma_scheduling/deterministic/single_site.pyx":1270
  *         batch_inventory, batch_backlog, batch_supply, batch_waste = [], [], [], []
  * 
  *         for i, due_date in enumerate(self.due_dates):             # <<<<<<<<<<<<<<
@@ -18546,26 +18554,26 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
     __pyx_t_12 = __pyx_cur_scope->__pyx_v_self->due_dates; __Pyx_INCREF(__pyx_t_12); __pyx_t_20 = 0;
     __pyx_t_21 = NULL;
   } else {
-    __pyx_t_20 = -1; __pyx_t_12 = PyObject_GetIter(__pyx_cur_scope->__pyx_v_self->due_dates); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1271, __pyx_L1_error)
+    __pyx_t_20 = -1; __pyx_t_12 = PyObject_GetIter(__pyx_cur_scope->__pyx_v_self->due_dates); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1270, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_12);
-    __pyx_t_21 = Py_TYPE(__pyx_t_12)->tp_iternext; if (unlikely(!__pyx_t_21)) __PYX_ERR(0, 1271, __pyx_L1_error)
+    __pyx_t_21 = Py_TYPE(__pyx_t_12)->tp_iternext; if (unlikely(!__pyx_t_21)) __PYX_ERR(0, 1270, __pyx_L1_error)
   }
   for (;;) {
     if (likely(!__pyx_t_21)) {
       if (likely(PyList_CheckExact(__pyx_t_12))) {
         if (__pyx_t_20 >= PyList_GET_SIZE(__pyx_t_12)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_7 = PyList_GET_ITEM(__pyx_t_12, __pyx_t_20); __Pyx_INCREF(__pyx_t_7); __pyx_t_20++; if (unlikely(0 < 0)) __PYX_ERR(0, 1271, __pyx_L1_error)
+        __pyx_t_7 = PyList_GET_ITEM(__pyx_t_12, __pyx_t_20); __Pyx_INCREF(__pyx_t_7); __pyx_t_20++; if (unlikely(0 < 0)) __PYX_ERR(0, 1270, __pyx_L1_error)
         #else
-        __pyx_t_7 = PySequence_ITEM(__pyx_t_12, __pyx_t_20); __pyx_t_20++; if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1271, __pyx_L1_error)
+        __pyx_t_7 = PySequence_ITEM(__pyx_t_12, __pyx_t_20); __pyx_t_20++; if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1270, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_7);
         #endif
       } else {
         if (__pyx_t_20 >= PyTuple_GET_SIZE(__pyx_t_12)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_7 = PyTuple_GET_ITEM(__pyx_t_12, __pyx_t_20); __Pyx_INCREF(__pyx_t_7); __pyx_t_20++; if (unlikely(0 < 0)) __PYX_ERR(0, 1271, __pyx_L1_error)
+        __pyx_t_7 = PyTuple_GET_ITEM(__pyx_t_12, __pyx_t_20); __Pyx_INCREF(__pyx_t_7); __pyx_t_20++; if (unlikely(0 < 0)) __PYX_ERR(0, 1270, __pyx_L1_error)
         #else
-        __pyx_t_7 = PySequence_ITEM(__pyx_t_12, __pyx_t_20); __pyx_t_20++; if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1271, __pyx_L1_error)
+        __pyx_t_7 = PySequence_ITEM(__pyx_t_12, __pyx_t_20); __pyx_t_20++; if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1270, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_7);
         #endif
       }
@@ -18575,7 +18583,7 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 1271, __pyx_L1_error)
+          else __PYX_ERR(0, 1270, __pyx_L1_error)
         }
         break;
       }
@@ -18585,13 +18593,13 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
     __pyx_t_7 = 0;
     __Pyx_INCREF(__pyx_t_10);
     __Pyx_XDECREF_SET(__pyx_v_i, __pyx_t_10);
-    __pyx_t_7 = __Pyx_PyInt_AddObjC(__pyx_t_10, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1271, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyInt_AddObjC(__pyx_t_10, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1270, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_10);
     __pyx_t_10 = __pyx_t_7;
     __pyx_t_7 = 0;
 
-    /* "biopharma_scheduling/deterministic/single_site.pyx":1272
+    /* "biopharma_scheduling/deterministic/single_site.pyx":1271
  * 
  *         for i, due_date in enumerate(self.due_dates):
  *             batch_inventory.append({             # <<<<<<<<<<<<<<
@@ -18601,12 +18609,12 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
     { /* enter inner scope */
       PyObject *__pyx_8genexpr5__pyx_v_j = NULL;
       PyObject *__pyx_8genexpr5__pyx_v_product_label = NULL;
-      __pyx_t_7 = PyDict_New(); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1272, __pyx_L13_error)
+      __pyx_t_7 = PyDict_New(); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1271, __pyx_L13_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_INCREF(__pyx_int_0);
       __pyx_t_1 = __pyx_int_0;
 
-      /* "biopharma_scheduling/deterministic/single_site.pyx":1274
+      /* "biopharma_scheduling/deterministic/single_site.pyx":1273
  *             batch_inventory.append({
  *                 product_label: schedule.batch_inventory[j][i]
  *                 for j, product_label in enumerate(self.product_labels)             # <<<<<<<<<<<<<<
@@ -18617,26 +18625,26 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
         __pyx_t_11 = __pyx_cur_scope->__pyx_v_self->product_labels; __Pyx_INCREF(__pyx_t_11); __pyx_t_22 = 0;
         __pyx_t_23 = NULL;
       } else {
-        __pyx_t_22 = -1; __pyx_t_11 = PyObject_GetIter(__pyx_cur_scope->__pyx_v_self->product_labels); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1274, __pyx_L13_error)
+        __pyx_t_22 = -1; __pyx_t_11 = PyObject_GetIter(__pyx_cur_scope->__pyx_v_self->product_labels); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1273, __pyx_L13_error)
         __Pyx_GOTREF(__pyx_t_11);
-        __pyx_t_23 = Py_TYPE(__pyx_t_11)->tp_iternext; if (unlikely(!__pyx_t_23)) __PYX_ERR(0, 1274, __pyx_L13_error)
+        __pyx_t_23 = Py_TYPE(__pyx_t_11)->tp_iternext; if (unlikely(!__pyx_t_23)) __PYX_ERR(0, 1273, __pyx_L13_error)
       }
       for (;;) {
         if (likely(!__pyx_t_23)) {
           if (likely(PyList_CheckExact(__pyx_t_11))) {
             if (__pyx_t_22 >= PyList_GET_SIZE(__pyx_t_11)) break;
             #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-            __pyx_t_9 = PyList_GET_ITEM(__pyx_t_11, __pyx_t_22); __Pyx_INCREF(__pyx_t_9); __pyx_t_22++; if (unlikely(0 < 0)) __PYX_ERR(0, 1274, __pyx_L13_error)
+            __pyx_t_9 = PyList_GET_ITEM(__pyx_t_11, __pyx_t_22); __Pyx_INCREF(__pyx_t_9); __pyx_t_22++; if (unlikely(0 < 0)) __PYX_ERR(0, 1273, __pyx_L13_error)
             #else
-            __pyx_t_9 = PySequence_ITEM(__pyx_t_11, __pyx_t_22); __pyx_t_22++; if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1274, __pyx_L13_error)
+            __pyx_t_9 = PySequence_ITEM(__pyx_t_11, __pyx_t_22); __pyx_t_22++; if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1273, __pyx_L13_error)
             __Pyx_GOTREF(__pyx_t_9);
             #endif
           } else {
             if (__pyx_t_22 >= PyTuple_GET_SIZE(__pyx_t_11)) break;
             #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-            __pyx_t_9 = PyTuple_GET_ITEM(__pyx_t_11, __pyx_t_22); __Pyx_INCREF(__pyx_t_9); __pyx_t_22++; if (unlikely(0 < 0)) __PYX_ERR(0, 1274, __pyx_L13_error)
+            __pyx_t_9 = PyTuple_GET_ITEM(__pyx_t_11, __pyx_t_22); __Pyx_INCREF(__pyx_t_9); __pyx_t_22++; if (unlikely(0 < 0)) __PYX_ERR(0, 1273, __pyx_L13_error)
             #else
-            __pyx_t_9 = PySequence_ITEM(__pyx_t_11, __pyx_t_22); __pyx_t_22++; if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1274, __pyx_L13_error)
+            __pyx_t_9 = PySequence_ITEM(__pyx_t_11, __pyx_t_22); __pyx_t_22++; if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1273, __pyx_L13_error)
             __Pyx_GOTREF(__pyx_t_9);
             #endif
           }
@@ -18646,7 +18654,7 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
             PyObject* exc_type = PyErr_Occurred();
             if (exc_type) {
               if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-              else __PYX_ERR(0, 1274, __pyx_L13_error)
+              else __PYX_ERR(0, 1273, __pyx_L13_error)
             }
             break;
           }
@@ -18656,27 +18664,27 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
         __pyx_t_9 = 0;
         __Pyx_INCREF(__pyx_t_1);
         __Pyx_XDECREF_SET(__pyx_8genexpr5__pyx_v_j, __pyx_t_1);
-        __pyx_t_9 = __Pyx_PyInt_AddObjC(__pyx_t_1, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1274, __pyx_L13_error)
+        __pyx_t_9 = __Pyx_PyInt_AddObjC(__pyx_t_1, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1273, __pyx_L13_error)
         __Pyx_GOTREF(__pyx_t_9);
         __Pyx_DECREF(__pyx_t_1);
         __pyx_t_1 = __pyx_t_9;
         __pyx_t_9 = 0;
 
-        /* "biopharma_scheduling/deterministic/single_site.pyx":1273
+        /* "biopharma_scheduling/deterministic/single_site.pyx":1272
  *         for i, due_date in enumerate(self.due_dates):
  *             batch_inventory.append({
  *                 product_label: schedule.batch_inventory[j][i]             # <<<<<<<<<<<<<<
  *                 for j, product_label in enumerate(self.product_labels)
  *             })
  */
-        __pyx_t_24 = __Pyx_PyInt_As_size_t(__pyx_8genexpr5__pyx_v_j); if (unlikely((__pyx_t_24 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 1273, __pyx_L13_error)
-        __pyx_t_25 = __Pyx_PyInt_As_size_t(__pyx_v_i); if (unlikely((__pyx_t_25 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 1273, __pyx_L13_error)
-        __pyx_t_9 = PyFloat_FromDouble(((__pyx_v_schedule.batch_inventory[__pyx_t_24])[__pyx_t_25])); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1273, __pyx_L13_error)
+        __pyx_t_24 = __Pyx_PyInt_As_size_t(__pyx_8genexpr5__pyx_v_j); if (unlikely((__pyx_t_24 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 1272, __pyx_L13_error)
+        __pyx_t_25 = __Pyx_PyInt_As_size_t(__pyx_v_i); if (unlikely((__pyx_t_25 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 1272, __pyx_L13_error)
+        __pyx_t_9 = PyFloat_FromDouble(((__pyx_v_schedule.batch_inventory[__pyx_t_24])[__pyx_t_25])); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1272, __pyx_L13_error)
         __Pyx_GOTREF(__pyx_t_9);
-        if (unlikely(PyDict_SetItem(__pyx_t_7, (PyObject*)__pyx_8genexpr5__pyx_v_product_label, (PyObject*)__pyx_t_9))) __PYX_ERR(0, 1273, __pyx_L13_error)
+        if (unlikely(PyDict_SetItem(__pyx_t_7, (PyObject*)__pyx_8genexpr5__pyx_v_product_label, (PyObject*)__pyx_t_9))) __PYX_ERR(0, 1272, __pyx_L13_error)
         __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
 
-        /* "biopharma_scheduling/deterministic/single_site.pyx":1274
+        /* "biopharma_scheduling/deterministic/single_site.pyx":1273
  *             batch_inventory.append({
  *                 product_label: schedule.batch_inventory[j][i]
  *                 for j, product_label in enumerate(self.product_labels)             # <<<<<<<<<<<<<<
@@ -18696,31 +18704,31 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
       __pyx_L16_exit_scope:;
     } /* exit inner scope */
 
-    /* "biopharma_scheduling/deterministic/single_site.pyx":1272
+    /* "biopharma_scheduling/deterministic/single_site.pyx":1271
  * 
  *         for i, due_date in enumerate(self.due_dates):
  *             batch_inventory.append({             # <<<<<<<<<<<<<<
  *                 product_label: schedule.batch_inventory[j][i]
  *                 for j, product_label in enumerate(self.product_labels)
  */
-    __pyx_t_16 = __Pyx_PyList_Append(__pyx_v_batch_inventory, __pyx_t_7); if (unlikely(__pyx_t_16 == -1)) __PYX_ERR(0, 1272, __pyx_L1_error)
+    __pyx_t_16 = __Pyx_PyList_Append(__pyx_v_batch_inventory, __pyx_t_7); if (unlikely(__pyx_t_16 == -1)) __PYX_ERR(0, 1271, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-    /* "biopharma_scheduling/deterministic/single_site.pyx":1276
+    /* "biopharma_scheduling/deterministic/single_site.pyx":1275
  *                 for j, product_label in enumerate(self.product_labels)
  *             })
  *             batch_inventory[-1].update({'date': due_date})             # <<<<<<<<<<<<<<
  * 
  *             batch_backlog.append({
  */
-    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_batch_inventory, -1L, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1276, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_batch_inventory, -1L, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1275, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_update); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1276, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_update); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1275, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1276, __pyx_L1_error)
+    __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1275, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_date, __pyx_v_due_date) < 0) __PYX_ERR(0, 1276, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_date, __pyx_v_due_date) < 0) __PYX_ERR(0, 1275, __pyx_L1_error)
     __pyx_t_9 = NULL;
     if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_11))) {
       __pyx_t_9 = PyMethod_GET_SELF(__pyx_t_11);
@@ -18732,14 +18740,14 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
       }
     }
     if (!__pyx_t_9) {
-      __pyx_t_7 = __Pyx_PyObject_CallOneArg(__pyx_t_11, __pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1276, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyObject_CallOneArg(__pyx_t_11, __pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1275, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_GOTREF(__pyx_t_7);
     } else {
       #if CYTHON_FAST_PYCALL
       if (PyFunction_Check(__pyx_t_11)) {
         PyObject *__pyx_temp[2] = {__pyx_t_9, __pyx_t_1};
-        __pyx_t_7 = __Pyx_PyFunction_FastCall(__pyx_t_11, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1276, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_PyFunction_FastCall(__pyx_t_11, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1275, __pyx_L1_error)
         __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
         __Pyx_GOTREF(__pyx_t_7);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -18748,20 +18756,20 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
       #if CYTHON_FAST_PYCCALL
       if (__Pyx_PyFastCFunction_Check(__pyx_t_11)) {
         PyObject *__pyx_temp[2] = {__pyx_t_9, __pyx_t_1};
-        __pyx_t_7 = __Pyx_PyCFunction_FastCall(__pyx_t_11, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1276, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_PyCFunction_FastCall(__pyx_t_11, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1275, __pyx_L1_error)
         __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
         __Pyx_GOTREF(__pyx_t_7);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       } else
       #endif
       {
-        __pyx_t_14 = PyTuple_New(1+1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1276, __pyx_L1_error)
+        __pyx_t_14 = PyTuple_New(1+1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1275, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_14);
         __Pyx_GIVEREF(__pyx_t_9); PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_t_9); __pyx_t_9 = NULL;
         __Pyx_GIVEREF(__pyx_t_1);
         PyTuple_SET_ITEM(__pyx_t_14, 0+1, __pyx_t_1);
         __pyx_t_1 = 0;
-        __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_11, __pyx_t_14, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1276, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_11, __pyx_t_14, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1275, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_7);
         __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
       }
@@ -18769,7 +18777,7 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-    /* "biopharma_scheduling/deterministic/single_site.pyx":1278
+    /* "biopharma_scheduling/deterministic/single_site.pyx":1277
  *             batch_inventory[-1].update({'date': due_date})
  * 
  *             batch_backlog.append({             # <<<<<<<<<<<<<<
@@ -18779,12 +18787,12 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
     { /* enter inner scope */
       PyObject *__pyx_8genexpr6__pyx_v_j = NULL;
       PyObject *__pyx_8genexpr6__pyx_v_product_label = NULL;
-      __pyx_t_7 = PyDict_New(); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1278, __pyx_L19_error)
+      __pyx_t_7 = PyDict_New(); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1277, __pyx_L19_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_INCREF(__pyx_int_0);
       __pyx_t_11 = __pyx_int_0;
 
-      /* "biopharma_scheduling/deterministic/single_site.pyx":1280
+      /* "biopharma_scheduling/deterministic/single_site.pyx":1279
  *             batch_backlog.append({
  *                 product_label: schedule.batch_backlog[j][i]
  *                 for j, product_label in enumerate(self.product_labels)             # <<<<<<<<<<<<<<
@@ -18795,26 +18803,26 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
         __pyx_t_14 = __pyx_cur_scope->__pyx_v_self->product_labels; __Pyx_INCREF(__pyx_t_14); __pyx_t_22 = 0;
         __pyx_t_23 = NULL;
       } else {
-        __pyx_t_22 = -1; __pyx_t_14 = PyObject_GetIter(__pyx_cur_scope->__pyx_v_self->product_labels); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1280, __pyx_L19_error)
+        __pyx_t_22 = -1; __pyx_t_14 = PyObject_GetIter(__pyx_cur_scope->__pyx_v_self->product_labels); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1279, __pyx_L19_error)
         __Pyx_GOTREF(__pyx_t_14);
-        __pyx_t_23 = Py_TYPE(__pyx_t_14)->tp_iternext; if (unlikely(!__pyx_t_23)) __PYX_ERR(0, 1280, __pyx_L19_error)
+        __pyx_t_23 = Py_TYPE(__pyx_t_14)->tp_iternext; if (unlikely(!__pyx_t_23)) __PYX_ERR(0, 1279, __pyx_L19_error)
       }
       for (;;) {
         if (likely(!__pyx_t_23)) {
           if (likely(PyList_CheckExact(__pyx_t_14))) {
             if (__pyx_t_22 >= PyList_GET_SIZE(__pyx_t_14)) break;
             #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-            __pyx_t_1 = PyList_GET_ITEM(__pyx_t_14, __pyx_t_22); __Pyx_INCREF(__pyx_t_1); __pyx_t_22++; if (unlikely(0 < 0)) __PYX_ERR(0, 1280, __pyx_L19_error)
+            __pyx_t_1 = PyList_GET_ITEM(__pyx_t_14, __pyx_t_22); __Pyx_INCREF(__pyx_t_1); __pyx_t_22++; if (unlikely(0 < 0)) __PYX_ERR(0, 1279, __pyx_L19_error)
             #else
-            __pyx_t_1 = PySequence_ITEM(__pyx_t_14, __pyx_t_22); __pyx_t_22++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1280, __pyx_L19_error)
+            __pyx_t_1 = PySequence_ITEM(__pyx_t_14, __pyx_t_22); __pyx_t_22++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1279, __pyx_L19_error)
             __Pyx_GOTREF(__pyx_t_1);
             #endif
           } else {
             if (__pyx_t_22 >= PyTuple_GET_SIZE(__pyx_t_14)) break;
             #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-            __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_14, __pyx_t_22); __Pyx_INCREF(__pyx_t_1); __pyx_t_22++; if (unlikely(0 < 0)) __PYX_ERR(0, 1280, __pyx_L19_error)
+            __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_14, __pyx_t_22); __Pyx_INCREF(__pyx_t_1); __pyx_t_22++; if (unlikely(0 < 0)) __PYX_ERR(0, 1279, __pyx_L19_error)
             #else
-            __pyx_t_1 = PySequence_ITEM(__pyx_t_14, __pyx_t_22); __pyx_t_22++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1280, __pyx_L19_error)
+            __pyx_t_1 = PySequence_ITEM(__pyx_t_14, __pyx_t_22); __pyx_t_22++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1279, __pyx_L19_error)
             __Pyx_GOTREF(__pyx_t_1);
             #endif
           }
@@ -18824,7 +18832,7 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
             PyObject* exc_type = PyErr_Occurred();
             if (exc_type) {
               if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-              else __PYX_ERR(0, 1280, __pyx_L19_error)
+              else __PYX_ERR(0, 1279, __pyx_L19_error)
             }
             break;
           }
@@ -18834,27 +18842,27 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
         __pyx_t_1 = 0;
         __Pyx_INCREF(__pyx_t_11);
         __Pyx_XDECREF_SET(__pyx_8genexpr6__pyx_v_j, __pyx_t_11);
-        __pyx_t_1 = __Pyx_PyInt_AddObjC(__pyx_t_11, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1280, __pyx_L19_error)
+        __pyx_t_1 = __Pyx_PyInt_AddObjC(__pyx_t_11, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1279, __pyx_L19_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_11);
         __pyx_t_11 = __pyx_t_1;
         __pyx_t_1 = 0;
 
-        /* "biopharma_scheduling/deterministic/single_site.pyx":1279
+        /* "biopharma_scheduling/deterministic/single_site.pyx":1278
  * 
  *             batch_backlog.append({
  *                 product_label: schedule.batch_backlog[j][i]             # <<<<<<<<<<<<<<
  *                 for j, product_label in enumerate(self.product_labels)
  *             })
  */
-        __pyx_t_24 = __Pyx_PyInt_As_size_t(__pyx_8genexpr6__pyx_v_j); if (unlikely((__pyx_t_24 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 1279, __pyx_L19_error)
-        __pyx_t_25 = __Pyx_PyInt_As_size_t(__pyx_v_i); if (unlikely((__pyx_t_25 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 1279, __pyx_L19_error)
-        __pyx_t_1 = PyFloat_FromDouble(((__pyx_v_schedule.batch_backlog[__pyx_t_24])[__pyx_t_25])); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1279, __pyx_L19_error)
+        __pyx_t_24 = __Pyx_PyInt_As_size_t(__pyx_8genexpr6__pyx_v_j); if (unlikely((__pyx_t_24 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 1278, __pyx_L19_error)
+        __pyx_t_25 = __Pyx_PyInt_As_size_t(__pyx_v_i); if (unlikely((__pyx_t_25 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 1278, __pyx_L19_error)
+        __pyx_t_1 = PyFloat_FromDouble(((__pyx_v_schedule.batch_backlog[__pyx_t_24])[__pyx_t_25])); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1278, __pyx_L19_error)
         __Pyx_GOTREF(__pyx_t_1);
-        if (unlikely(PyDict_SetItem(__pyx_t_7, (PyObject*)__pyx_8genexpr6__pyx_v_product_label, (PyObject*)__pyx_t_1))) __PYX_ERR(0, 1279, __pyx_L19_error)
+        if (unlikely(PyDict_SetItem(__pyx_t_7, (PyObject*)__pyx_8genexpr6__pyx_v_product_label, (PyObject*)__pyx_t_1))) __PYX_ERR(0, 1278, __pyx_L19_error)
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-        /* "biopharma_scheduling/deterministic/single_site.pyx":1280
+        /* "biopharma_scheduling/deterministic/single_site.pyx":1279
  *             batch_backlog.append({
  *                 product_label: schedule.batch_backlog[j][i]
  *                 for j, product_label in enumerate(self.product_labels)             # <<<<<<<<<<<<<<
@@ -18874,31 +18882,31 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
       __pyx_L22_exit_scope:;
     } /* exit inner scope */
 
-    /* "biopharma_scheduling/deterministic/single_site.pyx":1278
+    /* "biopharma_scheduling/deterministic/single_site.pyx":1277
  *             batch_inventory[-1].update({'date': due_date})
  * 
  *             batch_backlog.append({             # <<<<<<<<<<<<<<
  *                 product_label: schedule.batch_backlog[j][i]
  *                 for j, product_label in enumerate(self.product_labels)
  */
-    __pyx_t_16 = __Pyx_PyList_Append(__pyx_v_batch_backlog, __pyx_t_7); if (unlikely(__pyx_t_16 == -1)) __PYX_ERR(0, 1278, __pyx_L1_error)
+    __pyx_t_16 = __Pyx_PyList_Append(__pyx_v_batch_backlog, __pyx_t_7); if (unlikely(__pyx_t_16 == -1)) __PYX_ERR(0, 1277, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-    /* "biopharma_scheduling/deterministic/single_site.pyx":1282
+    /* "biopharma_scheduling/deterministic/single_site.pyx":1281
  *                 for j, product_label in enumerate(self.product_labels)
  *             })
  *             batch_backlog[-1].update({'date': due_date})             # <<<<<<<<<<<<<<
  * 
  *             batch_supply.append({
  */
-    __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_batch_backlog, -1L, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1282, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_batch_backlog, -1L, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1281, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
-    __pyx_t_14 = __Pyx_PyObject_GetAttrStr(__pyx_t_11, __pyx_n_s_update); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1282, __pyx_L1_error)
+    __pyx_t_14 = __Pyx_PyObject_GetAttrStr(__pyx_t_11, __pyx_n_s_update); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1281, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_14);
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-    __pyx_t_11 = PyDict_New(); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1282, __pyx_L1_error)
+    __pyx_t_11 = PyDict_New(); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1281, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
-    if (PyDict_SetItem(__pyx_t_11, __pyx_n_s_date, __pyx_v_due_date) < 0) __PYX_ERR(0, 1282, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_11, __pyx_n_s_date, __pyx_v_due_date) < 0) __PYX_ERR(0, 1281, __pyx_L1_error)
     __pyx_t_1 = NULL;
     if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_14))) {
       __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_14);
@@ -18910,14 +18918,14 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
       }
     }
     if (!__pyx_t_1) {
-      __pyx_t_7 = __Pyx_PyObject_CallOneArg(__pyx_t_14, __pyx_t_11); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1282, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyObject_CallOneArg(__pyx_t_14, __pyx_t_11); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1281, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
       __Pyx_GOTREF(__pyx_t_7);
     } else {
       #if CYTHON_FAST_PYCALL
       if (PyFunction_Check(__pyx_t_14)) {
         PyObject *__pyx_temp[2] = {__pyx_t_1, __pyx_t_11};
-        __pyx_t_7 = __Pyx_PyFunction_FastCall(__pyx_t_14, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1282, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_PyFunction_FastCall(__pyx_t_14, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1281, __pyx_L1_error)
         __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
         __Pyx_GOTREF(__pyx_t_7);
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
@@ -18926,20 +18934,20 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
       #if CYTHON_FAST_PYCCALL
       if (__Pyx_PyFastCFunction_Check(__pyx_t_14)) {
         PyObject *__pyx_temp[2] = {__pyx_t_1, __pyx_t_11};
-        __pyx_t_7 = __Pyx_PyCFunction_FastCall(__pyx_t_14, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1282, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_PyCFunction_FastCall(__pyx_t_14, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1281, __pyx_L1_error)
         __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
         __Pyx_GOTREF(__pyx_t_7);
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
       } else
       #endif
       {
-        __pyx_t_9 = PyTuple_New(1+1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1282, __pyx_L1_error)
+        __pyx_t_9 = PyTuple_New(1+1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1281, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_9);
         __Pyx_GIVEREF(__pyx_t_1); PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_1); __pyx_t_1 = NULL;
         __Pyx_GIVEREF(__pyx_t_11);
         PyTuple_SET_ITEM(__pyx_t_9, 0+1, __pyx_t_11);
         __pyx_t_11 = 0;
-        __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_14, __pyx_t_9, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1282, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_14, __pyx_t_9, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1281, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_7);
         __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
       }
@@ -18947,7 +18955,7 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
     __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-    /* "biopharma_scheduling/deterministic/single_site.pyx":1284
+    /* "biopharma_scheduling/deterministic/single_site.pyx":1283
  *             batch_backlog[-1].update({'date': due_date})
  * 
  *             batch_supply.append({             # <<<<<<<<<<<<<<
@@ -18957,12 +18965,12 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
     { /* enter inner scope */
       PyObject *__pyx_8genexpr7__pyx_v_j = NULL;
       PyObject *__pyx_8genexpr7__pyx_v_product_label = NULL;
-      __pyx_t_7 = PyDict_New(); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1284, __pyx_L25_error)
+      __pyx_t_7 = PyDict_New(); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1283, __pyx_L25_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_INCREF(__pyx_int_0);
       __pyx_t_14 = __pyx_int_0;
 
-      /* "biopharma_scheduling/deterministic/single_site.pyx":1286
+      /* "biopharma_scheduling/deterministic/single_site.pyx":1285
  *             batch_supply.append({
  *                 product_label: schedule.batch_supply[j][i]
  *                 for j, product_label in enumerate(self.product_labels)             # <<<<<<<<<<<<<<
@@ -18973,26 +18981,26 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
         __pyx_t_9 = __pyx_cur_scope->__pyx_v_self->product_labels; __Pyx_INCREF(__pyx_t_9); __pyx_t_22 = 0;
         __pyx_t_23 = NULL;
       } else {
-        __pyx_t_22 = -1; __pyx_t_9 = PyObject_GetIter(__pyx_cur_scope->__pyx_v_self->product_labels); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1286, __pyx_L25_error)
+        __pyx_t_22 = -1; __pyx_t_9 = PyObject_GetIter(__pyx_cur_scope->__pyx_v_self->product_labels); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1285, __pyx_L25_error)
         __Pyx_GOTREF(__pyx_t_9);
-        __pyx_t_23 = Py_TYPE(__pyx_t_9)->tp_iternext; if (unlikely(!__pyx_t_23)) __PYX_ERR(0, 1286, __pyx_L25_error)
+        __pyx_t_23 = Py_TYPE(__pyx_t_9)->tp_iternext; if (unlikely(!__pyx_t_23)) __PYX_ERR(0, 1285, __pyx_L25_error)
       }
       for (;;) {
         if (likely(!__pyx_t_23)) {
           if (likely(PyList_CheckExact(__pyx_t_9))) {
             if (__pyx_t_22 >= PyList_GET_SIZE(__pyx_t_9)) break;
             #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-            __pyx_t_11 = PyList_GET_ITEM(__pyx_t_9, __pyx_t_22); __Pyx_INCREF(__pyx_t_11); __pyx_t_22++; if (unlikely(0 < 0)) __PYX_ERR(0, 1286, __pyx_L25_error)
+            __pyx_t_11 = PyList_GET_ITEM(__pyx_t_9, __pyx_t_22); __Pyx_INCREF(__pyx_t_11); __pyx_t_22++; if (unlikely(0 < 0)) __PYX_ERR(0, 1285, __pyx_L25_error)
             #else
-            __pyx_t_11 = PySequence_ITEM(__pyx_t_9, __pyx_t_22); __pyx_t_22++; if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1286, __pyx_L25_error)
+            __pyx_t_11 = PySequence_ITEM(__pyx_t_9, __pyx_t_22); __pyx_t_22++; if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1285, __pyx_L25_error)
             __Pyx_GOTREF(__pyx_t_11);
             #endif
           } else {
             if (__pyx_t_22 >= PyTuple_GET_SIZE(__pyx_t_9)) break;
             #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-            __pyx_t_11 = PyTuple_GET_ITEM(__pyx_t_9, __pyx_t_22); __Pyx_INCREF(__pyx_t_11); __pyx_t_22++; if (unlikely(0 < 0)) __PYX_ERR(0, 1286, __pyx_L25_error)
+            __pyx_t_11 = PyTuple_GET_ITEM(__pyx_t_9, __pyx_t_22); __Pyx_INCREF(__pyx_t_11); __pyx_t_22++; if (unlikely(0 < 0)) __PYX_ERR(0, 1285, __pyx_L25_error)
             #else
-            __pyx_t_11 = PySequence_ITEM(__pyx_t_9, __pyx_t_22); __pyx_t_22++; if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1286, __pyx_L25_error)
+            __pyx_t_11 = PySequence_ITEM(__pyx_t_9, __pyx_t_22); __pyx_t_22++; if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1285, __pyx_L25_error)
             __Pyx_GOTREF(__pyx_t_11);
             #endif
           }
@@ -19002,7 +19010,7 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
             PyObject* exc_type = PyErr_Occurred();
             if (exc_type) {
               if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-              else __PYX_ERR(0, 1286, __pyx_L25_error)
+              else __PYX_ERR(0, 1285, __pyx_L25_error)
             }
             break;
           }
@@ -19012,27 +19020,27 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
         __pyx_t_11 = 0;
         __Pyx_INCREF(__pyx_t_14);
         __Pyx_XDECREF_SET(__pyx_8genexpr7__pyx_v_j, __pyx_t_14);
-        __pyx_t_11 = __Pyx_PyInt_AddObjC(__pyx_t_14, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1286, __pyx_L25_error)
+        __pyx_t_11 = __Pyx_PyInt_AddObjC(__pyx_t_14, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1285, __pyx_L25_error)
         __Pyx_GOTREF(__pyx_t_11);
         __Pyx_DECREF(__pyx_t_14);
         __pyx_t_14 = __pyx_t_11;
         __pyx_t_11 = 0;
 
-        /* "biopharma_scheduling/deterministic/single_site.pyx":1285
+        /* "biopharma_scheduling/deterministic/single_site.pyx":1284
  * 
  *             batch_supply.append({
  *                 product_label: schedule.batch_supply[j][i]             # <<<<<<<<<<<<<<
  *                 for j, product_label in enumerate(self.product_labels)
  *             })
  */
-        __pyx_t_24 = __Pyx_PyInt_As_size_t(__pyx_8genexpr7__pyx_v_j); if (unlikely((__pyx_t_24 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 1285, __pyx_L25_error)
-        __pyx_t_25 = __Pyx_PyInt_As_size_t(__pyx_v_i); if (unlikely((__pyx_t_25 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 1285, __pyx_L25_error)
-        __pyx_t_11 = PyFloat_FromDouble(((__pyx_v_schedule.batch_supply[__pyx_t_24])[__pyx_t_25])); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1285, __pyx_L25_error)
+        __pyx_t_24 = __Pyx_PyInt_As_size_t(__pyx_8genexpr7__pyx_v_j); if (unlikely((__pyx_t_24 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 1284, __pyx_L25_error)
+        __pyx_t_25 = __Pyx_PyInt_As_size_t(__pyx_v_i); if (unlikely((__pyx_t_25 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 1284, __pyx_L25_error)
+        __pyx_t_11 = PyFloat_FromDouble(((__pyx_v_schedule.batch_supply[__pyx_t_24])[__pyx_t_25])); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1284, __pyx_L25_error)
         __Pyx_GOTREF(__pyx_t_11);
-        if (unlikely(PyDict_SetItem(__pyx_t_7, (PyObject*)__pyx_8genexpr7__pyx_v_product_label, (PyObject*)__pyx_t_11))) __PYX_ERR(0, 1285, __pyx_L25_error)
+        if (unlikely(PyDict_SetItem(__pyx_t_7, (PyObject*)__pyx_8genexpr7__pyx_v_product_label, (PyObject*)__pyx_t_11))) __PYX_ERR(0, 1284, __pyx_L25_error)
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
-        /* "biopharma_scheduling/deterministic/single_site.pyx":1286
+        /* "biopharma_scheduling/deterministic/single_site.pyx":1285
  *             batch_supply.append({
  *                 product_label: schedule.batch_supply[j][i]
  *                 for j, product_label in enumerate(self.product_labels)             # <<<<<<<<<<<<<<
@@ -19052,31 +19060,31 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
       __pyx_L28_exit_scope:;
     } /* exit inner scope */
 
-    /* "biopharma_scheduling/deterministic/single_site.pyx":1284
+    /* "biopharma_scheduling/deterministic/single_site.pyx":1283
  *             batch_backlog[-1].update({'date': due_date})
  * 
  *             batch_supply.append({             # <<<<<<<<<<<<<<
  *                 product_label: schedule.batch_supply[j][i]
  *                 for j, product_label in enumerate(self.product_labels)
  */
-    __pyx_t_16 = __Pyx_PyList_Append(__pyx_v_batch_supply, __pyx_t_7); if (unlikely(__pyx_t_16 == -1)) __PYX_ERR(0, 1284, __pyx_L1_error)
+    __pyx_t_16 = __Pyx_PyList_Append(__pyx_v_batch_supply, __pyx_t_7); if (unlikely(__pyx_t_16 == -1)) __PYX_ERR(0, 1283, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-    /* "biopharma_scheduling/deterministic/single_site.pyx":1288
+    /* "biopharma_scheduling/deterministic/single_site.pyx":1287
  *                 for j, product_label in enumerate(self.product_labels)
  *             })
  *             batch_supply[-1].update({'date': due_date})             # <<<<<<<<<<<<<<
  * 
  *             batch_waste.append({
  */
-    __pyx_t_14 = __Pyx_GetItemInt_List(__pyx_v_batch_supply, -1L, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1288, __pyx_L1_error)
+    __pyx_t_14 = __Pyx_GetItemInt_List(__pyx_v_batch_supply, -1L, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1287, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_14);
-    __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_t_14, __pyx_n_s_update); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1288, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_t_14, __pyx_n_s_update); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1287, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
     __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-    __pyx_t_14 = PyDict_New(); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1288, __pyx_L1_error)
+    __pyx_t_14 = PyDict_New(); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1287, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_14);
-    if (PyDict_SetItem(__pyx_t_14, __pyx_n_s_date, __pyx_v_due_date) < 0) __PYX_ERR(0, 1288, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_14, __pyx_n_s_date, __pyx_v_due_date) < 0) __PYX_ERR(0, 1287, __pyx_L1_error)
     __pyx_t_11 = NULL;
     if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_9))) {
       __pyx_t_11 = PyMethod_GET_SELF(__pyx_t_9);
@@ -19088,14 +19096,14 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
       }
     }
     if (!__pyx_t_11) {
-      __pyx_t_7 = __Pyx_PyObject_CallOneArg(__pyx_t_9, __pyx_t_14); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1288, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyObject_CallOneArg(__pyx_t_9, __pyx_t_14); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1287, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
       __Pyx_GOTREF(__pyx_t_7);
     } else {
       #if CYTHON_FAST_PYCALL
       if (PyFunction_Check(__pyx_t_9)) {
         PyObject *__pyx_temp[2] = {__pyx_t_11, __pyx_t_14};
-        __pyx_t_7 = __Pyx_PyFunction_FastCall(__pyx_t_9, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1288, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_PyFunction_FastCall(__pyx_t_9, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1287, __pyx_L1_error)
         __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
         __Pyx_GOTREF(__pyx_t_7);
         __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
@@ -19104,20 +19112,20 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
       #if CYTHON_FAST_PYCCALL
       if (__Pyx_PyFastCFunction_Check(__pyx_t_9)) {
         PyObject *__pyx_temp[2] = {__pyx_t_11, __pyx_t_14};
-        __pyx_t_7 = __Pyx_PyCFunction_FastCall(__pyx_t_9, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1288, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_PyCFunction_FastCall(__pyx_t_9, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1287, __pyx_L1_error)
         __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
         __Pyx_GOTREF(__pyx_t_7);
         __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
       } else
       #endif
       {
-        __pyx_t_1 = PyTuple_New(1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1288, __pyx_L1_error)
+        __pyx_t_1 = PyTuple_New(1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1287, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_GIVEREF(__pyx_t_11); PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_11); __pyx_t_11 = NULL;
         __Pyx_GIVEREF(__pyx_t_14);
         PyTuple_SET_ITEM(__pyx_t_1, 0+1, __pyx_t_14);
         __pyx_t_14 = 0;
-        __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_t_1, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1288, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_t_1, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1287, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_7);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       }
@@ -19125,7 +19133,7 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-    /* "biopharma_scheduling/deterministic/single_site.pyx":1290
+    /* "biopharma_scheduling/deterministic/single_site.pyx":1289
  *             batch_supply[-1].update({'date': due_date})
  * 
  *             batch_waste.append({             # <<<<<<<<<<<<<<
@@ -19135,12 +19143,12 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
     { /* enter inner scope */
       PyObject *__pyx_8genexpr8__pyx_v_j = NULL;
       PyObject *__pyx_8genexpr8__pyx_v_product_label = NULL;
-      __pyx_t_7 = PyDict_New(); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1290, __pyx_L31_error)
+      __pyx_t_7 = PyDict_New(); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1289, __pyx_L31_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_INCREF(__pyx_int_0);
       __pyx_t_9 = __pyx_int_0;
 
-      /* "biopharma_scheduling/deterministic/single_site.pyx":1292
+      /* "biopharma_scheduling/deterministic/single_site.pyx":1291
  *             batch_waste.append({
  *                 product_label: schedule.batch_waste[j][i]
  *                 for j, product_label in enumerate(self.product_labels)             # <<<<<<<<<<<<<<
@@ -19151,26 +19159,26 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
         __pyx_t_1 = __pyx_cur_scope->__pyx_v_self->product_labels; __Pyx_INCREF(__pyx_t_1); __pyx_t_22 = 0;
         __pyx_t_23 = NULL;
       } else {
-        __pyx_t_22 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_cur_scope->__pyx_v_self->product_labels); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1292, __pyx_L31_error)
+        __pyx_t_22 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_cur_scope->__pyx_v_self->product_labels); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1291, __pyx_L31_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_23 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_23)) __PYX_ERR(0, 1292, __pyx_L31_error)
+        __pyx_t_23 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_23)) __PYX_ERR(0, 1291, __pyx_L31_error)
       }
       for (;;) {
         if (likely(!__pyx_t_23)) {
           if (likely(PyList_CheckExact(__pyx_t_1))) {
             if (__pyx_t_22 >= PyList_GET_SIZE(__pyx_t_1)) break;
             #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-            __pyx_t_14 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_22); __Pyx_INCREF(__pyx_t_14); __pyx_t_22++; if (unlikely(0 < 0)) __PYX_ERR(0, 1292, __pyx_L31_error)
+            __pyx_t_14 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_22); __Pyx_INCREF(__pyx_t_14); __pyx_t_22++; if (unlikely(0 < 0)) __PYX_ERR(0, 1291, __pyx_L31_error)
             #else
-            __pyx_t_14 = PySequence_ITEM(__pyx_t_1, __pyx_t_22); __pyx_t_22++; if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1292, __pyx_L31_error)
+            __pyx_t_14 = PySequence_ITEM(__pyx_t_1, __pyx_t_22); __pyx_t_22++; if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1291, __pyx_L31_error)
             __Pyx_GOTREF(__pyx_t_14);
             #endif
           } else {
             if (__pyx_t_22 >= PyTuple_GET_SIZE(__pyx_t_1)) break;
             #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-            __pyx_t_14 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_22); __Pyx_INCREF(__pyx_t_14); __pyx_t_22++; if (unlikely(0 < 0)) __PYX_ERR(0, 1292, __pyx_L31_error)
+            __pyx_t_14 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_22); __Pyx_INCREF(__pyx_t_14); __pyx_t_22++; if (unlikely(0 < 0)) __PYX_ERR(0, 1291, __pyx_L31_error)
             #else
-            __pyx_t_14 = PySequence_ITEM(__pyx_t_1, __pyx_t_22); __pyx_t_22++; if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1292, __pyx_L31_error)
+            __pyx_t_14 = PySequence_ITEM(__pyx_t_1, __pyx_t_22); __pyx_t_22++; if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1291, __pyx_L31_error)
             __Pyx_GOTREF(__pyx_t_14);
             #endif
           }
@@ -19180,7 +19188,7 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
             PyObject* exc_type = PyErr_Occurred();
             if (exc_type) {
               if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-              else __PYX_ERR(0, 1292, __pyx_L31_error)
+              else __PYX_ERR(0, 1291, __pyx_L31_error)
             }
             break;
           }
@@ -19190,27 +19198,27 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
         __pyx_t_14 = 0;
         __Pyx_INCREF(__pyx_t_9);
         __Pyx_XDECREF_SET(__pyx_8genexpr8__pyx_v_j, __pyx_t_9);
-        __pyx_t_14 = __Pyx_PyInt_AddObjC(__pyx_t_9, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1292, __pyx_L31_error)
+        __pyx_t_14 = __Pyx_PyInt_AddObjC(__pyx_t_9, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1291, __pyx_L31_error)
         __Pyx_GOTREF(__pyx_t_14);
         __Pyx_DECREF(__pyx_t_9);
         __pyx_t_9 = __pyx_t_14;
         __pyx_t_14 = 0;
 
-        /* "biopharma_scheduling/deterministic/single_site.pyx":1291
+        /* "biopharma_scheduling/deterministic/single_site.pyx":1290
  * 
  *             batch_waste.append({
  *                 product_label: schedule.batch_waste[j][i]             # <<<<<<<<<<<<<<
  *                 for j, product_label in enumerate(self.product_labels)
  *             })
  */
-        __pyx_t_24 = __Pyx_PyInt_As_size_t(__pyx_8genexpr8__pyx_v_j); if (unlikely((__pyx_t_24 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 1291, __pyx_L31_error)
-        __pyx_t_25 = __Pyx_PyInt_As_size_t(__pyx_v_i); if (unlikely((__pyx_t_25 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 1291, __pyx_L31_error)
-        __pyx_t_14 = PyFloat_FromDouble(((__pyx_v_schedule.batch_waste[__pyx_t_24])[__pyx_t_25])); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1291, __pyx_L31_error)
+        __pyx_t_24 = __Pyx_PyInt_As_size_t(__pyx_8genexpr8__pyx_v_j); if (unlikely((__pyx_t_24 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 1290, __pyx_L31_error)
+        __pyx_t_25 = __Pyx_PyInt_As_size_t(__pyx_v_i); if (unlikely((__pyx_t_25 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 1290, __pyx_L31_error)
+        __pyx_t_14 = PyFloat_FromDouble(((__pyx_v_schedule.batch_waste[__pyx_t_24])[__pyx_t_25])); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 1290, __pyx_L31_error)
         __Pyx_GOTREF(__pyx_t_14);
-        if (unlikely(PyDict_SetItem(__pyx_t_7, (PyObject*)__pyx_8genexpr8__pyx_v_product_label, (PyObject*)__pyx_t_14))) __PYX_ERR(0, 1291, __pyx_L31_error)
+        if (unlikely(PyDict_SetItem(__pyx_t_7, (PyObject*)__pyx_8genexpr8__pyx_v_product_label, (PyObject*)__pyx_t_14))) __PYX_ERR(0, 1290, __pyx_L31_error)
         __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
 
-        /* "biopharma_scheduling/deterministic/single_site.pyx":1292
+        /* "biopharma_scheduling/deterministic/single_site.pyx":1291
  *             batch_waste.append({
  *                 product_label: schedule.batch_waste[j][i]
  *                 for j, product_label in enumerate(self.product_labels)             # <<<<<<<<<<<<<<
@@ -19230,31 +19238,31 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
       __pyx_L34_exit_scope:;
     } /* exit inner scope */
 
-    /* "biopharma_scheduling/deterministic/single_site.pyx":1290
+    /* "biopharma_scheduling/deterministic/single_site.pyx":1289
  *             batch_supply[-1].update({'date': due_date})
  * 
  *             batch_waste.append({             # <<<<<<<<<<<<<<
  *                 product_label: schedule.batch_waste[j][i]
  *                 for j, product_label in enumerate(self.product_labels)
  */
-    __pyx_t_16 = __Pyx_PyList_Append(__pyx_v_batch_waste, __pyx_t_7); if (unlikely(__pyx_t_16 == -1)) __PYX_ERR(0, 1290, __pyx_L1_error)
+    __pyx_t_16 = __Pyx_PyList_Append(__pyx_v_batch_waste, __pyx_t_7); if (unlikely(__pyx_t_16 == -1)) __PYX_ERR(0, 1289, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-    /* "biopharma_scheduling/deterministic/single_site.pyx":1294
+    /* "biopharma_scheduling/deterministic/single_site.pyx":1293
  *                 for j, product_label in enumerate(self.product_labels)
  *             })
  *             batch_waste[-1].update({'date': due_date})             # <<<<<<<<<<<<<<
  * 
  *         return PySingleSiteMultiSuiteSchedule(
  */
-    __pyx_t_9 = __Pyx_GetItemInt_List(__pyx_v_batch_waste, -1L, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1294, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_GetItemInt_List(__pyx_v_batch_waste, -1L, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1293, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_9, __pyx_n_s_update); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1294, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_9, __pyx_n_s_update); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1293, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-    __pyx_t_9 = PyDict_New(); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1294, __pyx_L1_error)
+    __pyx_t_9 = PyDict_New(); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 1293, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
-    if (PyDict_SetItem(__pyx_t_9, __pyx_n_s_date, __pyx_v_due_date) < 0) __PYX_ERR(0, 1294, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_9, __pyx_n_s_date, __pyx_v_due_date) < 0) __PYX_ERR(0, 1293, __pyx_L1_error)
     __pyx_t_14 = NULL;
     if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_1))) {
       __pyx_t_14 = PyMethod_GET_SELF(__pyx_t_1);
@@ -19266,14 +19274,14 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
       }
     }
     if (!__pyx_t_14) {
-      __pyx_t_7 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_9); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1294, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_9); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1293, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
       __Pyx_GOTREF(__pyx_t_7);
     } else {
       #if CYTHON_FAST_PYCALL
       if (PyFunction_Check(__pyx_t_1)) {
         PyObject *__pyx_temp[2] = {__pyx_t_14, __pyx_t_9};
-        __pyx_t_7 = __Pyx_PyFunction_FastCall(__pyx_t_1, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1294, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_PyFunction_FastCall(__pyx_t_1, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1293, __pyx_L1_error)
         __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
         __Pyx_GOTREF(__pyx_t_7);
         __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
@@ -19282,20 +19290,20 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
       #if CYTHON_FAST_PYCCALL
       if (__Pyx_PyFastCFunction_Check(__pyx_t_1)) {
         PyObject *__pyx_temp[2] = {__pyx_t_14, __pyx_t_9};
-        __pyx_t_7 = __Pyx_PyCFunction_FastCall(__pyx_t_1, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1294, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_PyCFunction_FastCall(__pyx_t_1, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1293, __pyx_L1_error)
         __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
         __Pyx_GOTREF(__pyx_t_7);
         __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
       } else
       #endif
       {
-        __pyx_t_11 = PyTuple_New(1+1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1294, __pyx_L1_error)
+        __pyx_t_11 = PyTuple_New(1+1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1293, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
         __Pyx_GIVEREF(__pyx_t_14); PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_t_14); __pyx_t_14 = NULL;
         __Pyx_GIVEREF(__pyx_t_9);
         PyTuple_SET_ITEM(__pyx_t_11, 0+1, __pyx_t_9);
         __pyx_t_9 = 0;
-        __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_11, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1294, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_11, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1293, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_7);
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
       }
@@ -19303,7 +19311,7 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-    /* "biopharma_scheduling/deterministic/single_site.pyx":1271
+    /* "biopharma_scheduling/deterministic/single_site.pyx":1270
  *         batch_inventory, batch_backlog, batch_supply, batch_waste = [], [], [], []
  * 
  *         for i, due_date in enumerate(self.due_dates):             # <<<<<<<<<<<<<<
@@ -19314,7 +19322,7 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
   __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
   __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
 
-  /* "biopharma_scheduling/deterministic/single_site.pyx":1296
+  /* "biopharma_scheduling/deterministic/single_site.pyx":1295
  *             batch_waste[-1].update({'date': due_date})
  * 
  *         return PySingleSiteMultiSuiteSchedule(             # <<<<<<<<<<<<<<
@@ -19322,37 +19330,37 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
  *                 obj: schedule.objectives[self.objectives[obj]]
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_12 = __Pyx_GetModuleGlobalName(__pyx_n_s_PySingleSiteMultiSuiteSchedule); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1296, __pyx_L1_error)
+  __pyx_t_12 = __Pyx_GetModuleGlobalName(__pyx_n_s_PySingleSiteMultiSuiteSchedule); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1295, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_12);
   { /* enter inner scope */
     PyObject *__pyx_8genexpr9__pyx_v_obj = NULL;
 
-    /* "biopharma_scheduling/deterministic/single_site.pyx":1297
+    /* "biopharma_scheduling/deterministic/single_site.pyx":1296
  * 
  *         return PySingleSiteMultiSuiteSchedule(
  *             {             # <<<<<<<<<<<<<<
  *                 obj: schedule.objectives[self.objectives[obj]]
  *                 for obj in self.AVAILABLE_OBJECTIVES
  */
-    __pyx_t_7 = PyDict_New(); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1297, __pyx_L37_error)
+    __pyx_t_7 = PyDict_New(); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1296, __pyx_L37_error)
     __Pyx_GOTREF(__pyx_t_7);
 
-    /* "biopharma_scheduling/deterministic/single_site.pyx":1299
+    /* "biopharma_scheduling/deterministic/single_site.pyx":1298
  *             {
  *                 obj: schedule.objectives[self.objectives[obj]]
  *                 for obj in self.AVAILABLE_OBJECTIVES             # <<<<<<<<<<<<<<
  *             },
  *             campaigns_table,
  */
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_cur_scope->__pyx_v_self), __pyx_n_s_AVAILABLE_OBJECTIVES); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1299, __pyx_L37_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_cur_scope->__pyx_v_self), __pyx_n_s_AVAILABLE_OBJECTIVES); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1298, __pyx_L37_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (likely(PyList_CheckExact(__pyx_t_1)) || PyTuple_CheckExact(__pyx_t_1)) {
       __pyx_t_11 = __pyx_t_1; __Pyx_INCREF(__pyx_t_11); __pyx_t_20 = 0;
       __pyx_t_21 = NULL;
     } else {
-      __pyx_t_20 = -1; __pyx_t_11 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1299, __pyx_L37_error)
+      __pyx_t_20 = -1; __pyx_t_11 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1298, __pyx_L37_error)
       __Pyx_GOTREF(__pyx_t_11);
-      __pyx_t_21 = Py_TYPE(__pyx_t_11)->tp_iternext; if (unlikely(!__pyx_t_21)) __PYX_ERR(0, 1299, __pyx_L37_error)
+      __pyx_t_21 = Py_TYPE(__pyx_t_11)->tp_iternext; if (unlikely(!__pyx_t_21)) __PYX_ERR(0, 1298, __pyx_L37_error)
     }
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     for (;;) {
@@ -19360,17 +19368,17 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
         if (likely(PyList_CheckExact(__pyx_t_11))) {
           if (__pyx_t_20 >= PyList_GET_SIZE(__pyx_t_11)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_1 = PyList_GET_ITEM(__pyx_t_11, __pyx_t_20); __Pyx_INCREF(__pyx_t_1); __pyx_t_20++; if (unlikely(0 < 0)) __PYX_ERR(0, 1299, __pyx_L37_error)
+          __pyx_t_1 = PyList_GET_ITEM(__pyx_t_11, __pyx_t_20); __Pyx_INCREF(__pyx_t_1); __pyx_t_20++; if (unlikely(0 < 0)) __PYX_ERR(0, 1298, __pyx_L37_error)
           #else
-          __pyx_t_1 = PySequence_ITEM(__pyx_t_11, __pyx_t_20); __pyx_t_20++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1299, __pyx_L37_error)
+          __pyx_t_1 = PySequence_ITEM(__pyx_t_11, __pyx_t_20); __pyx_t_20++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1298, __pyx_L37_error)
           __Pyx_GOTREF(__pyx_t_1);
           #endif
         } else {
           if (__pyx_t_20 >= PyTuple_GET_SIZE(__pyx_t_11)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_11, __pyx_t_20); __Pyx_INCREF(__pyx_t_1); __pyx_t_20++; if (unlikely(0 < 0)) __PYX_ERR(0, 1299, __pyx_L37_error)
+          __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_11, __pyx_t_20); __Pyx_INCREF(__pyx_t_1); __pyx_t_20++; if (unlikely(0 < 0)) __PYX_ERR(0, 1298, __pyx_L37_error)
           #else
-          __pyx_t_1 = PySequence_ITEM(__pyx_t_11, __pyx_t_20); __pyx_t_20++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1299, __pyx_L37_error)
+          __pyx_t_1 = PySequence_ITEM(__pyx_t_11, __pyx_t_20); __pyx_t_20++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1298, __pyx_L37_error)
           __Pyx_GOTREF(__pyx_t_1);
           #endif
         }
@@ -19380,7 +19388,7 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
             if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-            else __PYX_ERR(0, 1299, __pyx_L37_error)
+            else __PYX_ERR(0, 1298, __pyx_L37_error)
           }
           break;
         }
@@ -19389,23 +19397,23 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
       __Pyx_XDECREF_SET(__pyx_8genexpr9__pyx_v_obj, __pyx_t_1);
       __pyx_t_1 = 0;
 
-      /* "biopharma_scheduling/deterministic/single_site.pyx":1298
+      /* "biopharma_scheduling/deterministic/single_site.pyx":1297
  *         return PySingleSiteMultiSuiteSchedule(
  *             {
  *                 obj: schedule.objectives[self.objectives[obj]]             # <<<<<<<<<<<<<<
  *                 for obj in self.AVAILABLE_OBJECTIVES
  *             },
  */
-      __pyx_t_1 = PyObject_GetItem(__pyx_cur_scope->__pyx_v_self->objectives, __pyx_8genexpr9__pyx_v_obj); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1298, __pyx_L37_error)
+      __pyx_t_1 = PyObject_GetItem(__pyx_cur_scope->__pyx_v_self->objectives, __pyx_8genexpr9__pyx_v_obj); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1297, __pyx_L37_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_25 = __Pyx_PyInt_As_size_t(__pyx_t_1); if (unlikely((__pyx_t_25 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 1298, __pyx_L37_error)
+      __pyx_t_25 = __Pyx_PyInt_As_size_t(__pyx_t_1); if (unlikely((__pyx_t_25 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 1297, __pyx_L37_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_1 = PyFloat_FromDouble((__pyx_v_schedule.objectives[__pyx_t_25])); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1298, __pyx_L37_error)
+      __pyx_t_1 = PyFloat_FromDouble((__pyx_v_schedule.objectives[__pyx_t_25])); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1297, __pyx_L37_error)
       __Pyx_GOTREF(__pyx_t_1);
-      if (unlikely(PyDict_SetItem(__pyx_t_7, (PyObject*)__pyx_8genexpr9__pyx_v_obj, (PyObject*)__pyx_t_1))) __PYX_ERR(0, 1298, __pyx_L37_error)
+      if (unlikely(PyDict_SetItem(__pyx_t_7, (PyObject*)__pyx_8genexpr9__pyx_v_obj, (PyObject*)__pyx_t_1))) __PYX_ERR(0, 1297, __pyx_L37_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-      /* "biopharma_scheduling/deterministic/single_site.pyx":1299
+      /* "biopharma_scheduling/deterministic/single_site.pyx":1298
  *             {
  *                 obj: schedule.objectives[self.objectives[obj]]
  *                 for obj in self.AVAILABLE_OBJECTIVES             # <<<<<<<<<<<<<<
@@ -19422,7 +19430,7 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
     __pyx_L40_exit_scope:;
   } /* exit inner scope */
 
-  /* "biopharma_scheduling/deterministic/single_site.pyx":1307
+  /* "biopharma_scheduling/deterministic/single_site.pyx":1306
  *             batch_supply,
  *             batch_waste
  *         )             # <<<<<<<<<<<<<<
@@ -19444,7 +19452,7 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
   #if CYTHON_FAST_PYCALL
   if (PyFunction_Check(__pyx_t_12)) {
     PyObject *__pyx_temp[8] = {__pyx_t_11, __pyx_t_7, __pyx_v_campaigns_table, __pyx_v_batches_table, __pyx_v_batch_inventory, __pyx_v_batch_backlog, __pyx_v_batch_supply, __pyx_v_batch_waste};
-    __pyx_t_10 = __Pyx_PyFunction_FastCall(__pyx_t_12, __pyx_temp+1-__pyx_t_26, 7+__pyx_t_26); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 1296, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_PyFunction_FastCall(__pyx_t_12, __pyx_temp+1-__pyx_t_26, 7+__pyx_t_26); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 1295, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
     __Pyx_GOTREF(__pyx_t_10);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
@@ -19453,14 +19461,14 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
   #if CYTHON_FAST_PYCCALL
   if (__Pyx_PyFastCFunction_Check(__pyx_t_12)) {
     PyObject *__pyx_temp[8] = {__pyx_t_11, __pyx_t_7, __pyx_v_campaigns_table, __pyx_v_batches_table, __pyx_v_batch_inventory, __pyx_v_batch_backlog, __pyx_v_batch_supply, __pyx_v_batch_waste};
-    __pyx_t_10 = __Pyx_PyCFunction_FastCall(__pyx_t_12, __pyx_temp+1-__pyx_t_26, 7+__pyx_t_26); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 1296, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_PyCFunction_FastCall(__pyx_t_12, __pyx_temp+1-__pyx_t_26, 7+__pyx_t_26); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 1295, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
     __Pyx_GOTREF(__pyx_t_10);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   } else
   #endif
   {
-    __pyx_t_1 = PyTuple_New(7+__pyx_t_26); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1296, __pyx_L1_error)
+    __pyx_t_1 = PyTuple_New(7+__pyx_t_26); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1295, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (__pyx_t_11) {
       __Pyx_GIVEREF(__pyx_t_11); PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_11); __pyx_t_11 = NULL;
@@ -19486,7 +19494,7 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
     __Pyx_GIVEREF(__pyx_v_batch_waste);
     PyTuple_SET_ITEM(__pyx_t_1, 6+__pyx_t_26, __pyx_v_batch_waste);
     __pyx_t_7 = 0;
-    __pyx_t_10 = __Pyx_PyObject_Call(__pyx_t_12, __pyx_t_1, NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 1296, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_PyObject_Call(__pyx_t_12, __pyx_t_1, NULL); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 1295, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
@@ -19531,7 +19539,7 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
   return __pyx_r;
 }
 
-/* "biopharma_scheduling/deterministic/single_site.pyx":1310
+/* "biopharma_scheduling/deterministic/single_site.pyx":1309
  * 
  *     @property
  *     def schedules(self):             # <<<<<<<<<<<<<<
@@ -19557,7 +19565,7 @@ static PyObject *__pyx_pf_20biopharma_scheduling_13deterministic_11single_site_2
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "biopharma_scheduling/deterministic/single_site.pyx":1311
+  /* "biopharma_scheduling/deterministic/single_site.pyx":1310
  *     @property
  *     def schedules(self):
  *         return self.schedules             # <<<<<<<<<<<<<<
@@ -19569,7 +19577,7 @@ static PyObject *__pyx_pf_20biopharma_scheduling_13deterministic_11single_site_2
   __pyx_r = __pyx_v_self->schedules;
   goto __pyx_L0;
 
-  /* "biopharma_scheduling/deterministic/single_site.pyx":1310
+  /* "biopharma_scheduling/deterministic/single_site.pyx":1309
  * 
  *     @property
  *     def schedules(self):             # <<<<<<<<<<<<<<
@@ -19584,7 +19592,7 @@ static PyObject *__pyx_pf_20biopharma_scheduling_13deterministic_11single_site_2
   return __pyx_r;
 }
 
-/* "biopharma_scheduling/deterministic/single_site.pyx":1314
+/* "biopharma_scheduling/deterministic/single_site.pyx":1313
  * 
  *     @property
  *     def history(self):             # <<<<<<<<<<<<<<
@@ -19609,7 +19617,7 @@ static PyObject *__pyx_pf_20biopharma_scheduling_13deterministic_11single_site_2
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "biopharma_scheduling/deterministic/single_site.pyx":1315
+  /* "biopharma_scheduling/deterministic/single_site.pyx":1314
  *     @property
  *     def history(self):
  *         return self.history             # <<<<<<<<<<<<<<
@@ -19619,7 +19627,7 @@ static PyObject *__pyx_pf_20biopharma_scheduling_13deterministic_11single_site_2
   __pyx_r = __pyx_v_self->history;
   goto __pyx_L0;
 
-  /* "biopharma_scheduling/deterministic/single_site.pyx":1314
+  /* "biopharma_scheduling/deterministic/single_site.pyx":1313
  * 
  *     @property
  *     def history(self):             # <<<<<<<<<<<<<<

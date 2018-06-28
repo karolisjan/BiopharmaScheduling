@@ -1,0 +1,12 @@
+FROM biopharma-scheduling/base
+
+# Copy the codebase
+COPY . /BiopharmaScheduling 
+
+# Setup biopharma-scheduling
+RUN python /BiopharmaScheduling/setup.py && pip install /BiopharmaScheduling/dist/*linux*whl
+
+# Install additional libs for the examples
+RUN pip install -r examples_requirements.txt
+
+EXPOSE 8888

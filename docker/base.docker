@@ -1,0 +1,23 @@
+FROM python:3.6
+
+# Lock-in pip 
+RUN python -m pip install pip==10.0.1
+
+# Copy source
+RUN mkdir -p /BiopharmaScheduling/
+WORKDIR /BiopharmaScheduling
+
+# Get g++
+RUN echo "deb http://ftp.de.debian.org/debian testing main" >> /etc/apt/sources.list
+RUN apt-get --force-yes update && apt-get --assume-yes install g++
+
+# Get Jupyter
+RUN pip install jupyter
+
+# Get R and its dependencies, and setup a kernel for Jupyter
+RUN apt-get --force-yes update && apt-get --assume-yes install r-base-core
+COPY ./requirements.R /BiopharmaScheduling/requirements.R
+RUN Rscript /BiopharmaScheduling/requirements.R
+
+# Install Cython
+RUN pip install Cython==0.26

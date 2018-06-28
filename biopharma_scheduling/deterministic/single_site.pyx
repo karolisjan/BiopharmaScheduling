@@ -1244,13 +1244,12 @@ cdef class SingleSiteMultiSuite:
         campaigns_table = []
         batches_table = []
 
-        
         for suite in schedule.suites: 
             for campaign in suite:
 
                 campaigns_table.append(OrderedDict([
                     ('Product', self.product_labels[campaign.product_num - 1]),
-                    ('Suite', ('USP%d' if campaign.suite_num < self.num_usp_suites else 'DSP%d') % campaign.suite_num + 1),
+                    ('Suite', 'USP%d' % campaign.suite_num if campaign.suite_num < self.num_usp_suites else 'DSP%d' % (campaign.suite_num - self.num_usp_suites)),
                     ('Batches', campaign.num_batches),
                     ('Start', get_date_of(campaign.start)),
                     ('End', get_date_of(campaign.end))
@@ -1260,7 +1259,7 @@ cdef class SingleSiteMultiSuite:
 
                     batches_table.append(OrderedDict([
                         ('Product', self.product_labels[batch.product_num - 1]),
-                        ('Suite', ('USP%d' if campaign.suite_num < self.num_usp_suites else 'DSP%d') % campaign.suite_num + 1),
+                        ('Suite', 'USP%d' % campaign.suite_num if campaign.suite_num < self.num_usp_suites else 'DSP%d' % (campaign.suite_num - self.num_usp_suites)),
                         ('Start', get_date_of(batch.start)),
                         ('Stored on', get_date_of(batch.stored_at)),
                         ('Expires on', get_date_of(batch.expires_at)),
@@ -1313,3 +1312,59 @@ cdef class SingleSiteMultiSuite:
     @property
     def history(self):
         return self.history
+
+    def score(self, schedules: list, ref_point: dict=None, ideal_point: dict=None):
+        '''
+            When the number of objectives >= 2, estimates the hypervolume 
+            of the top non-dominated front, otherwise - returns the max 
+            objective function value of 'num_runs'.
+
+            Utilised 'hypervolume' benchmark utility from 'deap - Distributed 
+            Evolutionary Algorithms in Python' (https://github.com/DEAP/deap).
+
+            INPUT:
+
+                schedules: list
+                    A list of PySingleSiteMultiSuiteSchedule objects obtain from SingleSiteMultiSuite.schedules 
+                    once the model is fit. 
+
+                ref_point: dict, optional, default None
+                    A dictionary of objective name and value pairs. It is used
+                    as a reference point for hypervolume estimation. If 'ref_point'
+                    is None then, the worst value for each objective +1 is used.
+
+                    For example:
+
+                    {
+                        'total_kg_inventory_deficit': 2007.7,
+                        'total_kg_throughput': 106.9
+                    }
+
+                ideal_point: dict, optional, default None
+                    A dictionary of objective name and value pairs. If 'ideal_point'
+                    is not None, then it is used to normalise the hypervolume in
+                    range 0.0 - 1.0. 'ideal_point' is ignored if the number of 
+                    objectives is 1. 
+        '''
+        assert type(schedules) is list and len(schedules) > 0
+
+        if len(self.objectives_coefficients_list) == 1:
+            return schedules[0].objectives[self.objectives_coefficients_list[0][0]]
+
+        points = np.array([
+            [schedule.objectives[obj].values[0] * coef * -1 for (obj, coef) in self.objectives_coefficients_list]
+            for schedule in schedules
+        ])
+
+        if ref_point is not None:
+            ref_point = [ref_point[obj] * coef * -1 for (obj, coef) in self.objectives_coefficients_list]
+        else:
+            ref_point = (np.max(points, axis=0) + 1).tolist()
+
+        hv = hypervolume(points, ref_point)
+
+        if ideal_point is not None:
+            ideal_point = np.array([[ideal_point[obj] * coef * -1 for (obj, coef) in self.objectives_coefficients_list]])
+            hv /= hypervolume(ideal_point, ref_point)
+
+        return hv        
