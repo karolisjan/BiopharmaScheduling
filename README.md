@@ -23,10 +23,12 @@ This approach has been presented during a keynote lecture at the 27th European S
 ## Setup 
 
 <a id='docker'></a>
-### Docker
+### Docker (recommended option)
 
 * Download and install [docker](https://www.docker.com/community-edition) >= `docker version 17.12.0`
-* On Windows 10, [switch to using Linux containers](https://docs.microsoft.com/en-us/virtualization/windowscontainers/quick-start/quick-start-windows-10)
+* For Windows 10 users:
+    * `docker` supports only Windows 10 Professional and Enterprise editions. Also, [switch to using Linux containers](https://docs.microsoft.com/en-us/virtualization/windowscontainers/quick-start/quick-start-windows-10)
+    * For other Windows 10 editions, a [Linux Subsystem](https://docs.microsoft.com/en-us/windows/wsl/install-win10) can be installed to either install a Linux version of `docker` or build `biopharma-scheduling` from source (see [below](#ubuntu)). 
 * Run the following in the terminal
     ```
     git clone https://github.com/UCL-Biochemical-Engineering/BiopharmaScheduling
@@ -52,8 +54,7 @@ This approach has been presented during a keynote lecture at the 27th European S
     ```
 * Install Python libraries
     ```
-    python -m pip install pip==10.0.1
-    pip install setuptools==38.6.0 Cython==0.26 jupyter
+    python -m pip install pip==10.0.1 setuptools==38.6.0 Cython==0.26
     ```
 * Find the path to the `g++` binary with `brew ls gcc | grep g++`. It should be in       
     ```
@@ -93,8 +94,7 @@ This approach has been presented during a keynote lecture at the 27th European S
     ```
 * Install Python libraries
     ```
-    python -m pip install pip==10.0.1
-    pip install setuptools==38.6.0 Cython==0.26 jupyter
+    python -m pip install pip==10.0.1 setuptools==38.6.0 Cython==0.26
     ```
 * Export the path to the `g++` binary 
     ```
@@ -113,7 +113,7 @@ This approach has been presented during a keynote lecture at the 27th European S
 <a id='examples'></a>
 ## Examples
 
-* Using `docker`:
+* Using `docker`
     ```
     docker run -it -p 8888:8888 -v <absolute path to BiopharmaScheduling folder>:/BiopharmaScheduling biopharma-scheduling/lab bash -c "jupyter lab --ip 0.0.0.0 --no-browser --allow-root"
     ```
@@ -125,10 +125,9 @@ This approach has been presented during a keynote lecture at the 27th European S
         pip install ipykernel
         python -m ipykernel install --user --name <environment-name> --display-name "<display-name>"
         ```
-    * Create and activate a separate Python enviroment, and run `pip install jupyter jupyterlab`
+    * Create and activate a separate Python enviroment, and run `pip install jupyter jupyterlab` inside it
     * Install [Node.js](https://nodejs.org/en/)
-    * Set-up [Plotly extension](https://github.com/jupyterlab/jupyter-renderers/tree/master/packages/plotly-extension) with `jupyter labextension install @jupyterlab/plotly-extension`
+    * Setup [Plotly extension](https://github.com/jupyterlab/jupyter-renderers/tree/master/packages/plotly-extension) with `jupyter labextension install @jupyterlab/plotly-extension`
     * Launch `jupyter lab` and navigate to `examples` folder
 
 [back to top](#index)
-
