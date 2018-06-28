@@ -1,6 +1,6 @@
 FROM python:3.6
 
-# Lock-in pip 
+# Lock-in pip version
 RUN python -m pip install pip==10.0.1
 
 # Copy source
@@ -11,13 +11,19 @@ WORKDIR /BiopharmaScheduling
 RUN echo "deb http://ftp.de.debian.org/debian testing main" >> /etc/apt/sources.list
 RUN apt-get --force-yes update && apt-get --assume-yes install g++-8
 
-# Get Jupyter
-RUN pip install jupyter
+# Get Jupyter and Jupyter Lab
+RUN pip install jupyter jupyterlab
+
+# Get NodeJS
+RUN apt-get --force-yes update && apt-get --assume-yes install nodejs && apt-get --assume-yes install npm
+
+# Set up Plotly extension for Jupyter Lab
+RUN jupyter labextension install @jupyterlab/plotly-extension
+
+# Install Cython
+RUN pip install Cython==0.26
 
 # Get R and its dependencies, and setup a kernel for Jupyter
 # RUN apt-get --force-yes update && apt-get --assume-yes install r-base-core
 # COPY ./requirements.R /BiopharmaScheduling/requirements.R
 # RUN Rscript /BiopharmaScheduling/requirements.R
-
-# Install Cython
-RUN pip install Cython==0.26

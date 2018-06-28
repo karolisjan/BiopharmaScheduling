@@ -1,22 +1,42 @@
 <a id='index'></a>
-# Continuous-Time Capacity Planning for Biopharmaceutical Facility
+# Biopharma Scheduling
 
-This is a genetic algorithm (GA) based optimisation approach for medium-term capacity planning of a multi-product, multi-suite biopharmaceutical facility using a continuous-time representation. The continuous-time model is implemented by utilising a dynamic chromosome structure capable of adapting to the problem by growing in length from a single gene corresponding to a production campaign in a manufacturing schedule.
+> Work in progress...
 
-This software has been presented during a keynote lecture at the 27th European Symposium on Computer Aided Process Engineering (ESCAPE) and used in the following publication:
-
-> Jankauskas, K., Papageorgiou, L. G., & Farid, S. S. (2017). Continuous-Time Heuristic Model for Medium-Term Capacity Planning of a Multi-Suite, Multi-Product Biopharmaceutical Facility. In *Computer Aided Chemical Engineering* (Vol. 40, pp. 1303-1308). Elsevier. **DOI:** [10.1016/B978-0-444-63965-3.50219-1](https://doi.org/10.1016/B978-0-444-63965-3.50219-1).
-
+* [Introduction](#intro)
 * [Setup](#setup)
+    * [Docker](#docker)
     * [macOS](#macos)
     * [Ubuntu 16.04 LTS](#ubuntu)
-* [Running the demo](#demo)
+* [Examples](#demo)
+
+<a id='intro'></a>
+## Introduction
+
+This is a genetic algorithm (GA) based optimisation approach for medium-term capacity planning and scheduling of multi-product biopharmaceutical facilities using a continuous-time representation. The continuous-time model is implemented by utilising a variable-length chromosome structure capable of adapting to the problem by growing in length from a single gene corresponding to a production campaign in a manufacturing schedule.
+
+This approach has been presented during a keynote lecture at the 27th European Symposium on Computer Aided Process Engineering (ESCAPE):
+
+> Jankauskas, K., Papageorgiou, L. G., & Farid, S. S. (2017). Continuous-Time Heuristic Model for Medium-Term Capacity Planning of a Multi-Suite, Multi-Product Biopharmaceutical Facility. In *Computer Aided Chemical Engineering* (Vol. 40, pp. 1303-1308). Elsevier. **DOI:** [10.1016/B978-0-444-63965-3.50219-1](https://doi.org/10.1016/B978-0-444-63965-3.50219-1).
 
 <a id='setup'></a>
 ## Setup 
 
+<a id='docker'></a>
+### Docker
+
+* Download and install [docker](https://www.docker.com/community-edition) >= `docker version 17.12.0`
+* On Windows 10, [switch to using Linux containers](https://docs.microsoft.com/en-us/virtualization/windowscontainers/quick-start/quick-start-windows-10)
+* Run the following in the terminal
+    ```
+    git clone https://github.com/UCL-Biochemical-Engineering/BiopharmaScheduling
+    cd BiopharmaScheduling
+    docker build -t biopharma-scheduling/base -f ./docker/base.docker .
+    docker build -t biopharma-scheduling/lab -f ./docker/lab.docker .
+    ```
+
 <a id='macos'></a>
-### MacOS
+### macOS
 
 * Install [`brew`](https://brew.sh/)
 
@@ -35,7 +55,7 @@ This software has been presented during a keynote lecture at the 27th European S
     python -m pip install pip==10.0.1
     pip install setuptools==38.6.0 Cython==0.26 jupyter
     ```
-* Find the path to the `g++` binary with `brew ls gcc`. It should be in       
+* Find the path to the `g++` binary with `brew ls gcc | grep g++`. It should be in       
     ```
     /usr/local/Cellar/gcc/<version>/bin/g++-<version>
     ```
@@ -58,11 +78,10 @@ This software has been presented during a keynote lecture at the 27th European S
 
 * Install the essentials first
     ```
-    sudo apt-get update 
-    sudo apt-get install build-essential software-properties-common -y 
+    sudo apt-get update && sudo apt-get install build-essential software-properties-common -y 
     sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y 
     sudo apt-get update && sudo apt-get install gcc-snapshot -y 
-    sudo apt-get update && sudo apt-get install gcc-7 g++-7 -y
+    sudo apt-get update && sudo apt-get install gcc-8 g++-8 -y
     sudo apt-get install git python-dev python3-dev python-pip python3-pip python-wheel python3-wheel python-virtualenv 
     ```
 * Create and activate virtual Python environment
@@ -79,11 +98,11 @@ This software has been presented during a keynote lecture at the 27th European S
     ```
 * Export the path to the `g++` binary 
     ```
-    export CC=g++-7 && export CXX=g++-7
+    export CC=g++-8 && export CXX=g++-8
     ```
 * Compile and install the `biopharma-scheduling`
     ```
-    git clone https://github.com/karolisjan/BiopharmaScheduling.git
+    git clone https://github.com/UCL-Biochemical-Engineering/BiopharmaScheduling
     cd BiopharmaScheduling
     python setup.py
     pip install dist/*whl
@@ -91,16 +110,25 @@ This software has been presented during a keynote lecture at the 27th European S
 
 [back to top](#index)
 
-<a id='demo'></a>
-## Running the demo
+<a id='examples'></a>
+## Examples
 
-* Install `jupyter` with `pip install jupyter`
-* Setup the `ipykernel` for the environment created earlier
+* Using `docker`:
     ```
-    pip install ipykernel
-    python -m ipykernel install --user --name <environment-name> --display-name "<display-name>"
+    docker run -it -p 8888:8888 -v <absolute path to BiopharmaScheduling folder>:/BiopharmaScheduling biopharma-scheduling/lab bash -c "cd examples && jupyter lab --ip 0.0.0.0 --no-browser --allow-root"
     ```
-* Launch `jupyter notebook` and navigate to `ContinuousTimeCapacityPlanning/demo`
+    * Access the `examples` from `localhost::8888/?token=<token ID>`
+* Using [Jupyter Lab](https://blog.jupyter.org/jupyterlab-is-ready-for-users-5a6f039b8906) 
+
+    * Setup the `ipykernel` for the environment created earlier
+        ```
+        pip install ipykernel
+        python -m ipykernel install --user --name <environment-name> --display-name "<display-name>"
+        ```
+    * Install [Node.js](https://nodejs.org/en/)
+    * Create and activate a separate Python enviroment, and run `pip install jupyter jupyterlab`
+    * Set-up [Plotly extension](https://github.com/jupyterlab/jupyter-renderers/tree/master/packages/plotly-extension) with `jupyter labextension install @jupyterlab/plotly-extension`
+    * Launch `jupyter lab` and navigate to `examples` folder
 
 [back to top](#index)
 
