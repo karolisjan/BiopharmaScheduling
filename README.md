@@ -115,9 +115,9 @@ This approach has been presented during a keynote lecture at the 27th European S
 
 * Using `docker`:
     ```
-    docker run -it -p 8888:8888 -v <absolute path to BiopharmaScheduling folder>:/BiopharmaScheduling biopharma-scheduling/lab bash -c "cd examples && jupyter lab --ip 0.0.0.0 --no-browser --allow-root"
+    docker run -it -p 8888:8888 -v <absolute path to BiopharmaScheduling folder>:/BiopharmaScheduling biopharma-scheduling/lab bash -c "jupyter lab --ip 0.0.0.0 --no-browser --allow-root"
     ```
-    * Access the `examples` from `localhost::8888/?token=<token ID>`
+    * Go to `localhost::8888/?token=<token ID>`and navigate to `examples` folder
 * Using [Jupyter Lab](https://blog.jupyter.org/jupyterlab-is-ready-for-users-5a6f039b8906) 
 
     * Setup the `ipykernel` for the environment created earlier
