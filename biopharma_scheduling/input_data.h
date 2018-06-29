@@ -23,17 +23,39 @@ namespace stochastic
         TOTAL_MEAN_KG_SUPPLY,
         TOTAL_MEAN_KG_WASTE,
 
+		TOTAL_KG_INVENTORY_DEFICIT_STD,
+		TOTAL_KG_THROUGHPUT_STD,
+		TOTAL_KG_BACKLOG_STD,
+		TOTAL_KG_SUPPLY_STD,
+		TOTAL_KG_WASTE_STD,
+
+		TOTAL_INVENTORY_PENALTY_STD,
+		TOTAL_BACKLOG_PENALTY_STD,
+		TOTAL_PRODUCTION_COST_STD,
+		TOTAL_STORAGE_COST_STD,
+		TOTAL_WASTE_COST_STD,
+		TOTAL_REVENUE_STD,
+		TOTAL_PROFIT_STD,
+		TOTAL_COST_STD,
+
+		TOTAL_KG_INVENTORY_DEFICIT_MEAN,
+		TOTAL_KG_THROUGHPUT_MEAN,
+		TOTAL_KG_BACKLOG_MEAN,
+		TOTAL_KG_SUPPLY_MEAN,
+		TOTAL_KG_WASTE_MEAN,
+
+		TOTAL_INVENTORY_PENALTY_MEAN,
+		TOTAL_BACKLOG_PENALTY_MEAN,
+		TOTAL_PRODUCTION_COST_MEAN,
+		TOTAL_STORAGE_COST_MEAN,
+		TOTAL_WASTE_COST_MEAN,
+		TOTAL_REVENUE_MEAN,
+		TOTAL_PROFIT_MEAN,
+		TOTAL_COST_MEAN,
+
 		TOTAL_CHANGEOVER_COST,
 
-        TOTAL_MEAN_INVENTORY_PENALTY,
-        TOTAL_MEAN_BACKLOG_PENALTY,
-		TOTAL_MEAN_PRODUCTION_COST,
-        TOTAL_MEAN_STORAGE_COST,
-        TOTAL_MEAN_WASTE_COST,
-        TOTAL_MEAN_REVENUE,
-        TOTAL_MEAN_PROFIT,
-        TOTAL_MEAN_COST,
-        NUM_OBJECTIVES = TOTAL_MEAN_COST + 1
+        NUM_OBJECTIVES = TOTAL_COST_MEAN + 1
     };
 
     struct SingleSiteSimpleInputData
@@ -81,14 +103,21 @@ namespace stochastic
 			std::vector<std::vector<double>> *kg_inventory_target = NULL,
 			std::unordered_map<OBJECTIVES, std::pair<int, double>> *constraints = NULL
 		) :
-			kg_demand(kg_demand),
-			kg_inventory_target(kg_inventory_target),
 			days_per_period(days_per_period),
-			num_products(kg_demand.size()),
+
+			kg_demand_min(kg_demand_min),
+			kg_demand_mode(kg_demand_mode),
+			kg_demand_max(kg_demand_max),
+
+			num_mc_sims(num_mc_sims),
+			num_products(kg_demand_mode.size()),
 			num_periods(days_per_period.size()),
 
+			kg_inventory_target_min(kg_inventory_target_min),
+			kg_inventory_target_mode(kg_inventory_target_mode),
+			kg_inventory_target_max(kg_inventory_target_max),			
+
 			kg_opening_stock(kg_opening_stock),
-			kg_yield_per_batch(kg_yield_per_batch),
 			kg_storage_limits(kg_storage_limits),
 
 			inventory_penalty_per_kg(inventory_penalty_per_kg),
@@ -133,17 +162,24 @@ namespace stochastic
 		std::vector<std::pair<OBJECTIVES, int>> objectives;
 		std::vector<std::pair<OBJECTIVES, std::pair<int, double>>> constraints;
 
+		int num_mc_sims;
 		int num_products;
         int num_periods;
 
         double horizon; 
 
+		std::vector< std::vector<double>> kg_demand_min;
+		std::vector< std::vector<double>> kg_demand_mode;
+		std::vector< std::vector<double>> kg_demand_max;
+
+		std::vector<double> kg_yield_per_batch_min;
+		std::vector<double> kg_yield_per_batch_model;
+		std::vector<double> kg_yield_per_batch_max;
+
 		std::vector< std::vector<int>> changeover_days;
-		std::vector< std::vector<double>> kg_demand;
         std::vector< std::vector<double>> *kg_inventory_target;
 
 		std::vector<double> kg_opening_stock;
-        std::vector<double> kg_yield_per_batch;
         std::vector<double> kg_storage_limits;
 
 		std::vector<double> inventory_penalty_per_kg;

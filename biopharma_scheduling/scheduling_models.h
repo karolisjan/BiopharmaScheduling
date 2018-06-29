@@ -300,8 +300,6 @@ namespace stochastic
 			while (!schedule.inventory[product_num][period_num].empty() && kg_over > input_data.kg_storage_limits[product_num]) {
 				if (kg_over >= schedule.inventory[product_num][period_num].top().kg) {
 					schedule.kg_waste[product_num][period_num] += schedule.inventory[product_num][period_num].top().kg;
-					schedule.objectives[TOTAL_KG_WASTE] += schedule.inventory[product_num][period_num].top().kg;
-					schedule.objectives[TOTAL_WASTE_COST] += schedule.inventory[product_num][period_num].top().kg * input_data.waste_cost_per_kg[product_num];
 					kg_over -= schedule.inventory[product_num][period_num].top().kg;
 					schedule.inventory[product_num][period_num].pop();
 
@@ -311,8 +309,6 @@ namespace stochastic
 				}
 				else {
 					schedule.kg_waste[product_num][period_num] += kg_over;
-					schedule.objectives[TOTAL_KG_WASTE] += kg_over;
-					schedule.objectives[TOTAL_WASTE_COST] += kg_over * input_data.waste_cost_per_kg[product_num];
 					utils::access_queue_container(schedule.inventory[product_num][period_num])[0].kg -= kg_over;
 					kg_over = 0;
 				}
@@ -327,8 +323,6 @@ namespace stochastic
 				schedule.inventory[product_num][period_num].top().expires_at < input_data.due_dates[period_num]
 			) {
 				schedule.kg_waste[product_num][period_num] += schedule.inventory[product_num][period_num].top().kg;
-				schedule.objectives[TOTAL_KG_WASTE] += schedule.inventory[product_num][period_num].top().kg;
-				schedule.objectives[TOTAL_WASTE_COST] += schedule.inventory[product_num][period_num].top().kg * input_data.waste_cost_per_kg[product_num];
 				schedule.inventory[product_num][period_num].pop();
 			}
 		}
@@ -350,26 +344,25 @@ namespace stochastic
 			);
 		}
 
-		inline void CheckSupplyDemandBacklogInventory(types::SingleSiteSimpleSchedule &schedule, int product_num, int period_num) 
+		inline void CheckSupplyDemandBacklogInventory(types::SingleSiteSimpleSchedule &schedule, int product_num, int period_num, double kg_demand) 
 		{
 			double kg_available = GetKgAvailable(schedule, product_num, period_num);
 
 			// No demand and backlog orders -> exit early
-			if (period_num && !input_data.kg_demand[product_num][period_num] && !schedule.kg_backlog[product_num][period_num - 1]) {
+			if (period_num && kg_demand == utils::Approx(0.0) && !schedule.kg_backlog[product_num][period_num - 1]) {
 				schedule.kg_inventory[product_num][period_num] = kg_available;
 				return;
 			}
 
 			// Check that there is indeed a demand for a given product
-			if (input_data.kg_demand[product_num][period_num]) {
-				if (kg_available >= input_data.kg_demand[product_num][period_num]) {
-					schedule.kg_supply[product_num][period_num] = input_data.kg_demand[product_num][period_num];
-					kg_available -= input_data.kg_demand[product_num][period_num];
+			if (kg_demand) {
+				if (kg_available >= kg_demand) {
+					schedule.kg_supply[product_num][period_num] = kg_demand;
+					kg_available -= kg_demand;
 				}
 				else {
 					schedule.kg_supply[product_num][period_num] = kg_available;
-					schedule.kg_backlog[product_num][period_num] = input_data.kg_demand[product_num][period_num] - kg_available;
-					schedule.objectives[TOTAL_KG_BACKLOG] += schedule.kg_backlog[product_num][period_num];
+					schedule.kg_backlog[product_num][period_num] = kg_demand - kg_available;
 					kg_available = 0;
 
 					if (period_num) {
@@ -409,9 +402,6 @@ namespace stochastic
 				}
 			}
 
-			schedule.objectives[TOTAL_BACKLOG_PENALTY] += schedule.kg_backlog[product_num][period_num] * input_data.backlog_penalty_per_kg[product_num];
-			schedule.objectives[TOTAL_KG_SUPPLY] += schedule.kg_supply[product_num][period_num];
-			schedule.objectives[TOTAL_REVENUE] += schedule.kg_supply[product_num][period_num] * input_data.sell_price_per_kg[product_num];			
 			schedule.kg_inventory[product_num][period_num] = kg_available;
 		}
 
@@ -421,8 +411,8 @@ namespace stochastic
 				double kg_inventory_target_ = (*input_data.kg_inventory_target)[product_num][period_num];
 
 				if (schedule.kg_inventory[product_num][period_num] < kg_inventory_target_) {
-					schedule.objectives[TOTAL_KG_INVENTORY_DEFICIT] += kg_inventory_target_ - schedule.kg_inventory[product_num][period_num];
-					schedule.objectives[TOTAL_INVENTORY_PENALTY] += (kg_inventory_target_ - schedule.kg_inventory[product_num][period_num]) * input_data.inventory_penalty_per_kg[product_num];
+					schedule.objectives[TOTAL_KG_INVENTORY_DEFICIT_MEAN] += kg_inventory_target_ - schedule.kg_inventory[product_num][period_num];
+					schedule.objectives[TOTAL_INVENTORY_PENALTY_MEAN] += (kg_inventory_target_ - schedule.kg_inventory[product_num][period_num]) * input_data.inventory_penalty_per_kg[product_num];
 				}
 			}
 		}
