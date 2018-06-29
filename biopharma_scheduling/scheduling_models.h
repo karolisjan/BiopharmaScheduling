@@ -27,7 +27,7 @@
 
 namespace stochastic
 {
-	class SingleSiteSimple
+	class SingleSiteSimpleModel
 	{
 		SingleSiteSimpleInputData input_data;
 

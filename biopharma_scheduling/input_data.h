@@ -13,7 +13,7 @@
 #include <unordered_map>
 
 
-namespace deterministic
+namespace stochastic
 {
     enum OBJECTIVES 
     {
@@ -33,7 +33,7 @@ namespace deterministic
         TOTAL_MEAN_REVENUE,
         TOTAL_MEAN_PROFIT,
         TOTAL_MEAN_COST,
-        NUM_OBJECTIVES = TOTAL_COST + 1
+        NUM_OBJECTIVES = TOTAL_MEAN_COST + 1
     };
 
     struct SingleSiteSimpleInputData
@@ -41,14 +41,22 @@ namespace deterministic
 		SingleSiteSimpleInputData() {}
 		
 		SingleSiteSimpleInputData(
+			int num_mc_sims, 
+			
 			std::unordered_map<OBJECTIVES, int> objectives,
 
-			std::vector< std::vector<double>> kg_demand,
 			std::vector<int> days_per_period,
 
-			std::vector<double> kg_opening_stock,
-			std::vector<double> kg_yield_per_batch,
+			std::vector< std::vector<double>> kg_demand_min,
+			std::vector< std::vector<double>> kg_demand_mode,
+			std::vector< std::vector<double>> kg_demand_max,
+
+			std::vector<double> kg_yield_per_batch_min,
+			std::vector<double> kg_yield_per_batch_mode,
+			std::vector<double> kg_yield_per_batch_max,
+
 			std::vector<double> kg_storage_limits,
+			std::vector<double> kg_opening_stock,
 			
 			std::vector<double> inventory_penalty_per_kg,
 			std::vector<double> backlog_penalty_per_kg,
