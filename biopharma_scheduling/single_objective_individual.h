@@ -8,8 +8,6 @@
 #ifndef __SINGLE_OBJECTIVE_INDIVIDUAL_H__
 #define __SINGLE_OBJECTIVE_INDIVIDUAL_H__
 
-#include <vector>
-
 #include "base_individual.h"
 
 

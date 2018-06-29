@@ -1,7 +1,11 @@
 #define CATCH_CONFIG_MAIN  
 #include "catch.hpp"
 
+#include <unordered_map>
+
+#include "gene.h"
 #include "nsgaii.h"
+#include "single_objective_ga.h"
 #include "scheduling_models.h"
 
 
@@ -409,7 +413,7 @@ SCENARIO("Range-based binary search for test")
 	}
 }
 
-SCENARIO("SingleSiteSimpleModel::CreateSchedule test without additional storage limits and shelf-life constraints.") 
+SCENARIO("deterministic::SingleSiteSimpleModel::CreateSchedule test without additional storage limits and shelf-life constraints.") 
 {
 	std::unordered_map<deterministic::OBJECTIVES, int> objectives;
 	objectives.emplace(deterministic::TOTAL_KG_INVENTORY_DEFICIT, -1);
@@ -509,7 +513,7 @@ SCENARIO("SingleSiteSimpleModel::CreateSchedule test without additional storage 
 		WHEN("The solution has 8 genes and is known to correspond to a schedule with 8 different " +
 		"campaigns with a total throughput of 570 kg, inventory deficit of 34 kg, and 0 kg backlog.")
 		{
-			types::NSGAIndividual<type::SingleSiteSimpleGene> known_solution;
+			types::NSGAIndividual<types::SingleSiteSimpleGene> known_solution;
 
 			known_solution.genes.resize(7);
 
@@ -528,7 +532,7 @@ SCENARIO("SingleSiteSimpleModel::CreateSchedule test without additional storage 
 			known_solution.genes[6].product_num = 1;
 			known_solution.genes[6].num_batches = 45;
 
-			types::Schedule schedule;
+			types::SingleSiteSimpleSchedule schedule;
 			single_site_simple_model.CreateSchedule(known_solution, schedule);
 
 			THEN("CreateSchedule creates a schedule with 8 different campaigns and the correct total kg throughput, inventory deficit, and backlog.")
@@ -547,7 +551,7 @@ SCENARIO("SingleSiteSimpleModel::CreateSchedule test without additional storage 
 
 		WHEN("The solution has 8 genes. 7 of the genes correspond to 7 valid campaigns but the last gene is known to be beyond the horizon.")
 		{
-			types::NSGAIndividual<type::SingleSiteSimpleGene> input, output;
+			types::NSGAIndividual<types::SingleSiteSimpleGene> input, output;
 
 			input.genes.resize(8);
 
@@ -585,7 +589,7 @@ SCENARIO("SingleSiteSimpleModel::CreateSchedule test without additional storage 
 			output.genes[6].product_num = 4;
 			output.genes[6].num_batches = 37;
 
-			types::Schedule schedule;
+			types::SingleSiteSimpleSchedule schedule;
 			single_site_simple_model.CreateSchedule(input, schedule);
 
 			THEN("CreateSchedule correctly creates a schedule with 7 different campaigns cutting off the last one.")
@@ -601,7 +605,7 @@ SCENARIO("SingleSiteSimpleModel::CreateSchedule test without additional storage 
 
 		WHEN("The solution has 8 genes but two consecutive genes have the same product number.")
 		{
-			types::NSGAIndividual<type::SingleSiteSimpleGene> input, output;
+			types::NSGAIndividual<types::SingleSiteSimpleGene> input, output;
 
 			input.genes.resize(8);
 
@@ -639,7 +643,7 @@ SCENARIO("SingleSiteSimpleModel::CreateSchedule test without additional storage 
 			output.genes[6].product_num = 4;
 			output.genes[6].num_batches = 37;
 
-			types::Schedule schedule;
+			types::SingleSiteSimpleSchedule schedule;
 			single_site_simple_model.CreateSchedule(input, schedule);
 
 			THEN("CreateSchedule correctly creates a schedule with 7 different campaigns concatenating the two campaigns with the same product number.")
@@ -655,7 +659,7 @@ SCENARIO("SingleSiteSimpleModel::CreateSchedule test without additional storage 
 
 		WHEN("The solution with 14 genes has multiple consecutive one with the same product number and some beyond the horizon.")
 		{
-			types::NSGAIndividual<type::SingleSiteSimpleGene> input, output;
+			types::NSGAIndividual<types::SingleSiteSimpleGene> input, output;
 
 			input.genes.resize(13);
 
@@ -703,7 +707,7 @@ SCENARIO("SingleSiteSimpleModel::CreateSchedule test without additional storage 
 			output.genes[6].product_num = 4;
 			output.genes[6].num_batches = 37;
 
-			types::Schedule schedule;
+			types::SingleSiteSimpleSchedule schedule;
 			single_site_simple_model.CreateSchedule(input, schedule);
 
 			THEN("CreateSchedule correctly creates a schedule with 7 different campaigns concatenating the campaigns with the same product number and removing the ones beyond the horizon.")
@@ -715,6 +719,225 @@ SCENARIO("SingleSiteSimpleModel::CreateSchedule test without additional storage 
 					REQUIRE( schedule.campaigns[i].num_batches == output.genes[i].num_batches );
 				}
 			}
+		}
+	}
+}
+
+SCENARIO("deterministic::SingleSiteMultiSuiteModel::CreateSchedule test")
+{
+	GIVEN("Example 1 base case data and a known solution")
+	{
+		THEN("deterministic::SingleSiteMultiSuiteModel::CreateSchedule creates a schedule with a total profit of 518")
+		{
+			std::unordered_map<deterministic::OBJECTIVES, int> objectives;
+			objectives.emplace(deterministic::TOTAL_PROFIT, -1);
+			
+			std::vector<std::vector<int>> demand =
+			{
+				{ 0, 0, 0, 6, 0, 6 },
+				{ 0, 0, 6, 0, 0, 0 },
+				{ 0, 8, 0, 0, 8, 0 }
+			};
+
+			std::vector<int> days_per_period = { 60, 60, 60, 60, 60, 60 };
+
+			int num_usp_suites = 2, num_dsp_suites = 2;
+
+			std::vector<double> sales_price = { 20, 20, 20 };
+			std::vector<double> usp_production_cost = { 2, 2, 2 };
+			std::vector<double> dsp_production_cost = { 2, 2, 2 };
+			std::vector<double> waste_disposal_cost = { 1, 1, 1 };
+			std::vector<double> storage_cost = { 1, 1, 1 };
+			std::vector<double> backlog_penalty = { 20, 20, 20 };
+			std::vector<double> usp_changeover_cost = { 1, 1, 1 };
+			std::vector<double> dsp_changeover_cost = { 1, 1, 1 };
+		
+			std::vector<double> usp_days = { 20, 22, 12.5 };
+			std::vector<double> dsp_days = { 10, 10, 10 };
+
+			std::vector<std::vector<double>> usp_changeovers = { 
+				{ 10, 10, 10  },
+				{ 10, 10, 10 },
+				{ 10, 10, 10 }
+			};
+
+			std::vector<std::vector<double>> dsp_changeovers = { 
+				{ 10,   10,   10   },
+				{ 10,   10,   10   },
+				{ 12.5, 12.5, 12.5 }
+			};
+
+			std::vector<int> shelf_life = { 180, 180, 180 };
+			std::vector<int> storage_cap = { 40, 40, 40 };
+
+			deterministic::SingleSiteMultiSuiteInputData input_data(
+				objectives,
+
+				num_usp_suites,
+				num_dsp_suites,
+
+				demand,
+				days_per_period,
+
+				usp_days,
+				dsp_days,
+				
+				shelf_life,
+				storage_cap,
+
+				sales_price,
+				storage_cost,
+				backlog_penalty,
+				waste_disposal_cost,
+				usp_production_cost,
+				dsp_production_cost,
+				usp_changeover_cost,
+				dsp_changeover_cost,
+
+				usp_changeovers,
+				dsp_changeovers
+			);
+
+			deterministic::SingleSiteMultiSuiteModel single_site_multi_suite_model(input_data);
+
+			types::SingleObjectiveIndividual<types::SingleSiteMultiSuiteGene> i;
+
+			i.genes.resize(5);
+
+			i.genes[0].usp_suite_num = 1;
+			i.genes[0].product_num = 2;
+			i.genes[0].num_batches = 6;
+
+			i.genes[1].usp_suite_num = 1;
+			i.genes[1].product_num = 1;
+			i.genes[1].num_batches = 2;
+
+			i.genes[2].usp_suite_num = 1;
+			i.genes[2].product_num = 3;
+			i.genes[2].num_batches = 7;
+
+			i.genes[3].usp_suite_num = 2;
+			i.genes[3].product_num = 3;
+			i.genes[3].num_batches = 9;
+
+			i.genes[4].usp_suite_num = 2;
+			i.genes[4].product_num = 1;
+			i.genes[4].num_batches = 10;
+
+			types::SingleSiteMultiSuiteSchedule schedule;
+			single_site_multi_suite_model.CreateSchedule(i, schedule);
+
+			REQUIRE(schedule.objectives[deterministic::TOTAL_PROFIT] == Approx(518.0));
+		}
+	}
+
+	GIVEN("Increased demand for p1 during last time period, i.e. 9 batches due by the end of t6")
+	{
+		THEN("deterministic::SingleSiteMultiSuiteModel::CreateSchedule creates a schedule with a total profit of 563")
+		{
+			std::unordered_map<deterministic::OBJECTIVES, int> objectives;
+			objectives.emplace(deterministic::TOTAL_PROFIT, -1);
+			
+			std::vector<std::vector<int>> demand =
+			{
+				{ 0, 0, 0, 6, 0, 9 },
+				{ 0, 0, 6, 0, 0, 0 },
+				{ 0, 8, 0, 0, 8, 0 }
+			};
+
+			std::vector<int> days_per_period = { 60, 60, 60, 60, 60, 60 };
+
+			int num_usp_suites = 2, num_dsp_suites = 2;
+
+			std::vector<double> sales_price = { 20, 20, 20 };
+			std::vector<double> usp_production_cost = { 2, 2, 2 };
+			std::vector<double> dsp_production_cost = { 2, 2, 2 };
+			std::vector<double> waste_disposal_cost = { 1, 1, 1 };
+			std::vector<double> storage_cost = { 1, 1, 1 };
+			std::vector<double> backlog_penalty = { 20, 20, 20 };
+			std::vector<double> usp_changeover_cost = { 1, 1, 1 };
+			std::vector<double> dsp_changeover_cost = { 1, 1, 1 };
+		
+			std::vector<double> usp_days = { 20, 22, 12.5 };
+			std::vector<double> dsp_days = { 10, 10, 10 };
+
+			std::vector<std::vector<double>> usp_changeovers = {
+				{ 10, 10, 10 },
+				{ 10, 10, 10 },
+				{ 10, 10, 10 }
+			};
+
+			std::vector<std::vector<double>> dsp_changeovers = {
+				{ 10,   10,   10 },
+				{ 10,   10,   10 },
+				{ 12.5, 12.5, 12.5 }
+			};
+
+			std::vector<int> shelf_life = { 180, 180, 180 };
+			std::vector<int> storage_cap = { 40, 40, 40 };
+
+			deterministic::SingleSiteMultiSuiteInputData input_data(
+				objectives, 
+
+				num_usp_suites,
+				num_dsp_suites,
+
+				demand,
+				days_per_period,
+
+				usp_days,
+				dsp_days,
+				
+				shelf_life,
+				storage_cap,
+
+				sales_price,
+				storage_cost,
+				backlog_penalty,
+				waste_disposal_cost,
+				usp_production_cost,
+				dsp_production_cost,
+				usp_changeover_cost,
+				dsp_changeover_cost,
+
+				usp_changeovers,
+				dsp_changeovers
+			);
+
+			deterministic::SingleSiteMultiSuiteModel single_site_multi_suite_model(input_data);
+
+			types::SingleObjectiveIndividual<types::SingleSiteMultiSuiteGene> i;
+
+			i.genes.resize(6);
+
+			i.genes[0].usp_suite_num = 1;
+			i.genes[0].product_num = 3;
+			i.genes[0].num_batches = 1;
+
+			i.genes[1].usp_suite_num = 1;
+			i.genes[1].product_num = 2;
+			i.genes[1].num_batches = 6;
+
+			i.genes[2].usp_suite_num = 1;
+			i.genes[2].product_num = 3;
+			i.genes[2].num_batches = 8;
+
+			i.genes[3].usp_suite_num = 1;
+			i.genes[3].product_num = 1;
+			i.genes[3].num_batches = 3;
+
+			i.genes[4].usp_suite_num = 2;
+			i.genes[4].product_num = 3;
+			i.genes[4].num_batches = 7;
+
+			i.genes[5].usp_suite_num = 2;
+			i.genes[5].product_num = 1;
+			i.genes[5].num_batches = 12;
+
+			types::SingleSiteMultiSuiteSchedule schedule;
+			single_site_multi_suite_model.CreateSchedule(i, schedule);
+
+			REQUIRE(schedule.objectives[deterministic::TOTAL_PROFIT] == Approx(563.0));
 		}
 	}
 }

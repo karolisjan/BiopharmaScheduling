@@ -1,7 +1,6 @@
 #ifndef __NSGA_INDIVIDUAL_H__
 #define __NSGA_INDIVIDUAL_H__
 
-#include "gene.h"
 #include "base_individual.h"
 
 

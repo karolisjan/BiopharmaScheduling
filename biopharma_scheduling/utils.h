@@ -199,62 +199,47 @@ namespace utils
 	class CustomRandom
 	{
 		public:
-			void Init();
-			void Init(std::vector<int> seed_seq);
+			void Init()
+			{
+				typename RNG::result_type random_data[N];
+				std::random_device r;
+				std::generate(random_data, random_data + N, std::ref(r));
+				std::seed_seq seed(random_data, random_data + N);
+				RNG seeded_rng(seed);
 
-			template<class T>
-			T UniformRand(T max = 0, T min = 0) { return uniform_random(max, min); }
+				uniform_random_float = std::bind(std::uniform_real_distribution<float>(0.0f, 1.0f), seeded_rng);
+				uniform_random_double = std::bind(std::uniform_real_distribution<double>(0.0, 1.0), seeded_rng);
+			}
+
+			void Init(std::vector<int> seed_seq)
+			{
+				std::seed_seq seed(seed_seq.begin(), seed_seq.end());
+				RNG seeded_rng(seed);
+
+				uniform_random_float = std::bind(std::uniform_real_distribution<float>(0.0f, 1.0f), seeded_rng);
+				uniform_random_double = std::bind(std::uniform_real_distribution<double>(0.0, 1.0), seeded_rng);
+			}
+
+			double UniformRandDouble(double max = 0, double min = 0)
+			{ 
+				return (max - min + 1) * uniform_random_double() + min;
+			}
+
+			float UniformRandFloat(float max = 0, float min = 0)
+			{ 
+				return (max - min + 1) * uniform_random_float() + min;
+			}
 
 		private:
-			template<typename T>
-			T uniform_random(T max = 0, T min = 0);
-
-			double uniform_random(double max, double min);
 
 			std::function<float()> uniform_random_float;
 			std::function<double()> uniform_random_double;
-		};
-	}
+	};
 
-	template<class RNG, std::size_t N>
-	void CustomRandom<RNG, N>::Init()
+	template<class RNG>
+	inline double triangular_distribution(double min, double mode, double max, RNG &rng)
 	{
-		typename RNG::result_type random_data[N];
-		std::random_device r;
-		std::generate(random_data, random_data + N, std::ref(r));
-		std::seed_seq seed(random_data, random_data + N);
-		RNG seeded_rng(seed);
-
-		uniform_random_float = std::bind(std::uniform_real_distribution<float>(0.0f, 1.0f), seeded_rng);
-		uniform_random_double = std::bind(std::uniform_real_distribution<double>(0.0, 1.0), seeded_rng);
-	}
-
-	template<class RNG, std::size_t N>
-	void CustomRandom<RNG, N>::Init(std::vector<int> seed_seq)
-	{
-		std::seed_seq seed(seed_seq.begin(), seed_seq.end());
-		RNG seeded_rng(seed);
-
-		uniform_random_float = std::bind(std::uniform_real_distribution<float>(0.0f, 1.0f), seeded_rng);
-		uniform_random_double = std::bind(std::uniform_real_distribution<double>(0.0, 1.0), seeded_rng);
-	}
-
-	template<class RNG, std::size_t N>
-	template<typename T>
-	inline T CustomRandom<RNG, N>::uniform_random(T max, T min)
-	{
-		return (max - min + 1) * uniform_random_float() + min;
-	}
-
-	template<class RNG, std::size_t N>
-	inline double CustomRandom<RNG, N>::uniform_random(double max, double min)
-	{
-		return (max - min + 1) * uniform_random_double() + min;
-	}
-
-	inline double stochastic::triangular_distribution(double min, double mode, double max, const CustomRandom<> &rng)
-	{
-		double u = rng.UniformRand<double>(); 
+		double u = rng.UniformRandDouble(); 
 
 		max += 1;
 

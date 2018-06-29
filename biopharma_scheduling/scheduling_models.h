@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <unordered_map>
 
+#include "gene.h"
 #include "schedule.h"
 #include "input_data.h"
 #include "nsga_individual.h"
@@ -90,17 +91,14 @@ namespace stochastic
 			// First actual batch object of the current campaign
 			types::Batch new_batch;
 			new_batch.product_num = new_cmpgn.product_num;
-			new_batch.kg = input_data.kg_yield_per_batch[new_cmpgn.product_num - 1];
 			new_batch.start = new_cmpgn.start;
 			new_batch.harvested_at = new_cmpgn.first_harvest;
 			new_batch.stored_at = new_cmpgn.first_batch;
 			new_batch.approved_at = new_batch.stored_at + input_data.approval_days[new_cmpgn.product_num - 1];
 			new_batch.expires_at = new_batch.stored_at + input_data.shelf_life_days[new_cmpgn.product_num - 1];
 			
-			new_cmpgn.kg += new_batch.kg;
 			new_cmpgn.batches.reserve(100); 
 			new_cmpgn.batches.push_back(new_batch); 
-			AddToInventory(schedule, std::move(new_batch));
 
 			int num_batches = individual.genes[0].num_batches;		
 
@@ -124,7 +122,6 @@ namespace stochastic
 			for (int i = 1; i < num_batches; ++i) {
 				types::Batch new_batch, &prev_batch = new_cmpgn.batches.back();
 				new_batch.product_num = new_cmpgn.product_num;
-				new_batch.kg = input_data.kg_yield_per_batch[new_cmpgn.product_num - 1];
 				new_batch.harvested_at = prev_batch.stored_at;
 				new_batch.start = new_batch.harvested_at - input_data.usp_days[new_cmpgn.product_num - 1];
 				new_batch.stored_at = new_batch.harvested_at + input_data.dsp_days[new_cmpgn.product_num - 1];
@@ -136,9 +133,7 @@ namespace stochastic
 				new_batch.approved_at = new_batch.stored_at + input_data.approval_days[new_cmpgn.product_num - 1];
 				new_batch.expires_at = new_batch.stored_at + input_data.shelf_life_days[new_cmpgn.product_num - 1];
 				
-				new_cmpgn.kg += new_batch.kg;
 				new_cmpgn.batches.push_back(new_batch);
-				AddToInventory(schedule, std::move(new_batch));
 			}
 
 			new_cmpgn.num_batches = new_cmpgn.batches.size();
@@ -173,17 +168,14 @@ namespace stochastic
 			// First batch of the current campaign
 			types::Batch new_batch;
 			new_batch.product_num = new_cmpgn.product_num;
-			new_batch.kg = input_data.kg_yield_per_batch[new_cmpgn.product_num - 1];
 			new_batch.start = new_cmpgn.start;
 			new_batch.harvested_at = new_cmpgn.first_harvest;
 			new_batch.stored_at = new_cmpgn.first_batch;
 			new_batch.approved_at = new_batch.stored_at + input_data.approval_days[new_cmpgn.product_num - 1];
 			new_batch.expires_at = new_batch.stored_at + input_data.shelf_life_days[new_cmpgn.product_num - 1];
 			
-			new_cmpgn.kg += new_batch.kg;
 			new_cmpgn.batches.reserve(100);
 			new_cmpgn.batches.push_back(new_batch);
-			AddToInventory(schedule, std::move(new_batch));
 
 			int num_batches = individual.genes[cmpgn_num].num_batches;		
 
@@ -207,7 +199,6 @@ namespace stochastic
 			for (int i = 1; i < num_batches; ++i) {
 				types::Batch new_batch, &prev_batch = new_cmpgn.batches.back();
 				new_batch.product_num = new_cmpgn.product_num;
-				new_batch.kg = input_data.kg_yield_per_batch[new_cmpgn.product_num - 1];
 				new_batch.harvested_at = prev_batch.stored_at;
 				new_batch.start = new_batch.harvested_at - input_data.usp_days[new_cmpgn.product_num - 1];
 				new_batch.stored_at = new_batch.harvested_at + input_data.dsp_days[new_cmpgn.product_num - 1];
@@ -219,9 +210,7 @@ namespace stochastic
 				new_batch.approved_at = new_batch.stored_at + input_data.approval_days[new_cmpgn.product_num - 1];
 				new_batch.expires_at = new_batch.stored_at + input_data.shelf_life_days[new_cmpgn.product_num - 1];
 				
-				new_cmpgn.kg += new_batch.kg;
 				new_cmpgn.batches.push_back(new_batch);
-				AddToInventory(schedule, std::move(new_batch));
 			}
 
 			new_cmpgn.num_batches = new_cmpgn.batches.size();
@@ -254,7 +243,6 @@ namespace stochastic
 			for (; i < num_batches; ++i) {
 				types::Batch new_batch, &prev_batch = prev_cmpgn.batches.back();
 				new_batch.product_num = prev_cmpgn.product_num;
-				new_batch.kg = input_data.kg_yield_per_batch[prev_cmpgn.product_num - 1];
 				new_batch.harvested_at = prev_batch.stored_at;
 				new_batch.start = new_batch.harvested_at - input_data.usp_days[prev_cmpgn.product_num - 1];
 				new_batch.stored_at = new_batch.harvested_at + input_data.dsp_days[prev_cmpgn.product_num - 1];
@@ -269,9 +257,7 @@ namespace stochastic
 				new_batch.approved_at = new_batch.stored_at + input_data.approval_days[prev_cmpgn.product_num - 1];
 				new_batch.expires_at = new_batch.stored_at + input_data.shelf_life_days[prev_cmpgn.product_num - 1];
 				
-				prev_cmpgn.kg += new_batch.kg;
 				prev_cmpgn.batches.push_back(new_batch);
-				AddToInventory(schedule, std::move(new_batch));
 			}
 
 			prev_cmpgn.num_batches = prev_cmpgn.batches.size();
@@ -423,14 +409,22 @@ namespace stochastic
 		void EvaluateCampaigns(types::SingleSiteSimpleSchedule &schedule) 
 		{		
 			int product_num, period_num;
+			double kg_demand = 0;
 	
 			for (product_num = 0; product_num < input_data.num_products; ++product_num) {
 
 				period_num = 0;
+				
+				kg_demand = utils::triangular_distribution(
+					input_data.kg_demand_min[product_num][period_num],
+					input_data.kg_demand_mode[product_num][period_num],
+					input_data.kg_demand_max[product_num][period_num],
+					input_data.rng
+				);
 
 				CreateOpeningStock(schedule, product_num, period_num);
 				RemoveExpired(schedule, product_num, period_num);		
-				CheckSupplyDemandBacklogInventory(schedule, product_num, period_num);
+				CheckSupplyDemandBacklogInventory(schedule, product_num, period_num, 0);
 				RemoveExcess(schedule, product_num, period_num);
 				CheckInventoryTarget(schedule, product_num, period_num);
 			
@@ -441,7 +435,7 @@ namespace stochastic
 					}
 					
 					RemoveExpired(schedule, product_num, period_num);		
-					CheckSupplyDemandBacklogInventory(schedule, product_num, period_num);
+					CheckSupplyDemandBacklogInventory(schedule, product_num, period_num, 0);
 					RemoveExcess(schedule, product_num, period_num);
 					CheckInventoryTarget(schedule, product_num, period_num);
 				}
@@ -483,8 +477,8 @@ namespace stochastic
 			// TODO: check the final throughput against the storage constraints
 			for (const auto &cmpgn : schedule.campaigns) {
 				for (const auto &batch : cmpgn.batches) {
-					schedule.objectives[TOTAL_KG_THROUGHPUT] += batch.kg;
-					schedule.objectives[TOTAL_PRODUCTION_COST] += batch.kg * input_data.production_cost_per_kg[batch.product_num - 1];
+					schedule.objectives[TOTAL_KG_THROUGHPUT_MEAN] += batch.kg;
+					schedule.objectives[TOTAL_PRODUCTION_COST_MEAN] += batch.kg * input_data.production_cost_per_kg[batch.product_num - 1];
 				}
 			}
 
@@ -494,15 +488,15 @@ namespace stochastic
 				}
 			}
 
-			schedule.objectives[TOTAL_COST] = (
-				schedule.objectives[TOTAL_INVENTORY_PENALTY] + 
-				schedule.objectives[TOTAL_BACKLOG_PENALTY] +
-				schedule.objectives[TOTAL_PRODUCTION_COST] +
-				schedule.objectives[TOTAL_STORAGE_COST] +
-				schedule.objectives[TOTAL_WASTE_COST]
+			schedule.objectives[TOTAL_COST_MEAN] = (
+				schedule.objectives[TOTAL_INVENTORY_PENALTY_MEAN] + 
+				schedule.objectives[TOTAL_BACKLOG_PENALTY_MEAN] +
+				schedule.objectives[TOTAL_PRODUCTION_COST_MEAN] +
+				schedule.objectives[TOTAL_STORAGE_COST_MEAN] +
+				schedule.objectives[TOTAL_WASTE_COST_MEAN]
 			);
 
-			schedule.objectives[TOTAL_PROFIT] = schedule.objectives[TOTAL_REVENUE] - schedule.objectives[TOTAL_COST];
+			schedule.objectives[TOTAL_PROFIT_MEAN] = schedule.objectives[TOTAL_REVENUE_MEAN] - schedule.objectives[TOTAL_COST_MEAN];
 
 			for (cmpgn_num = 0; cmpgn_num != schedule.campaigns.size(); ++cmpgn_num) {
 				individual.genes[cmpgn_num].product_num = schedule.campaigns[cmpgn_num].product_num;
@@ -521,7 +515,7 @@ namespace stochastic
 
 			CreateSchedule(individual, schedule);
 
-			for (auto &it : input_data.objectives) {
+			for (const auto &it : input_data.objectives) {
 				individual.objective = schedule.objectives[it.first] * it.second * -1;
 				break;
 			}

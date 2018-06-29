@@ -12,6 +12,8 @@
 #include <vector>
 #include <unordered_map>
 
+#include "utils.h"
+
 
 namespace stochastic
 {
@@ -63,6 +65,7 @@ namespace stochastic
 		SingleSiteSimpleInputData() {}
 		
 		SingleSiteSimpleInputData(
+			int mc_seed,
 			int num_mc_sims, 
 			
 			std::unordered_map<OBJECTIVES, int> objectives,
@@ -109,13 +112,14 @@ namespace stochastic
 			kg_demand_mode(kg_demand_mode),
 			kg_demand_max(kg_demand_max),
 
+			mc_seed(mc_seed),
 			num_mc_sims(num_mc_sims),
 			num_products(kg_demand_mode.size()),
 			num_periods(days_per_period.size()),
 
-			kg_inventory_target_min(kg_inventory_target_min),
-			kg_inventory_target_mode(kg_inventory_target_mode),
-			kg_inventory_target_max(kg_inventory_target_max),			
+			kg_yield_per_batch_min(kg_yield_per_batch_min),
+			kg_yield_per_batch_mode(kg_yield_per_batch_mode),
+			kg_yield_per_batch_max(kg_yield_per_batch_max),			
 
 			kg_opening_stock(kg_opening_stock),
 			kg_storage_limits(kg_storage_limits),
@@ -137,7 +141,9 @@ namespace stochastic
 			changeover_days(changeover_days),
 			min_batches_per_campaign(min_batches_per_campaign),
 			max_batches_per_campaign(max_batches_per_campaign),
-			batches_multiples_of_per_campaign(batches_multiples_of_per_campaign)
+			batches_multiples_of_per_campaign(batches_multiples_of_per_campaign),
+
+			kg_inventory_target(kg_inventory_target)
 		{	
 			int prev = 0;
 
@@ -157,11 +163,14 @@ namespace stochastic
 					this->constraints.push_back(std::make_pair(it.first, it.second));
 				}
 			}
+
+			rng.Init();
 		}
 
 		std::vector<std::pair<OBJECTIVES, int>> objectives;
 		std::vector<std::pair<OBJECTIVES, std::pair<int, double>>> constraints;
 
+		int mc_seed;
 		int num_mc_sims;
 		int num_products;
         int num_periods;
@@ -173,7 +182,7 @@ namespace stochastic
 		std::vector< std::vector<double>> kg_demand_max;
 
 		std::vector<double> kg_yield_per_batch_min;
-		std::vector<double> kg_yield_per_batch_model;
+		std::vector<double> kg_yield_per_batch_mode;
 		std::vector<double> kg_yield_per_batch_max;
 
 		std::vector< std::vector<int>> changeover_days;
@@ -201,6 +210,8 @@ namespace stochastic
 		std::vector<int> min_batches_per_campaign;
         std::vector<int> max_batches_per_campaign;
         std::vector<int> batches_multiples_of_per_campaign;
+
+		utils::CustomRandom<> rng;
 	};
 }
 
