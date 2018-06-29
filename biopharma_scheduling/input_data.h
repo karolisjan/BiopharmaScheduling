@@ -17,6 +17,153 @@ namespace deterministic
 {
     enum OBJECTIVES 
     {
+        TOTAL_MEAN_KG_INVENTORY_DEFICIT,
+        TOTAL_MEAN_KG_THROUGHPUT,
+        TOTAL_MEAN_KG_BACKLOG,
+        TOTAL_MEAN_KG_SUPPLY,
+        TOTAL_MEAN_KG_WASTE,
+
+		TOTAL_CHANGEOVER_COST,
+
+        TOTAL_MEAN_INVENTORY_PENALTY,
+        TOTAL_MEAN_BACKLOG_PENALTY,
+		TOTAL_MEAN_PRODUCTION_COST,
+        TOTAL_MEAN_STORAGE_COST,
+        TOTAL_MEAN_WASTE_COST,
+        TOTAL_MEAN_REVENUE,
+        TOTAL_MEAN_PROFIT,
+        TOTAL_MEAN_COST,
+        NUM_OBJECTIVES = TOTAL_COST + 1
+    };
+
+    struct SingleSiteSimpleInputData
+	{
+		SingleSiteSimpleInputData() {}
+		
+		SingleSiteSimpleInputData(
+			std::unordered_map<OBJECTIVES, int> objectives,
+
+			std::vector< std::vector<double>> kg_demand,
+			std::vector<int> days_per_period,
+
+			std::vector<double> kg_opening_stock,
+			std::vector<double> kg_yield_per_batch,
+			std::vector<double> kg_storage_limits,
+			
+			std::vector<double> inventory_penalty_per_kg,
+			std::vector<double> backlog_penalty_per_kg,
+			std::vector<double> production_cost_per_kg,
+			std::vector<double> storage_cost_per_kg,
+			std::vector<double> waste_cost_per_kg,
+			std::vector<double> sell_price_per_kg,
+
+			std::vector<int> inoculation_days,
+			std::vector<int> seed_days,
+			std::vector<int> production_days,
+			std::vector<int> usp_days,
+			std::vector<int> dsp_days,
+			std::vector<int> approval_days,
+			std::vector<int> shelf_life_days,
+			std::vector<int> min_batches_per_campaign,
+			std::vector<int> max_batches_per_campaign,
+			std::vector<int> batches_multiples_of_per_campaign,
+			std::vector<std::vector<int>> changeover_days,
+
+			// Optional
+			std::vector<std::vector<double>> *kg_inventory_target = NULL,
+			std::unordered_map<OBJECTIVES, std::pair<int, double>> *constraints = NULL
+		) :
+			kg_demand(kg_demand),
+			kg_inventory_target(kg_inventory_target),
+			days_per_period(days_per_period),
+			num_products(kg_demand.size()),
+			num_periods(days_per_period.size()),
+
+			kg_opening_stock(kg_opening_stock),
+			kg_yield_per_batch(kg_yield_per_batch),
+			kg_storage_limits(kg_storage_limits),
+
+			inventory_penalty_per_kg(inventory_penalty_per_kg),
+			backlog_penalty_per_kg(backlog_penalty_per_kg),
+			production_cost_per_kg(production_cost_per_kg),
+			storage_cost_per_kg(storage_cost_per_kg),
+			waste_cost_per_kg(waste_cost_per_kg),
+			sell_price_per_kg(sell_price_per_kg),
+
+			inoculation_days(inoculation_days),
+			seed_days(seed_days),
+			production_days(production_days),
+			usp_days(usp_days), 
+			dsp_days(dsp_days),
+			approval_days(approval_days),
+			shelf_life_days(shelf_life_days),
+			changeover_days(changeover_days),
+			min_batches_per_campaign(min_batches_per_campaign),
+			max_batches_per_campaign(max_batches_per_campaign),
+			batches_multiples_of_per_campaign(batches_multiples_of_per_campaign)
+		{	
+			int prev = 0;
+
+			for (auto &days : days_per_period) {
+				due_dates.push_back(days + prev);
+				prev = due_dates.back();
+			}
+
+			horizon = due_dates.back();
+
+			for (const auto &it : objectives) {
+				this->objectives.push_back(std::make_pair(it.first, it.second));
+			}
+
+			if (constraints) {
+				for (const auto &it : *constraints) {
+					this->constraints.push_back(std::make_pair(it.first, it.second));
+				}
+			}
+		}
+
+		std::vector<std::pair<OBJECTIVES, int>> objectives;
+		std::vector<std::pair<OBJECTIVES, std::pair<int, double>>> constraints;
+
+		int num_products;
+        int num_periods;
+
+        double horizon; 
+
+		std::vector< std::vector<int>> changeover_days;
+		std::vector< std::vector<double>> kg_demand;
+        std::vector< std::vector<double>> *kg_inventory_target;
+
+		std::vector<double> kg_opening_stock;
+        std::vector<double> kg_yield_per_batch;
+        std::vector<double> kg_storage_limits;
+
+		std::vector<double> inventory_penalty_per_kg;
+        std::vector<double> backlog_penalty_per_kg;
+        std::vector<double> production_cost_per_kg;
+        std::vector<double> storage_cost_per_kg;
+        std::vector<double> waste_cost_per_kg;
+        std::vector<double> sell_price_per_kg;
+
+		std::vector<int> inoculation_days;
+        std::vector<int> seed_days;
+        std::vector<int> production_days;
+        std::vector<int> usp_days;
+        std::vector<int> dsp_days;
+        std::vector<int> approval_days;
+        std::vector<int> shelf_life_days;
+		std::vector<int> days_per_period;
+        std::vector<int> due_dates;
+		std::vector<int> min_batches_per_campaign;
+        std::vector<int> max_batches_per_campaign;
+        std::vector<int> batches_multiples_of_per_campaign;
+	};
+}
+
+namespace deterministic
+{
+    enum OBJECTIVES 
+    {
         TOTAL_KG_INVENTORY_DEFICIT,
         TOTAL_KG_THROUGHPUT,
         TOTAL_KG_BACKLOG,
