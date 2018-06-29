@@ -17,81 +17,6 @@ namespace utils
 {
     static const double EPSILON = 1E-5;
 
-	template<class RNG = std::mt19937_64, std::size_t N = RNG::state_size>
-	class CustomRandom
-	{
-		public:
-			void Init();
-			void Init(std::vector<int> seed_seq);
-
-			template<class T>
-			T UniformRand(T max = 0, T min = 0) { return uniform_random(max, min); }
-
-		private:
-			template<typename T>
-			T uniform_random(T max = 0, T min = 0);
-
-			double uniform_random(double max, double min);
-
-			std::function<float()> uniform_random_float;
-			std::function<double()> uniform_random_double;
-		};
-	}
-
-	template<class RNG, std::size_t N>
-	void CustomRandom<RNG, N>::Init()
-	{
-		typename RNG::result_type random_data[N];
-		std::random_device r;
-		std::generate(random_data, random_data + N, std::ref(r));
-		std::seed_seq seed(random_data, random_data + N);
-		RNG seeded_rng(seed);
-
-		uniform_random_float = std::bind(std::uniform_real_distribution<float>(0.0f, 1.0f), seeded_rng);
-		uniform_random_double = std::bind(std::uniform_real_distribution<double>(0.0, 1.0), seeded_rng);
-	}
-
-	template<class RNG, std::size_t N>
-	void CustomRandom<RNG, N>::Init(std::vector<int> seed_seq)
-	{
-		std::seed_seq seed(seed_seq.begin(), seed_seq.end());
-		RNG seeded_rng(seed);
-
-		uniform_random_float = std::bind(std::uniform_real_distribution<float>(0.0f, 1.0f), seeded_rng);
-		uniform_random_double = std::bind(std::uniform_real_distribution<double>(0.0, 1.0), seeded_rng);
-	}
-
-	template<class RNG, std::size_t N>
-	template<typename T>
-	inline T CustomRandom<RNG, N>::uniform_random(T max, T min)
-	{
-		return (max - min + 1) * uniform_random_float() + min;
-	}
-
-	template<class RNG, std::size_t N>
-	inline double CustomRandom<RNG, N>::uniform_random(double max, double min)
-	{
-		return (max - min + 1) * uniform_random_double() + min;
-	}
-
-	template<class RNG>
-	inline double stochastic::triangular_distribution(double min, double mode, double max, const RNG &rng)
-	{
-		double u = rng.UniformRand<double>(); 
-
-		max += 1;
-
-		if (abs(u - ((mode - min) / (max - min))) == 1e-6) {
-			return mode;
-		}
-
-		if (u > ((mode - min) / (max - min))) {
-			return max - sqrtf((1 - u) * (max - min) * (max - mode));
-		}
-
-		return min + sqrtf(u * (max - min) * (mode - min));
-	}
-
 	// See  Catch.hpp https://github.com/catchorg/Catch2
 	class Approx 
 	{
@@ -269,6 +194,80 @@ namespace utils
 
         return std::distance(v.cbegin(), std::upper_bound(v.cbegin(), v.cend(), val));
     }
+
+	template<class RNG = std::mt19937_64, std::size_t N = RNG::state_size>
+	class CustomRandom
+	{
+		public:
+			void Init();
+			void Init(std::vector<int> seed_seq);
+
+			template<class T>
+			T UniformRand(T max = 0, T min = 0) { return uniform_random(max, min); }
+
+		private:
+			template<typename T>
+			T uniform_random(T max = 0, T min = 0);
+
+			double uniform_random(double max, double min);
+
+			std::function<float()> uniform_random_float;
+			std::function<double()> uniform_random_double;
+		};
+	}
+
+	template<class RNG, std::size_t N>
+	void CustomRandom<RNG, N>::Init()
+	{
+		typename RNG::result_type random_data[N];
+		std::random_device r;
+		std::generate(random_data, random_data + N, std::ref(r));
+		std::seed_seq seed(random_data, random_data + N);
+		RNG seeded_rng(seed);
+
+		uniform_random_float = std::bind(std::uniform_real_distribution<float>(0.0f, 1.0f), seeded_rng);
+		uniform_random_double = std::bind(std::uniform_real_distribution<double>(0.0, 1.0), seeded_rng);
+	}
+
+	template<class RNG, std::size_t N>
+	void CustomRandom<RNG, N>::Init(std::vector<int> seed_seq)
+	{
+		std::seed_seq seed(seed_seq.begin(), seed_seq.end());
+		RNG seeded_rng(seed);
+
+		uniform_random_float = std::bind(std::uniform_real_distribution<float>(0.0f, 1.0f), seeded_rng);
+		uniform_random_double = std::bind(std::uniform_real_distribution<double>(0.0, 1.0), seeded_rng);
+	}
+
+	template<class RNG, std::size_t N>
+	template<typename T>
+	inline T CustomRandom<RNG, N>::uniform_random(T max, T min)
+	{
+		return (max - min + 1) * uniform_random_float() + min;
+	}
+
+	template<class RNG, std::size_t N>
+	inline double CustomRandom<RNG, N>::uniform_random(double max, double min)
+	{
+		return (max - min + 1) * uniform_random_double() + min;
+	}
+
+	inline double stochastic::triangular_distribution(double min, double mode, double max, const CustomRandom<> &rng)
+	{
+		double u = rng.UniformRand<double>(); 
+
+		max += 1;
+
+		if (((mode - min) / (max - min)) == Approx(u)){
+			return mode;
+		}
+
+		if (u > ((mode - min) / (max - min))) {
+			return max - sqrtf((1 - u) * (max - min) * (max - mode));
+		}
+
+		return min + sqrtf(u * (max - min) * (mode - min));
+	}
 }
 
 #endif
