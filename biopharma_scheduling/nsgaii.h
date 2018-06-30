@@ -106,7 +106,7 @@ namespace algorithms
 				i.n = 0;
 			}
 
-			// First first_front
+			// First front
 			F.resize(1);
 			for (size_t p = 0; p != R.size(); ++p) {
 				for (size_t q = p + 1; q != R.size(); ++q) {

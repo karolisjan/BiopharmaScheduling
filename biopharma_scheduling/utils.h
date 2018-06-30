@@ -199,7 +199,7 @@ namespace utils
 	class CustomRandom
 	{
 		public:
-			void Init()
+			inline void init()
 			{
 				typename RNG::result_type random_data[N];
 				std::random_device r;
@@ -211,7 +211,7 @@ namespace utils
 				uniform_random_double = std::bind(std::uniform_real_distribution<double>(0.0, 1.0), seeded_rng);
 			}
 
-			void Init(std::vector<int> seed_seq)
+			inline void init(std::vector<int> seed_seq)
 			{
 				std::seed_seq seed(seed_seq.begin(), seed_seq.end());
 				RNG seeded_rng(seed);
@@ -220,12 +220,12 @@ namespace utils
 				uniform_random_double = std::bind(std::uniform_real_distribution<double>(0.0, 1.0), seeded_rng);
 			}
 
-			double UniformRandDouble(double max = 0, double min = 0)
+			inline double uniform_rand_double(double max = 0, double min = 0)
 			{ 
 				return (max - min + 1) * uniform_random_double() + min;
 			}
 
-			float UniformRandFloat(float max = 0, float min = 0)
+			inline float uniform_rand_float(float max = 0, float min = 0)
 			{ 
 				return (max - min + 1) * uniform_random_float() + min;
 			}
@@ -239,7 +239,7 @@ namespace utils
 	template<class RNG>
 	inline double triangular_distribution(double min, double mode, double max, RNG &rng)
 	{
-		double u = rng.UniformRandDouble(); 
+		double u = rng.uniform_rand_double(); 
 
 		max += 1;
 

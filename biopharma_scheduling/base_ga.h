@@ -24,8 +24,8 @@ namespace algorithms
 	/*
 		Individual<Gene> class object is expected to have the following methods:
 
-		void cross(Individual& other)
-		void mutate() methods
+		void Cross(Individual& other)
+		void Mutate() methods
 	*/
 	template<class Individual, class FitnessFunction>
 	class BaseGA
@@ -72,12 +72,12 @@ namespace algorithms
 			int p = 0;
 
 			for (p = 0; p != offspring.size(); p += 2) {
-				offspring[p].cross(offspring[p + 1]);
+				offspring[p].Cross(offspring[p + 1]);
 			}
 
 			for (p = 0; p != offspring.size(); p += 2) {
-				offspring[p].mutate();
-				offspring[p + 1].mutate();
+				offspring[p].Mutate();
+				offspring[p + 1].Mutate();
 			}
 		}
 
@@ -95,6 +95,7 @@ namespace algorithms
 			}
 
 			int actual_num_threads = omp_get_num_procs();
+
 			if (num_procs >= 1 && num_procs <= actual_num_threads) {
 				omp_set_dynamic(0);
 				omp_set_num_threads(num_procs);

@@ -53,7 +53,7 @@ namespace types
 			);
 		}
 
-		inline void mutate()
+		inline void Mutate()
 		{
 			mutate_product_num();
 			mutate_usp_suite_num();
@@ -140,7 +140,7 @@ namespace types
 			);
 		}
 
-		inline void mutate()
+		inline void Mutate()
 		{
 			mutate_product_num();
 			mutate_num_batches();

@@ -164,7 +164,7 @@ namespace stochastic
 				}
 			}
 
-			rng.Init();
+			rng.init();
 		}
 
 		std::vector<std::pair<OBJECTIVES, int>> objectives;

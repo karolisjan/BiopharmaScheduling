@@ -23,8 +23,9 @@ namespace types
 		Base dynamic individual class. Not to be called directly.
 	*/
 	template<class Gene>
-	struct BaseIndividual
+	class BaseIndividual
 	{
+	public:
 		explicit BaseIndividual() {}
 
 		template<class... GeneParams>
@@ -43,7 +44,7 @@ namespace types
 			}
 		}
 
-		inline void cross(BaseIndividual &other) 
+		inline void Cross(BaseIndividual &other) 
 		{
 			if (utils::random() > p_xo) {
 				return;
@@ -81,25 +82,25 @@ namespace types
 			}
 		}
 
-		inline void mutate() 
+		inline void Mutate() 
 		{
 			for (auto &gene : genes) {
-				gene.mutate();
+				gene.Mutate();
 			}
 			
-			add_gene();
-			swap_genes();
+			AddGene();
+			SwapGenes();
 		}
 
 		std::vector<Gene> genes;
 
 	private:
-		inline void add_gene()
+		inline void AddGene()
 		{
 			genes.push_back(genes.back().make_new());
 		}
 
-		inline void swap_genes()
+		inline void SwapGenes()
 		{
 			if (utils::random() >= p_gene_swap) {
 				return;
@@ -115,7 +116,8 @@ namespace types
 			std::swap(genes[g1], genes[g2]);
 		}
 
-		double p_xo, p_gene_swap;
+		double p_xo;
+		double p_gene_swap;
 	};
 }
 
