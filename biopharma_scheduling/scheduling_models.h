@@ -996,6 +996,7 @@ namespace deterministic
 
 					schedule.objectives[TOTAL_CHANGEOVER_COST] += input_data.dsp_changeover_cost[dsp_cmpgn.product_num - 1];
 					schedule.objectives[TOTAL_PRODUCTION_COST] += (dsp_cmpgn.num_batches * input_data.dsp_production_cost[dsp_cmpgn.product_num - 1]);
+					schedule.objectives[TOTAL_BATCH_THROUGHPUT] += dsp_cmpgn.num_batches;
 				}
 			}
 

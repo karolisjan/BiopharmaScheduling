@@ -846,6 +846,11 @@ cdef class SingleSiteMultiSuite:
         double p_gene_swap
 
     AVAILABLE_OBJECTIVES = {
+        'total_batch_throughput',
+        'total_batch_backlog',
+        'total_batch_supply',
+        'total_batch_waste',
+
         'total_backlog_penalty',
         'total_changeover_cost',
         'total_production_cost',
@@ -915,6 +920,11 @@ cdef class SingleSiteMultiSuite:
         self.save_history = save_history
 
         self.objectives = {
+            'total_batch_throughput': OBJECTIVES.TOTAL_BATCH_THROUGHPUT,
+            'total_batch_backlog': OBJECTIVES.TOTAL_BATCH_BACKLOG,
+            'total_batch_supply': OBJECTIVES.TOTAL_BATCH_SUPPLY,
+            'total_batch_waste': OBJECTIVES.TOTAL_BATCH_WASTE,
+
             'total_changeover_cost': OBJECTIVES.TOTAL_CHANGEOVER_COST,
             'total_backlog_penalty': OBJECTIVES.TOTAL_BACKLOG_PENALTY,
             'total_production_cost': OBJECTIVES.TOTAL_PRODUCTION_COST,
