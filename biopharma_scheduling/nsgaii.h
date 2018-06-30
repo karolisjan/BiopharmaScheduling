@@ -22,18 +22,18 @@ namespace algorithms
 		Deb, K., Pratap, A., Agarwal, S. and Meyarivan, T.A.M.T., 2002. A fast and elitist multiobjective genetic algorithm: NSGA-II. IEEE transactions on evolutionary computation, 6(2), pp.182-197.
 		http://ieeexplore.ieee.org/document/996017/?reload=true
 	*/
-	template<class Individual, class FitnessFunctor>
-	class NSGAII : public BaseGA<Individual, FitnessFunctor>
+	template<class Individual, class FitnessFunction>
+	class NSGAII : public BaseGA<Individual, FitnessFunction>
 	{
-		using BaseGA<Individual, FitnessFunctor>::BaseGA;
-		using BaseGA<Individual, FitnessFunctor>::Select;
-		using BaseGA<Individual, FitnessFunctor>::Reproduce;
-		using BaseGA<Individual, FitnessFunctor>::fitness_functor;
-		using BaseGA<Individual, FitnessFunctor>::indices;
-		using BaseGA<Individual, FitnessFunctor>::parents;
-		using BaseGA<Individual, FitnessFunctor>::offspring;
+		using BaseGA<Individual, FitnessFunction>::BaseGA;
+		using BaseGA<Individual, FitnessFunction>::Select;
+		using BaseGA<Individual, FitnessFunction>::Reproduce;
+		using BaseGA<Individual, FitnessFunction>::fitness_function;
+		using BaseGA<Individual, FitnessFunction>::indices;
+		using BaseGA<Individual, FitnessFunction>::parents;
+		using BaseGA<Individual, FitnessFunction>::offspring;
 
-		typedef typename BaseGA<Individual, FitnessFunctor>::Population Population;
+		typedef typename BaseGA<Individual, FitnessFunction>::Population Population;
 
 		Population top_front;
 
@@ -233,7 +233,7 @@ namespace algorithms
 
 			#pragma omp parallel for
 			for (int i = 0; i < parents.size(); ++i) {
-				fitness_functor(parents[i]);
+				fitness_function(parents[i]);
 			}
 		}
 
@@ -245,7 +245,7 @@ namespace algorithms
 
 			#pragma omp parallel for 
 			for (int i = 0; i < offspring.size(); ++i) {
-				fitness_functor(offspring[i]);
+				fitness_function(offspring[i]);
 			}
 		}
 

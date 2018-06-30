@@ -27,12 +27,12 @@ namespace algorithms
 		void cross(Individual& other)
 		void mutate() methods
 	*/
-	template<class Individual, class FitnessFunctor>
+	template<class Individual, class FitnessFunction>
 	class BaseGA
 	{
 	protected:
 		typedef std::vector<Individual> Population;
-		FitnessFunctor fitness_functor;
+		FitnessFunction fitness_function;
 		Population parents, offspring;
 		std::vector<int> indices;
 
@@ -84,11 +84,11 @@ namespace algorithms
 	public:
 		explicit BaseGA() {}
 		explicit BaseGA(
-			FitnessFunctor fitness_functor,
+			FitnessFunction fitness_function,
 			int seed=-1,
 			int num_procs=-1
 		) :
-			fitness_functor(fitness_functor)
+			fitness_function(fitness_function)
 		{
 			if (seed != -1) {
 				srand(seed);
