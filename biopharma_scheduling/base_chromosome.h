@@ -5,8 +5,8 @@
 	#pragma GCC diagnostic ignored "-Wformat="
 #endif 
 
-#ifndef __BASE_INDIVIDUAL__
-#define __BASE_INDIVIDUAL__
+#ifndef __BASE_CHROMOSOME__
+#define __BASE_CHROMOSOME__
 
 #include <vector>
 #include <cstdlib>
@@ -23,13 +23,15 @@ namespace types
 		Base dynamic individual class. Not to be called directly.
 	*/
 	template<class Gene>
-	class BaseIndividual
+	class BaseChromosome
 	{
 	public:
-		explicit BaseIndividual() {}
+		typedef std::vector<Gene> Genes;
+
+		explicit BaseChromosome() {}
 
 		template<class... GeneParams>
-		explicit BaseIndividual(
+		explicit BaseChromosome(
 			int starting_length = 1,
 			double p_xo = 0.820769,
 			double p_gene_swap = 0.766782,
@@ -44,7 +46,7 @@ namespace types
 			}
 		}
 
-		inline void Cross(BaseIndividual &other) 
+		inline void Cross(BaseChromosome &other) 
 		{
 			if (utils::random() > p_xo) {
 				return;
@@ -92,7 +94,7 @@ namespace types
 			SwapGenes();
 		}
 
-		std::vector<Gene> genes;
+		Genes genes;
 
 	private:
 		inline void AddGene()

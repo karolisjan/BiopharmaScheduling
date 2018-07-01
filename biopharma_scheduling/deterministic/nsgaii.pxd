@@ -2,9 +2,9 @@ from libcpp.vector cimport vector
 
 
 cdef extern from "../nsgaii.h" namespace "algorithms" nogil:
-    cdef cppclass NSGAII[Individual, FitnessFunctor]:
+    cdef cppclass NSGAII[Chromosome, FitnessFunction]:
         NSGAII()
-        NSGAII(FitnessFunctor, int seed, int num_threads)
+        NSGAII(FitnessFunction, int seed, int num_threads)
 
         void Init(
             int popsize,
@@ -31,5 +31,5 @@ cdef extern from "../nsgaii.h" namespace "algorithms" nogil:
         )
 
         void Update()
-        vector[Individual] TopFront()
-        vector[Individual] TopFront(vector[Individual])
+        vector[Chromosome] TopFront()
+        vector[Chromosome] TopFront(vector[Chromosome])

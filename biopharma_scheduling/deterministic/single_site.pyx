@@ -10,9 +10,9 @@ from libcpp.algorithm cimport sort
 from libcpp.unordered_map cimport unordered_map
 
 from nsgaii cimport NSGAII
-from nsgaii_individual cimport NSGAIndividual
+from nsgaii_chromosome cimport NSGAChromosome
 from single_objective_ga cimport SingleObjectiveGA
-from single_objective_individual cimport SingleObjectiveIndividual
+from single_objective_chromosome cimport SingleObjectiveChromosome
 from gene cimport SingleSiteSimpleGene, SingleSiteMultiSuiteGene
 
 from single_site cimport (
@@ -495,11 +495,11 @@ cdef class SingleSiteSimple:
     def __run_single_objective_ga(self):
         cdef:
             SingleSiteSimpleSchedule schedule
-            SingleObjectiveIndividual[SingleSiteSimpleGene] top_solution
-            vector[SingleObjectiveIndividual[SingleSiteSimpleGene]] solutions 
+            SingleObjectiveChromosome[SingleSiteSimpleGene] top_solution
+            vector[SingleObjectiveChromosome[SingleSiteSimpleGene]] solutions 
             
-            SingleObjectiveGA[SingleObjectiveIndividual[SingleSiteSimpleGene], SingleSiteSimpleModel] ga = \
-                SingleObjectiveGA[SingleObjectiveIndividual[SingleSiteSimpleGene], SingleSiteSimpleModel](
+            SingleObjectiveGA[SingleObjectiveChromosome[SingleSiteSimpleGene], SingleSiteSimpleModel] ga = \
+                SingleObjectiveGA[SingleObjectiveChromosome[SingleSiteSimpleGene], SingleSiteSimpleModel](
                 self.single_site_simple,
                 self.random_state,
                 self.num_threads   
@@ -561,11 +561,11 @@ cdef class SingleSiteSimple:
     def __run_nsgaii(self):
         cdef:
             SingleSiteSimpleSchedule schedule
-            vector[vector[NSGAIndividual[SingleSiteSimpleGene]]] history
-            vector[NSGAIndividual[SingleSiteSimpleGene]] solutions, top_front
+            vector[vector[NSGAChromosome[SingleSiteSimpleGene]]] history
+            vector[NSGAChromosome[SingleSiteSimpleGene]] solutions, top_front
             
-            NSGAII[NSGAIndividual[SingleSiteSimpleGene], SingleSiteSimpleModel] nsgaii = \
-                NSGAII[NSGAIndividual[SingleSiteSimpleGene], SingleSiteSimpleModel](
+            NSGAII[NSGAChromosome[SingleSiteSimpleGene], SingleSiteSimpleModel] nsgaii = \
+                NSGAII[NSGAChromosome[SingleSiteSimpleGene], SingleSiteSimpleModel](
                 self.single_site_simple,
                 self.random_state,
                 self.num_threads   
@@ -1110,11 +1110,11 @@ cdef class SingleSiteMultiSuite:
     def __run_single_objective_ga(self):
         cdef:
             SingleSiteMultiSuiteSchedule schedule
-            SingleObjectiveIndividual[SingleSiteMultiSuiteGene] top_solution
-            vector[SingleObjectiveIndividual[SingleSiteMultiSuiteGene]] solutions 
+            SingleObjectiveChromosome[SingleSiteMultiSuiteGene] top_solution
+            vector[SingleObjectiveChromosome[SingleSiteMultiSuiteGene]] solutions 
             
-            SingleObjectiveGA[SingleObjectiveIndividual[SingleSiteMultiSuiteGene], SingleSiteMultiSuiteModel] ga = \
-                SingleObjectiveGA[SingleObjectiveIndividual[SingleSiteMultiSuiteGene], SingleSiteMultiSuiteModel](
+            SingleObjectiveGA[SingleObjectiveChromosome[SingleSiteMultiSuiteGene], SingleSiteMultiSuiteModel] ga = \
+                SingleObjectiveGA[SingleObjectiveChromosome[SingleSiteMultiSuiteGene], SingleSiteMultiSuiteModel](
                 self.single_site_multi_suite,
                 self.random_state,
                 self.num_threads   
@@ -1178,11 +1178,11 @@ cdef class SingleSiteMultiSuite:
     def __run_nsgaii(self):
         cdef:
             SingleSiteMultiSuiteSchedule schedule
-            vector[vector[NSGAIndividual[SingleSiteMultiSuiteGene]]] history
-            vector[NSGAIndividual[SingleSiteMultiSuiteGene]] solutions, top_front
+            vector[vector[NSGAChromosome[SingleSiteMultiSuiteGene]]] history
+            vector[NSGAChromosome[SingleSiteMultiSuiteGene]] solutions, top_front
             
-            NSGAII[NSGAIndividual[SingleSiteMultiSuiteGene], SingleSiteMultiSuiteModel] nsgaii = \
-                NSGAII[NSGAIndividual[SingleSiteMultiSuiteGene], SingleSiteMultiSuiteModel](
+            NSGAII[NSGAChromosome[SingleSiteMultiSuiteGene], SingleSiteMultiSuiteModel] nsgaii = \
+                NSGAII[NSGAChromosome[SingleSiteMultiSuiteGene], SingleSiteMultiSuiteModel](
                 self.single_site_multi_suite,
                 self.random_state,
                 self.num_threads   

@@ -10,7 +10,6 @@
 
 #include <omp.h>
 #include <limits>
-
 #include <vector>
 #include <numeric>
 #include <cstdlib>
@@ -22,21 +21,21 @@
 namespace algorithms
 {
 	/*
-		Individual<Gene> class object is expected to have the following methods:
+		Chromosome<Gene> class object is expected to have the following methods:
 
-		void Cross(Individual& other)
+		void Cross(Chromosome& other)
 		void Mutate() methods
 	*/
-	template<class Individual, class FitnessFunction>
+	template<class Chromosome, class FitnessFunction>
 	class BaseGA
 	{
 	protected:
-		typedef std::vector<Individual> Population;
+		typedef std::vector<Chromosome> Population;
 		FitnessFunction fitness_function;
 		Population parents, offspring;
 		std::vector<int> indices;
 
-		virtual bool Tournament(const Individual &p, const Individual &q) = 0;
+		virtual bool Tournament(const Chromosome &p, const Chromosome &q) = 0;
 
 		inline void Select()
 		{

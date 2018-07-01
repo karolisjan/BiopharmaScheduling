@@ -5,19 +5,19 @@
 	#pragma GCC diagnostic ignored "-Wformat="
 #endif 
 
-#ifndef __SINGLE_OBJECTIVE_INDIVIDUAL_H__
-#define __SINGLE_OBJECTIVE_INDIVIDUAL_H__
+#ifndef __SINGLE_OBJECTIVE_CHROMOSOME_H__
+#define __SINGLE_OBJECTIVE_CHROMOSOME_H__
 
-#include "base_individual.h"
+#include "base_chromosome.h"
 
 
 namespace types
 {
 	template<class Gene>
-	class SingleObjectiveIndividual : public BaseIndividual<Gene>
+	class SingleObjectiveChromosome : public BaseChromosome<Gene>
 	{
 	public:
-		using BaseIndividual<Gene>::BaseIndividual;
+		using BaseChromosome<Gene>::BaseChromosome;
 
 		double objective;
         double constraints;

@@ -2,9 +2,9 @@ from libcpp.vector cimport vector
 
 
 cdef extern from "../single_objective_ga.h" namespace "algorithms" nogil:
-    cdef cppclass SingleObjectiveGA[Individual, FitnessFunctor]:
+    cdef cppclass SingleObjectiveGA[Chromosome, FitnessFunction]:
         SingleObjectiveGA()
-        SingleObjectiveGA(FitnessFunctor, int seed, int num_threads)
+        SingleObjectiveGA(FitnessFunction, int seed, int num_threads)
 
         void Init(
             int popsize,
@@ -31,5 +31,5 @@ cdef extern from "../single_objective_ga.h" namespace "algorithms" nogil:
         )
 
         void Update()
-        Individual Top()
-        Individual Top(vector[Individual])
+        Chromosome Top()
+        Chromosome Top(vector[Chromosome])

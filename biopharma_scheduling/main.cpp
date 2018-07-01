@@ -152,7 +152,7 @@ void DisplaySchedule(types::SingleSiteMultiSuiteSchedule &schedule)
 
  	deterministic::SingleSiteMultiSuiteModel single_site_multi_suite_model(input_data);
 
- 	algorithms::SingleObjectiveGA<types::SingleObjectiveIndividual<types::SingleSiteMultiSuiteGene>, deterministic::SingleSiteMultiSuiteModel> simple_ga(
+ 	algorithms::SingleObjectiveGA<types::SingleObjectiveChromosome<types::SingleSiteMultiSuiteGene>, deterministic::SingleSiteMultiSuiteModel> simple_ga(
  		single_site_multi_suite_model,
  		seed,
  		num_threads
@@ -286,7 +286,7 @@ void DisplaySchedule(types::SingleSiteMultiSuiteSchedule &schedule)
 
  	deterministic::SingleSiteMultiSuiteModel single_site_multi_suite_model(input_data);
 
- 	algorithms::SingleObjectiveGA<types::SingleObjectiveIndividual<types::SingleSiteMultiSuiteGene>, deterministic::SingleSiteMultiSuiteModel> simple_ga(
+ 	algorithms::SingleObjectiveGA<types::SingleObjectiveChromosome<types::SingleSiteMultiSuiteGene>, deterministic::SingleSiteMultiSuiteModel> simple_ga(
  		single_site_multi_suite_model,
  		seed,
  		num_threads

@@ -22,8 +22,8 @@
 #include "gene.h"
 #include "schedule.h"
 #include "input_data.h"
-#include "nsga_individual.h"
-#include "single_objective_individual.h"
+#include "nsga_chromosome.h"
+#include "single_objective_chromosome.h"
 
 
 namespace stochastic
@@ -47,10 +47,10 @@ namespace stochastic
 			}
 		}
 
-		template<class Individual>
+		template<class Chromosome>
 		inline bool IsOverHorizon(
 			int cmpgn_num,
-			Individual &individual, 
+			Chromosome &individual, 
 			types::SingleSiteSimpleSchedule &schedule,
 			types::Campaign &new_cmpgn,
 			types::Batch &new_batch,
@@ -72,9 +72,9 @@ namespace stochastic
 			Adds the first campaign to the schedule. Returns false if the schedule 
 			is at/over the horizon, true otherwise.
 		*/
-		template<class Individual>
+		template<class Chromosome>
 		bool AddFirstCampaign(
-			Individual &individual,
+			Chromosome &individual,
 			types::SingleSiteSimpleSchedule &schedule
 		) 
 		{
@@ -148,10 +148,10 @@ namespace stochastic
 			Adds a new manufacturing campaign of a different product. Returns false if 
 			the schedule is at/over the horizon, true otherwise.
 		*/
-		template<class Individual>
+		template<class Chromosome>
 		bool AddNewCampaign(
 			int cmpgn_num,
-			Individual &individual,
+			Chromosome &individual,
 			types::SingleSiteSimpleSchedule &schedule
 		)
 		{		
@@ -221,10 +221,10 @@ namespace stochastic
 			return true;
 		}
 
-		template<class Individual>
+		template<class Chromosome>
 		bool ContinuePreviousCampaign(
 			int cmpgn_num,
-			Individual &individual,
+			Chromosome &individual,
 			types::SingleSiteSimpleSchedule &schedule
 		)
 		{
@@ -446,9 +446,9 @@ namespace stochastic
 		SingleSiteSimpleModel() {}
 		SingleSiteSimpleModel(SingleSiteSimpleInputData input_data) : input_data(input_data) {}
 
-		template<class Individual>
+		template<class Chromosome>
 		void CreateSchedule(
-			Individual &individual,
+			Chromosome &individual,
 			types::SingleSiteSimpleSchedule &schedule
 		)
 		{
@@ -509,7 +509,7 @@ namespace stochastic
 			}
 		}
 
-		void operator()(types::SingleObjectiveIndividual<types::SingleSiteSimpleGene> &individual)
+		void operator()(types::SingleObjectiveChromosome<types::SingleSiteSimpleGene> &individual)
 		{
 			types::SingleSiteSimpleSchedule schedule;
 
@@ -536,7 +536,7 @@ namespace stochastic
 			}
 		}
 		
-		void operator()(types::NSGAIndividual<types::SingleSiteSimpleGene> &individual)
+		void operator()(types::NSGAChromosome<types::SingleSiteSimpleGene> &individual)
 		{
 			types::SingleSiteSimpleSchedule schedule;
 
@@ -595,10 +595,10 @@ namespace deterministic
 			}
 		}
 
-		template<class Individual>
+		template<class Chromosome>
 		inline void AddNewUSPCampaign(
 			int cmpgn_num,
-			Individual &individual,
+			Chromosome &individual,
 			types::SingleSiteMultiSuiteSchedule &schedule
 		)
 		{
@@ -633,10 +633,10 @@ namespace deterministic
 			}
 		}
 
-		template<class Individual>
+		template<class Chromosome>
 		inline void ContinuePreviousUSPCampaign(
 			int cmpgn_num,
-			Individual &individual,
+			Chromosome &individual,
 			types::SingleSiteMultiSuiteSchedule &schedule
 		)
 		{
@@ -663,9 +663,9 @@ namespace deterministic
 			}
 		}
 
-		template<class Individual>
+		template<class Chromosome>
 		void CreateUSPSchedule(
-			Individual &individual,
+			Chromosome &individual,
 			types::SingleSiteMultiSuiteSchedule &schedule
 		)
 		{
@@ -766,9 +766,9 @@ namespace deterministic
 			schedule.suites[dsp_suite - 1].push_back(dsp_cmpgn);
 		}
 
-		template<class Individual>
+		template<class Chromosome>
 		void CreateDSPSchedule(
-			Individual &individual,
+			Chromosome &individual,
 			types::SingleSiteMultiSuiteSchedule &schedule
 		)
 		{
@@ -1023,9 +1023,9 @@ namespace deterministic
 		SingleSiteMultiSuiteModel() {}
 		SingleSiteMultiSuiteModel(const SingleSiteMultiSuiteInputData &input_data) : input_data(input_data) {}
 
-		template<class Individual>
+		template<class Chromosome>
 		void CreateSchedule(
-			Individual &individual,
+			Chromosome &individual,
 			types::SingleSiteMultiSuiteSchedule &schedule
 		)
 		{
@@ -1035,7 +1035,7 @@ namespace deterministic
 			CalculateObjectiveFunction(schedule);
 		}
 
-		void operator()(types::SingleObjectiveIndividual<types::SingleSiteMultiSuiteGene> &individual)
+		void operator()(types::SingleObjectiveChromosome<types::SingleSiteMultiSuiteGene> &individual)
 		{
 			types::SingleSiteMultiSuiteSchedule schedule;
 			CreateSchedule(individual, schedule);			
@@ -1062,7 +1062,7 @@ namespace deterministic
 			}
 		}
 		
-		void operator()(types::NSGAIndividual<types::SingleSiteMultiSuiteGene> &individual)
+		void operator()(types::NSGAChromosome<types::SingleSiteMultiSuiteGene> &individual)
 		{
 			types::SingleSiteMultiSuiteSchedule schedule;
 			CreateSchedule(individual, schedule);		
@@ -1111,10 +1111,10 @@ namespace deterministic
 			}
 		}
 
-		template<class Individual>
+		template<class Chromosome>
 		inline bool IsOverHorizon(
 			int cmpgn_num,
-			Individual &individual, 
+			Chromosome &individual, 
 			types::SingleSiteSimpleSchedule &schedule,
 			types::Campaign &new_cmpgn,
 			types::Batch &new_batch,
@@ -1136,9 +1136,9 @@ namespace deterministic
 			Adds the first campaign to the schedule. Returns false if the schedule 
 			is at/over the horizon, true otherwise.
 		*/
-		template<class Individual>
+		template<class Chromosome>
 		bool AddFirstCampaign(
-			Individual &individual,
+			Chromosome &individual,
 			types::SingleSiteSimpleSchedule &schedule
 		) 
 		{
@@ -1218,10 +1218,10 @@ namespace deterministic
 			Adds a new manufacturing campaign of a different product. Returns false if 
 			the schedule is at/over the horizon, true otherwise.
 		*/
-		template<class Individual>
+		template<class Chromosome>
 		bool AddNewCampaign(
 			int cmpgn_num,
-			Individual &individual,
+			Chromosome &individual,
 			types::SingleSiteSimpleSchedule &schedule
 		)
 		{		
@@ -1297,10 +1297,10 @@ namespace deterministic
 			return true;
 		}
 
-		template<class Individual>
+		template<class Chromosome>
 		bool ContinuePreviousCampaign(
 			int cmpgn_num,
-			Individual &individual,
+			Chromosome &individual,
 			types::SingleSiteSimpleSchedule &schedule
 		)
 		{
@@ -1527,9 +1527,9 @@ namespace deterministic
 		SingleSiteSimpleModel() {}
 		SingleSiteSimpleModel(SingleSiteSimpleInputData input_data) : input_data(input_data) {}
 
-		template<class Individual>
+		template<class Chromosome>
 		void CreateSchedule(
-			Individual &individual,
+			Chromosome &individual,
 			types::SingleSiteSimpleSchedule &schedule
 		)
 		{
@@ -1590,7 +1590,7 @@ namespace deterministic
 			}
 		}
 
-		void operator()(types::SingleObjectiveIndividual<types::SingleSiteSimpleGene> &individual)
+		void operator()(types::SingleObjectiveChromosome<types::SingleSiteSimpleGene> &individual)
 		{
 			types::SingleSiteSimpleSchedule schedule;
 
@@ -1617,7 +1617,7 @@ namespace deterministic
 			}
 		}
 		
-		void operator()(types::NSGAIndividual<types::SingleSiteSimpleGene> &individual)
+		void operator()(types::NSGAChromosome<types::SingleSiteSimpleGene> &individual)
 		{
 			types::SingleSiteSimpleSchedule schedule;
 

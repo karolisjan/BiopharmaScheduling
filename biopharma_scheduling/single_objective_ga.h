@@ -16,23 +16,23 @@
 
 namespace algorithms
 {
-	template<class Individual, class FitnessFunction>
-	class SingleObjectiveGA : public BaseGA<Individual, FitnessFunction>
+	template<class Chromosome, class FitnessFunction>
+	class SingleObjectiveGA : public BaseGA<Chromosome, FitnessFunction>
 	{
-		using BaseGA<Individual, FitnessFunction>::BaseGA;
-		using BaseGA<Individual, FitnessFunction>::Select;
-		using BaseGA<Individual, FitnessFunction>::Reproduce;
-		using BaseGA<Individual, FitnessFunction>::fitness_function;
-		using BaseGA<Individual, FitnessFunction>::indices;
-		using BaseGA<Individual, FitnessFunction>::parents;
-		using BaseGA<Individual, FitnessFunction>::offspring;
+		using BaseGA<Chromosome, FitnessFunction>::BaseGA;
+		using BaseGA<Chromosome, FitnessFunction>::Select;
+		using BaseGA<Chromosome, FitnessFunction>::Reproduce;
+		using BaseGA<Chromosome, FitnessFunction>::fitness_function;
+		using BaseGA<Chromosome, FitnessFunction>::indices;
+		using BaseGA<Chromosome, FitnessFunction>::parents;
+		using BaseGA<Chromosome, FitnessFunction>::offspring;
 
-		typedef typename BaseGA<Individual, FitnessFunction>::Population Population;
+		typedef typename BaseGA<Chromosome, FitnessFunction>::Population Population;
 
 		// Updates the parents with the best individuals from the offspring population.
 		void Replace()
 		{
-			auto on_objective_and_constraints = [](const Individual &p, const Individual &q)
+			auto on_objective_and_constraints = [](const Chromosome &p, const Chromosome &q)
 			{
                 // If either p or q is infeasible
                 if (p.constraints != utils::Approx(q.constraints)) {
@@ -60,7 +60,7 @@ namespace algorithms
             );
 		}
 
-		inline bool Tournament(const Individual &p, const Individual &q) override
+		inline bool Tournament(const Chromosome &p, const Chromosome &q) override
 		{	
             // If either p or q is infeasible
             if (p.constraints != utils::Approx(q.constraints)) {
@@ -79,10 +79,10 @@ namespace algorithms
 
 	public:
 		// Creates new parent population.
-		template<class... IndividualParams>
+		template<class... ChromosomeParams>
 		void Init(
 			int popsize,
-			IndividualParams... params
+			ChromosomeParams... params
 		)
 		{
 			indices.resize(popsize);
@@ -92,7 +92,7 @@ namespace algorithms
 			parents.resize(0);
 
 			while (popsize-- > 0) {
-				parents.push_back(std::move(Individual(params...)));
+				parents.push_back(std::move(Chromosome(params...)));
 			}
 
 			#pragma omp parallel for
@@ -103,7 +103,7 @@ namespace algorithms
 			// Sorts in an descending order of objective 
 			// and ascending order of constraints values
 			std::sort(parents.begin(), parents.end(),
-				[](const Individual &p, const Individual &q)
+				[](const Chromosome &p, const Chromosome &q)
                 {
                     // If either p or q is infeasible
                     if (p.constraints != utils::Approx(q.constraints)) {
@@ -129,17 +129,17 @@ namespace algorithms
 		}
 
 		// Returns top parent individual.
-		Individual Top()
+		Chromosome Top()
 		{
 			// No need to sort parents because of the merge in Replace().
 			return parents[0];
 		}
 
 		// Returns top parent individual.
-		Individual Top(Population solutions)
+		Chromosome Top(Population solutions)
 		{
 			std::sort(solutions.begin(), solutions.end(),
-				[](const Individual &p, const Individual &q)
+				[](const Chromosome &p, const Chromosome &q)
                 {
                     // If either p or q is infeasible
                     if (p.constraints != utils::Approx(q.constraints)) {

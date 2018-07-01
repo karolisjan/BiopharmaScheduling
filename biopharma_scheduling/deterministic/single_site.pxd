@@ -149,10 +149,10 @@ cdef extern from "../scheduling_models.h" namespace "deterministic" nogil:
     cdef cppclass SingleSiteSimpleModel:
         SingleSiteSimpleModel()
         SingleSiteSimpleModel(SingleSiteSimpleInputData input_data)
-        void CreateSchedule[Individual](Individual &individual, SingleSiteSimpleSchedule &schedule)
+        void CreateSchedule[Chromosome](Chromosome &chromosome, SingleSiteSimpleSchedule &schedule)
 
 
     cdef cppclass SingleSiteMultiSuiteModel:
         SingleSiteMultiSuiteModel()
         SingleSiteMultiSuiteModel(SingleSiteMultiSuiteInputData input_data)
-        void CreateSchedule[Individual](Individual &individual, SingleSiteMultiSuiteSchedule &schedule)
+        void CreateSchedule[Chromosome](Chromosome &chromosome, SingleSiteMultiSuiteSchedule &schedule)
