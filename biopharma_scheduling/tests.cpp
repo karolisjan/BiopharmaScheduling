@@ -9,10 +9,10 @@
 #include "scheduling_models.h"
 
 
-struct Individual
+struct Chromosome
 {
-	Individual() {}
-	Individual(std::vector<double> objectives, std::vector<double> constraints) : objectives(objectives), constraints(constraints) {}
+	Chromosome() {}
+	Chromosome(std::vector<double> objectives, std::vector<double> constraints) : objectives(objectives), constraints(constraints) {}
 
 	std::vector<double> objectives, constraints;
 	std::vector<int> S;
@@ -20,8 +20,8 @@ struct Individual
 	double d;
 };
 
-template<class Individual>
-static inline int CheckDominance(const Individual &p, const Individual &q)
+template<class Chromosome>
+static inline int CheckDominance(const Chromosome &p, const Chromosome &q)
 {
 	// Constraints are expected to be normalised in 0.0 - 1.0 range
 	double p_constraints = 0.0, q_constraints = 0.0;
@@ -63,21 +63,21 @@ static inline int CheckDominance(const Individual &p, const Individual &q)
 
 SCENARIO("Dominance test")
 {
-	Individual i1({ -580.5, 500.0 }, { 34.1 });
-	Individual i2({ -359.9, 934.4 }, { 66.4 });
+	Chromosome i1({ -580.5, 500.0 }, { 34.1 });
+	Chromosome i2({ -359.9, 934.4 }, { 66.4 });
 
 	REQUIRE( CheckDominance(i1, i2) == 1 );
 	REQUIRE( CheckDominance(i2, i1) == -1 );
 
-	Individual i3({ -568.9, 217.4 }, { 0.0 });
-	Individual i4({ -596.4, 193.4 }, { 0.0 });
+	Chromosome i3({ -568.9, 217.4 }, { 0.0 });
+	Chromosome i4({ -596.4, 193.4 }, { 0.0 });
 
 	REQUIRE( CheckDominance(i3, i4) == -1 );
 	REQUIRE( CheckDominance(i4, i3) == 1 );
 
 
-	Individual i5({ -628.6, 454.6 }, { 0.0 });
-	Individual i6({ -625.5, 477.1 }, { 0.0 });
+	Chromosome i5({ -628.6, 454.6 }, { 0.0 });
+	Chromosome i6({ -625.5, 477.1 }, { 0.0 });
 
 	REQUIRE( CheckDominance(i5, i6) == 1 );
 	REQUIRE( CheckDominance(i6, i5) == -1 );
@@ -144,21 +144,21 @@ void NonDominatedSort(Population &R, std::vector<Population> &F)
 
 SCENARIO("Non-dominated sort test (unconstrained)")
 {
-	Individual i1({ -1, 1 }, { 0 });
-	Individual i2({ -1, 2 }, { 0 });
-	Individual i3({ -1, 3 }, { 0 });
-	Individual i4({ -2, 1 }, { 0 });
-	Individual i5({ -2, 2 }, { 0 });
-	Individual i6({ -2, 3 }, { 0 });
-	Individual i7({ -3, 1 }, { 0 });
-	Individual i8({ -3, 2 }, { 0 });
-	Individual i9({ -3, 3 }, { 0 });
-	Individual i10({ -4, 1 }, { 0 });
-	Individual i11({ -4, 2 }, { 0 });
-	Individual i12({ -4, 3 }, { 0 });
+	Chromosome i1({ -1, 1 }, { 0 });
+	Chromosome i2({ -1, 2 }, { 0 });
+	Chromosome i3({ -1, 3 }, { 0 });
+	Chromosome i4({ -2, 1 }, { 0 });
+	Chromosome i5({ -2, 2 }, { 0 });
+	Chromosome i6({ -2, 3 }, { 0 });
+	Chromosome i7({ -3, 1 }, { 0 });
+	Chromosome i8({ -3, 2 }, { 0 });
+	Chromosome i9({ -3, 3 }, { 0 });
+	Chromosome i10({ -4, 1 }, { 0 });
+	Chromosome i11({ -4, 2 }, { 0 });
+	Chromosome i12({ -4, 3 }, { 0 });
 
-	std::vector<Individual> R = { i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12 };
-	std::vector<std::vector<Individual>> F;
+	std::vector<Chromosome> R = { i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12 };
+	std::vector<std::vector<Chromosome>> F;
 
 	NonDominatedSort(R, F);
 
@@ -174,21 +174,21 @@ SCENARIO("Non-dominated sort test (unconstrained)")
 
 SCENARIO("Non-dominated sort test (constrained)")
 {
-	Individual i1({ -1, 1 }, { 0 });
-	Individual i2({ -1, 2 }, { 3.0 });
-	Individual i3({ -1, 3 }, { 0 });
-	Individual i4({ -2, 1 }, { 1.1 });
-	Individual i5({ -2, 2 }, { 0 });
-	Individual i6({ -2, 3 }, { 0.5, 0.4 });
-	Individual i7({ -3, 1 }, { 0.0 });
-	Individual i8({ -3, 2 }, { 2.0 });
-	Individual i9({ -3, 3 }, { 0 });
-	Individual i10({ -4, 1 }, { 1.1 });
-	Individual i11({ -4, 2 }, { 0 });
-	Individual i12({ -4, 3 }, { 1.0, 0.1 });
+	Chromosome i1({ -1, 1 }, { 0 });
+	Chromosome i2({ -1, 2 }, { 3.0 });
+	Chromosome i3({ -1, 3 }, { 0 });
+	Chromosome i4({ -2, 1 }, { 1.1 });
+	Chromosome i5({ -2, 2 }, { 0 });
+	Chromosome i6({ -2, 3 }, { 0.5, 0.4 });
+	Chromosome i7({ -3, 1 }, { 0.0 });
+	Chromosome i8({ -3, 2 }, { 2.0 });
+	Chromosome i9({ -3, 3 }, { 0 });
+	Chromosome i10({ -4, 1 }, { 1.1 });
+	Chromosome i11({ -4, 2 }, { 0 });
+	Chromosome i12({ -4, 3 }, { 1.0, 0.1 });
 
-	std::vector<Individual> R = { i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12 };
-	std::vector<std::vector<Individual>> F;
+	std::vector<Chromosome> R = { i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12 };
+	std::vector<std::vector<Chromosome>> F;
 
 	NonDominatedSort(R, F);
 
@@ -255,12 +255,12 @@ SCENARIO("Sorting in ascending order test")
 	REQUIRE(v.back() == *std::max_element(v.begin(), v.end()));
 }
 
-struct DummyIndividual
+struct DummyChromosome
 {
 	std::vector<double> constraints;
 };
 
-inline void NormaliseConstraints(std::vector<DummyIndividual> &parents, std::vector<DummyIndividual> &offspring)
+inline void NormaliseConstraints(std::vector<DummyChromosome> &parents, std::vector<DummyChromosome> &offspring)
 {
 	auto num_constraints = parents.back().constraints.size();
 
@@ -321,7 +321,7 @@ inline void NormaliseConstraints(std::vector<DummyIndividual> &parents, std::vec
 
 SCENARIO("Constraints normalisation test")
 {
-	std::vector<DummyIndividual> parents(100), offspring;
+	std::vector<DummyChromosome> parents(100), offspring;
 
 	for (auto &i : parents) {
 		i.constraints = { (double)utils::random_int(1, 100), (double)utils::random_int(100, 1000) };
@@ -513,7 +513,7 @@ SCENARIO("deterministic::SingleSiteSimpleModel::CreateSchedule test without addi
 		WHEN("The solution has 8 genes and is known to correspond to a schedule with 8 different " +
 		"campaigns with a total throughput of 570 kg, inventory deficit of 34 kg, and 0 kg backlog.")
 		{
-			types::NSGAIndividual<types::SingleSiteSimpleGene> known_solution;
+			types::NSGAChromosome<types::SingleSiteSimpleGene> known_solution;
 
 			known_solution.genes.resize(7);
 
@@ -551,7 +551,7 @@ SCENARIO("deterministic::SingleSiteSimpleModel::CreateSchedule test without addi
 
 		WHEN("The solution has 8 genes. 7 of the genes correspond to 7 valid campaigns but the last gene is known to be beyond the horizon.")
 		{
-			types::NSGAIndividual<types::SingleSiteSimpleGene> input, output;
+			types::NSGAChromosome<types::SingleSiteSimpleGene> input, output;
 
 			input.genes.resize(8);
 
@@ -605,7 +605,7 @@ SCENARIO("deterministic::SingleSiteSimpleModel::CreateSchedule test without addi
 
 		WHEN("The solution has 8 genes but two consecutive genes have the same product number.")
 		{
-			types::NSGAIndividual<types::SingleSiteSimpleGene> input, output;
+			types::NSGAChromosome<types::SingleSiteSimpleGene> input, output;
 
 			input.genes.resize(8);
 
@@ -659,7 +659,7 @@ SCENARIO("deterministic::SingleSiteSimpleModel::CreateSchedule test without addi
 
 		WHEN("The solution with 14 genes has multiple consecutive one with the same product number and some beyond the horizon.")
 		{
-			types::NSGAIndividual<types::SingleSiteSimpleGene> input, output;
+			types::NSGAChromosome<types::SingleSiteSimpleGene> input, output;
 
 			input.genes.resize(13);
 
@@ -800,7 +800,7 @@ SCENARIO("deterministic::SingleSiteMultiSuiteModel::CreateSchedule test")
 
 			deterministic::SingleSiteMultiSuiteModel single_site_multi_suite_model(input_data);
 
-			types::SingleObjectiveIndividual<types::SingleSiteMultiSuiteGene> i;
+			types::SingleObjectiveChromosome<types::SingleSiteMultiSuiteGene> i;
 
 			i.genes.resize(5);
 
@@ -906,7 +906,7 @@ SCENARIO("deterministic::SingleSiteMultiSuiteModel::CreateSchedule test")
 
 			deterministic::SingleSiteMultiSuiteModel single_site_multi_suite_model(input_data);
 
-			types::SingleObjectiveIndividual<types::SingleSiteMultiSuiteGene> i;
+			types::SingleObjectiveChromosome<types::SingleSiteMultiSuiteGene> i;
 
 			i.genes.resize(6);
 
