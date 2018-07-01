@@ -290,13 +290,7 @@ __pycache__/
 .ipynb_checkpoints
 .DS_Store
 build
-temp-plot.html
 .json
 *.egg-info
-*.so
-dist
-*out
 .vscode
 *plist
-*out
-single_site.cpp
