@@ -289,10 +289,6 @@ __pycache__/
 
 .ipynb_checkpoints
 .DS_Store
-build
-.json
-*.egg-info
 .vscode
 *plist
 *out
-*so

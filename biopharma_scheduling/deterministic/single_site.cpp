@@ -4,27 +4,27 @@
 {
     "distutils": {
         "depends": [
-            "biopharma_scheduling/batch.h", 
-            "biopharma_scheduling/campaign.h", 
-            "biopharma_scheduling/gene.h", 
-            "biopharma_scheduling/input_data.h", 
-            "biopharma_scheduling/nsga_chromosome.h", 
-            "biopharma_scheduling/nsgaii.h", 
-            "biopharma_scheduling/schedule.h", 
-            "biopharma_scheduling/scheduling_models.h", 
-            "biopharma_scheduling/single_objective_chromosome.h", 
+            "biopharma_scheduling/batch.h",
+            "biopharma_scheduling/campaign.h",
+            "biopharma_scheduling/gene.h",
+            "biopharma_scheduling/input_data.h",
+            "biopharma_scheduling/nsga_chromosome.h",
+            "biopharma_scheduling/nsgaii.h",
+            "biopharma_scheduling/schedule.h",
+            "biopharma_scheduling/scheduling_models.h",
+            "biopharma_scheduling/single_objective_chromosome.h",
             "biopharma_scheduling/single_objective_ga.h"
-        ], 
+        ],
         "include_dirs": [
-            "biopharma_scheduling/deterministic", 
+            "biopharma_scheduling/deterministic",
             "./biopharma_scheduling/deterministic"
-        ], 
-        "language": "c++", 
-        "name": "biopharma_scheduling.deterministic.single_site", 
+        ],
+        "language": "c++",
+        "name": "biopharma_scheduling.deterministic.single_site",
         "sources": [
             "biopharma_scheduling/deterministic/single_site.pyx"
         ]
-    }, 
+    },
     "module_name": "biopharma_scheduling.deterministic.single_site"
 }
 END: Cython Metadata */
