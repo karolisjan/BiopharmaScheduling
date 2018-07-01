@@ -105,7 +105,7 @@ This approach has been presented during a keynote lecture at the 27th European S
     git clone https://github.com/UCL-Biochemical-Engineering/BiopharmaScheduling
     cd BiopharmaScheduling
     python setup.py
-    pip install dist/*whl
+    pip install dist/biopharma_scheduling-1.0-cp35-cp35m-linux_x86_64.whl
     ```
 
 [back to top](#index)
