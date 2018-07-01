@@ -294,3 +294,5 @@ build
 *.egg-info
 .vscode
 *plist
+*out
+*so
