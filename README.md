@@ -54,7 +54,7 @@ This approach has been presented during a keynote lecture at the 27th European S
     ```
 * Install Python libraries
     ```
-    python -m pip install pip==10.0.1 setuptools==38.6.0 Cython==0.26
+    python -m pip install -r requirements.txt
     ```
 * Find the path to the `g++` binary with `brew ls gcc | grep g++`. It should be in       
     ```
@@ -94,7 +94,7 @@ This approach has been presented during a keynote lecture at the 27th European S
     ```
 * Install Python libraries
     ```
-    python -m pip install pip==10.0.1 setuptools==38.6.0 Cython==0.26
+    python -m pip install -r requirements.txt
     ```
 * Export the path to the `g++` binary 
     ```
@@ -122,7 +122,6 @@ This approach has been presented during a keynote lecture at the 27th European S
 
     * Setup the `ipykernel` for the environment created earlier
         ```
-        pip install ipykernel
         python -m ipykernel install --user --name <environment-name> --display-name "<display-name>"
         ```
     * Create and activate a separate Python enviroment, and run `pip install jupyter jupyterlab` inside it
