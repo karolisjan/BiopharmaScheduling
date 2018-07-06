@@ -1,0 +1,11 @@
+pip==10.0.1 
+setuptools==38.6.0 
+Cython==0.26
+ipykernel==4.8.2
+deap==1.2.2
+matplotlib==2.2.0
+numpy==1.13.3
+pandas==0.21.0
+plotly==2.2.3
+tqdm==4.19.4
+ipykernel==4.8.2

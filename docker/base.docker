@@ -1,0 +1,24 @@
+FROM python:3.6
+
+# Get Node.js
+RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
+RUN apt-get --force-yes update && apt-get --assume-yes install nodejs 
+
+# Get g++ and essentials
+RUN echo "deb http://ftp.de.debian.org/debian testing main" >> /etc/apt/sources.list
+RUN apt-get --force-yes update && apt-get --assume-yes install g++-8
+
+# Lock-in pip version and setup core Python libs
+RUN python -m pip install pip==10.0.1 setuptools==38.6.0 Cython==0.26 jupyter jupyterlab
+
+# Set up Plotly extension for Jupyter Lab
+RUN jupyter labextension install @jupyterlab/plotly-extension
+
+# Copy source
+RUN mkdir -p /BiopharmaScheduling/
+WORKDIR /BiopharmaScheduling
+
+# Get R and its dependencies, and setup a kernel for Jupyter
+# RUN apt-get --force-yes update && apt-get --assume-yes install r-base-core
+# COPY ./requirements.R /BiopharmaScheduling/requirements.R
+# RUN Rscript /BiopharmaScheduling/requirements.R
