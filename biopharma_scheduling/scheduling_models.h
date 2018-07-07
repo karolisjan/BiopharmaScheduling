@@ -472,31 +472,43 @@ namespace stochastic
 				}
 			}
 
-			EvaluateCampaigns(schedule);
-
-			// TODO: check the final throughput against the storage constraints
-			for (const auto &cmpgn : schedule.campaigns) {
-				for (const auto &batch : cmpgn.batches) {
-					schedule.objectives[TOTAL_KG_THROUGHPUT_MEAN] += batch.kg;
-					schedule.objectives[TOTAL_PRODUCTION_COST_MEAN] += batch.kg * input_data.production_cost_per_kg[batch.product_num - 1];
+			for (int sim; sim != input_data.num_mc_sims; ++sim) {
+				for (const auto &cmpgn : schedule.campaigns) {
+					for (const auto &batch : cmpgn.batches) {
+						batch.kg = utils::triangular_distribution(
+							input_data.kg_demand_min[batch.product_num - 1],
+							input_data.kg_demand_mode[batch.product_num - 1],
+							input_data.kg_demand_max[batch.product_num - 1],
+							input_data.rng
+						)
+					}
 				}
-			}
 
-			for (auto &obj : schedule.objectives) {
-				if (obj < utils::EPSILON) {
-					obj = 0.0;
+				EvaluateCampaigns(schedule);
+
+				for (const auto &cmpgn : schedule.campaigns) {
+					for (const auto &batch : cmpgn.batches) {
+						schedule.objectives[TOTAL_KG_THROUGHPUT_MEAN] += batch.kg;
+						schedule.objectives[TOTAL_PRODUCTION_COST_MEAN] += batch.kg * input_data.production_cost_per_kg[batch.product_num - 1];
+					}
 				}
+
+				for (auto &obj : schedule.objectives) {
+					if (obj < utils::EPSILON) {
+						obj = 0.0;
+					}
+				}
+
+				schedule.objectives[TOTAL_COST_MEAN] = (
+					schedule.objectives[TOTAL_INVENTORY_PENALTY_MEAN] + 
+					schedule.objectives[TOTAL_BACKLOG_PENALTY_MEAN] +
+					schedule.objectives[TOTAL_PRODUCTION_COST_MEAN] +
+					schedule.objectives[TOTAL_STORAGE_COST_MEAN] +
+					schedule.objectives[TOTAL_WASTE_COST_MEAN]
+				);
+
+				schedule.objectives[TOTAL_PROFIT_MEAN] = schedule.objectives[TOTAL_REVENUE_MEAN] - schedule.objectives[TOTAL_COST_MEAN];
 			}
-
-			schedule.objectives[TOTAL_COST_MEAN] = (
-				schedule.objectives[TOTAL_INVENTORY_PENALTY_MEAN] + 
-				schedule.objectives[TOTAL_BACKLOG_PENALTY_MEAN] +
-				schedule.objectives[TOTAL_PRODUCTION_COST_MEAN] +
-				schedule.objectives[TOTAL_STORAGE_COST_MEAN] +
-				schedule.objectives[TOTAL_WASTE_COST_MEAN]
-			);
-
-			schedule.objectives[TOTAL_PROFIT_MEAN] = schedule.objectives[TOTAL_REVENUE_MEAN] - schedule.objectives[TOTAL_COST_MEAN];
 
 			for (cmpgn_num = 0; cmpgn_num != schedule.campaigns.size(); ++cmpgn_num) {
 				individual.genes[cmpgn_num].product_num = schedule.campaigns[cmpgn_num].product_num;

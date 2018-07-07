@@ -4,20 +4,24 @@
 {
     "distutils": {
         "depends": [
-            "biopharma_scheduling/batch.h",
-            "biopharma_scheduling/campaign.h",
-            "biopharma_scheduling/gene.h",
-            "biopharma_scheduling/input_data.h",
-            "biopharma_scheduling/nsga_chromosome.h",
-            "biopharma_scheduling/nsgaii.h",
-            "biopharma_scheduling/schedule.h",
-            "biopharma_scheduling/scheduling_models.h",
-            "biopharma_scheduling/single_objective_chromosome.h",
-            "biopharma_scheduling/single_objective_ga.h"
+            "biopharma_scheduling\\batch.h",
+            "biopharma_scheduling\\campaign.h",
+            "biopharma_scheduling\\gene.h",
+            "biopharma_scheduling\\input_data.h",
+            "biopharma_scheduling\\nsga_chromosome.h",
+            "biopharma_scheduling\\nsgaii.h",
+            "biopharma_scheduling\\schedule.h",
+            "biopharma_scheduling\\scheduling_models.h",
+            "biopharma_scheduling\\single_objective_chromosome.h",
+            "biopharma_scheduling\\single_objective_ga.h"
+        ],
+        "extra_compile_args": [
+            "/std:c++14",
+            "/openmp"
         ],
         "include_dirs": [
             "biopharma_scheduling/deterministic",
-            "./biopharma_scheduling/deterministic"
+            ".\\biopharma_scheduling\\deterministic"
         ],
         "language": "c++",
         "name": "biopharma_scheduling.deterministic.single_site",
@@ -732,7 +736,7 @@ static const char *__pyx_filename;
 
 
 static const char *__pyx_f[] = {
-  "biopharma_scheduling/deterministic/single_site.pyx",
+  "biopharma_scheduling\\deterministic\\single_site.pyx",
   "stringsource",
 };
 
@@ -1562,7 +1566,7 @@ static const char __pyx_k_Product_labels_in_product_column[] = "Product labels i
 static const char __pyx_k_SingleSiteMultiSuite___make_pysc[] = "SingleSiteMultiSuite.__make_pyschedule.<locals>.get_date_of";
 static const char __pyx_k_SingleSiteSimple___make_pyschedu[] = "SingleSiteSimple.__make_pyschedule.<locals>.get_date_of";
 static const char __pyx_k_batches_multiples_of_per_campaig[] = "batches_multiples_of_per_campaign";
-static const char __pyx_k_biopharma_scheduling_determinist[] = "biopharma_scheduling/deterministic/single_site.pyx";
+static const char __pyx_k_biopharma_scheduling_determinist[] = "biopharma_scheduling\\deterministic\\single_site.pyx";
 static const char __pyx_k_self_input_data_self_single_site[] = "self.input_data,self.single_site_simple cannot be converted to a Python object for pickling";
 static const char __pyx_k_Product_labels_from_batch_demand_2[] = "Product labels from 'batch_demand' and 'usp_changeover_days' do not match.";
 static const char __pyx_k_Product_labels_from_batch_demand_3[] = "Product labels from 'batch_demand' and 'dsp_changeover_days' do not match.";
