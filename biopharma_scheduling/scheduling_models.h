@@ -476,11 +476,11 @@ namespace stochastic
 				for (const auto &cmpgn : schedule.campaigns) {
 					for (const auto &batch : cmpgn.batches) {
 						batch.kg = utils::triangular_distribution(
-							input_data.kg_demand_min[batch.product_num - 1],
-							input_data.kg_demand_mode[batch.product_num - 1],
-							input_data.kg_demand_max[batch.product_num - 1],
+							input_data.kg_yield_per_batch_min[batch.product_num - 1],
+							input_data.kg_yield_per_batch_mode[batch.product_num - 1],
+							input_data.kg_yield_per_batch_max[batch.product_num - 1],
 							input_data.rng
-						)
+						);
 					}
 				}
 
