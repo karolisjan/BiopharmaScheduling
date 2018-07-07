@@ -418,11 +418,13 @@ namespace stochastic
 		*/
 		void EvaluateCampaigns(types::SingleSiteSimpleSchedule &schedule) 
 		{		
-			int product_num, period_num = 0;
+			int product_num, period_num;
 			double kg_demand;
 	
 			for (product_num = 0; product_num < input_data.num_products; ++product_num) {
 				
+				period_num = 0;
+
 				kg_demand = utils::triangular_distribution(
 					input_data.kg_demand_min[product_num][period_num],
 					input_data.kg_demand_mode[product_num][period_num],
@@ -432,7 +434,7 @@ namespace stochastic
 
 				CreateOpeningStock(schedule, product_num, period_num);
 				RemoveExpired(schedule, product_num, period_num);		
-				CheckSupplyDemandBacklogInventory(schedule, product_num, period_num, 0);
+				CheckSupplyDemandBacklogInventory(schedule, product_num, period_num, kg_demand);
 				RemoveExcess(schedule, product_num, period_num);
 				CheckInventoryTarget(schedule, product_num, period_num);
 			
@@ -450,7 +452,7 @@ namespace stochastic
 					);
 						
 					RemoveExpired(schedule, product_num, period_num);		
-					CheckSupplyDemandBacklogInventory(schedule, product_num, period_num, 0);
+					CheckSupplyDemandBacklogInventory(schedule, product_num, period_num, kg_demand);
 					RemoveExcess(schedule, product_num, period_num);
 					CheckInventoryTarget(schedule, product_num, period_num);
 				}
@@ -487,7 +489,10 @@ namespace stochastic
 				}
 			}
 
-			for (int sim; sim != input_data.num_mc_sims; ++sim) {
+			for (int sim = 0; sim != input_data.num_mc_sims; ++sim) {
+
+				schedule.Reset(input_data.num_products, input_data.num_periods);
+
 				for (auto &cmpgn : schedule.campaigns) {
 					for (auto &batch : cmpgn.batches) {
 						batch.kg = utils::triangular_distribution(

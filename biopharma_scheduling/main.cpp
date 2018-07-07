@@ -8,7 +8,7 @@
 
 
 bool display_schedules = false;
-int seed = 0, num_threads = 1;
+int seed = 0, num_threads = -1;
 int num_runs = 10, num_gens = 1000, popsize = 200; 
 
 int starting_length = 1;
@@ -347,14 +347,14 @@ void DisplaySchedule(types::SingleSiteMultiSuiteSchedule &schedule)
 void Det_SingleSiteSimple_Test()
 {
 	num_runs = 10;
-	num_gens = 1000;
+	num_gens = 100;
 	popsize = 100;
 
-	p_xo = 0.820769;
-	p_product_mut = 0.141214;
-	p_plus_batch_mut = 0.121224;
-	p_minus_batch_mut = 0.213939;
-	p_gene_swap = 0.766782;
+	p_xo = 0.130878;
+	p_product_mut = 0.017718;
+	p_plus_batch_mut = 0.707202;
+	p_minus_batch_mut = 0.834735;
+	p_gene_swap = 0.531073;
 
 	std::unordered_map<deterministic::OBJECTIVES, int> objectives;
 	objectives.emplace(deterministic::TOTAL_KG_INVENTORY_DEFICIT, -1);
@@ -551,17 +551,17 @@ void Det_SingleSiteSimple_Test()
 void Stoch_SingleSiteSimple_Test()
 {
 	int mc_seed = 7;
-	int num_mc_sims = 100;
+	int num_mc_sims = 10;
 
 	num_runs = 10;
-	num_gens = 1000;
+	num_gens = 100;
 	popsize = 100;
 
-	p_xo = 0.820769;
-	p_product_mut = 0.141214;
-	p_plus_batch_mut = 0.121224;
-	p_minus_batch_mut = 0.213939;
-	p_gene_swap = 0.766782;
+	p_xo = 0.130878;
+	p_product_mut = 0.017718;
+	p_plus_batch_mut = 0.707202;
+	p_minus_batch_mut = 0.834735;
+	p_gene_swap = 0.531073;
 
 	std::unordered_map<stochastic::OBJECTIVES, int> objectives;
 	objectives.emplace(stochastic::TOTAL_KG_INVENTORY_DEFICIT_MEAN, -1);
@@ -739,18 +739,18 @@ void Stoch_SingleSiteSimple_Test()
 
 		printf(
 			"Solution X:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f (%.2f)\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
-			top_front[0].objectives[0], schedule_x.objectives[deterministic::TOTAL_KG_THROUGHPUT],
-			top_front[0].objectives[1], schedule_x.objectives[deterministic::TOTAL_KG_INVENTORY_DEFICIT],
-			schedule_x.objectives[deterministic::TOTAL_KG_BACKLOG],
-			schedule_x.objectives[deterministic::TOTAL_KG_WASTE]
+			top_front[0].objectives[0], schedule_x.objectives[stochastic::TOTAL_KG_THROUGHPUT_MEAN],
+			top_front[0].objectives[1], schedule_x.objectives[stochastic::TOTAL_KG_INVENTORY_DEFICIT_MEAN],
+			schedule_x.objectives[stochastic::TOTAL_KG_BACKLOG_MEAN],
+			schedule_x.objectives[stochastic::TOTAL_KG_WASTE_MEAN]
 		);
 
 		printf(
 			"Solution Y:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f (%.2f)\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
-			top_front.back().objectives[0], schedule_y.objectives[deterministic::TOTAL_KG_THROUGHPUT],
-			top_front.back().objectives[1], schedule_y.objectives[deterministic::TOTAL_KG_INVENTORY_DEFICIT],
-			schedule_y.objectives[deterministic::TOTAL_KG_BACKLOG],
-			schedule_y.objectives[deterministic::TOTAL_KG_WASTE]
+			top_front.back().objectives[0], schedule_y.objectives[stochastic::TOTAL_KG_THROUGHPUT_MEAN],
+			top_front.back().objectives[1], schedule_y.objectives[stochastic::TOTAL_KG_INVENTORY_DEFICIT_MEAN],
+			schedule_y.objectives[stochastic::TOTAL_KG_BACKLOG_MEAN],
+			schedule_y.objectives[stochastic::TOTAL_KG_WASTE_MEAN]
 		);
 
 		std::cout << std::flush;
@@ -765,18 +765,18 @@ void Stoch_SingleSiteSimple_Test()
 
 		printf(
 			"Solution X:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f (%.2f)\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
-			solutions[0].objectives[0], schedule_x.objectives[deterministic::TOTAL_KG_THROUGHPUT],
-			solutions[0].objectives[1], schedule_x.objectives[deterministic::TOTAL_KG_INVENTORY_DEFICIT],
-			schedule_x.objectives[deterministic::TOTAL_KG_BACKLOG],
-			schedule_x.objectives[deterministic::TOTAL_KG_WASTE]
+			solutions[0].objectives[0], schedule_x.objectives[stochastic::TOTAL_KG_THROUGHPUT_MEAN],
+			solutions[0].objectives[1], schedule_x.objectives[stochastic::TOTAL_KG_INVENTORY_DEFICIT_MEAN],
+			schedule_x.objectives[stochastic::TOTAL_KG_BACKLOG_MEAN],
+			schedule_x.objectives[stochastic::TOTAL_KG_WASTE_MEAN]
 		);
 
 		printf(
 			"Solution Y:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f (%.2f)\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
-			solutions.back().objectives[0], schedule_y.objectives[deterministic::TOTAL_KG_THROUGHPUT],
-			solutions.back().objectives[1], schedule_y.objectives[deterministic::TOTAL_KG_INVENTORY_DEFICIT],
-			schedule_y.objectives[deterministic::TOTAL_KG_BACKLOG],
-			schedule_y.objectives[deterministic::TOTAL_KG_WASTE]
+			solutions.back().objectives[0], schedule_y.objectives[stochastic::TOTAL_KG_THROUGHPUT_MEAN],
+			solutions.back().objectives[1], schedule_y.objectives[stochastic::TOTAL_KG_INVENTORY_DEFICIT_MEAN],
+			schedule_y.objectives[stochastic::TOTAL_KG_BACKLOG_MEAN],
+			schedule_y.objectives[stochastic::TOTAL_KG_WASTE_MEAN]
 		);
 }
 
@@ -790,7 +790,7 @@ int main()
 	// Det_SingleSiteMultiSuite_IncreasedDemandTest();
 
 	// printf("\nDeterministic SingleSiteSimple GA test\n\n");
-	// Det_SingleSiteSimple_Test();
+	// Det_SingleSiteSimple_Test();	
 
 	printf("\nStochastic SingleSiteSimple GA test\n\n");
 	Stoch_SingleSiteSimple_Test();
