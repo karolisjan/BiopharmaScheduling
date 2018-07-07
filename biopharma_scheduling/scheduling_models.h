@@ -496,6 +496,8 @@ namespace stochastic
 							input_data.kg_yield_per_batch_max[batch.product_num - 1],
 							input_data.rng
 						);
+
+						AddToInventory(schedule, std::move(batch));
 					}
 				}
 
