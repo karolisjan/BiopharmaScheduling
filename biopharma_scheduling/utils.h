@@ -239,6 +239,10 @@ namespace utils
 	template<class RNG>
 	inline double triangular_distribution(double min, double mode, double max, RNG &rng)
 	{
+		if ((max - min) == Approx(0.0)) {
+			return max;
+		}
+
 		double u = rng.uniform_rand_double(); 
 
 		max += 1;
