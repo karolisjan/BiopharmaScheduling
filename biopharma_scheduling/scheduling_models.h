@@ -286,6 +286,8 @@ namespace stochastic
 			while (!schedule.inventory[product_num][period_num].empty() && kg_over > input_data.kg_storage_limits[product_num]) {
 				if (kg_over >= schedule.inventory[product_num][period_num].top().kg) {
 					schedule.kg_waste[product_num][period_num] += schedule.inventory[product_num][period_num].top().kg;
+					schedule.objectives[TOTAL_KG_WASTE_MEAN] += schedule.inventory[product_num][period_num].top().kg;
+					schedule.objectives[TOTAL_WASTE_COST_MEAN] += schedule.inventory[product_num][period_num].top().kg * input_data.waste_cost_per_kg[product_num];
 					kg_over -= schedule.inventory[product_num][period_num].top().kg;
 					schedule.inventory[product_num][period_num].pop();
 
@@ -295,6 +297,8 @@ namespace stochastic
 				}
 				else {
 					schedule.kg_waste[product_num][period_num] += kg_over;
+					schedule.objectives[TOTAL_KG_WASTE_MEAN] += kg_over;
+					schedule.objectives[TOTAL_WASTE_COST_MEAN] += kg_over * input_data.waste_cost_per_kg[product_num];
 					utils::access_queue_container(schedule.inventory[product_num][period_num])[0].kg -= kg_over;
 					kg_over = 0;
 				}
@@ -309,6 +313,8 @@ namespace stochastic
 				schedule.inventory[product_num][period_num].top().expires_at < input_data.due_dates[period_num]
 			) {
 				schedule.kg_waste[product_num][period_num] += schedule.inventory[product_num][period_num].top().kg;
+				schedule.objectives[TOTAL_KG_WASTE_MEAN] += schedule.inventory[product_num][period_num].top().kg;
+				schedule.objectives[TOTAL_WASTE_COST_MEAN] += schedule.inventory[product_num][period_num].top().kg * input_data.waste_cost_per_kg[product_num];				
 				schedule.inventory[product_num][period_num].pop();
 			}
 		}
@@ -349,6 +355,7 @@ namespace stochastic
 				else {
 					schedule.kg_supply[product_num][period_num] = kg_available;
 					schedule.kg_backlog[product_num][period_num] = kg_demand - kg_available;
+					schedule.objectives[TOTAL_KG_BACKLOG_MEAN] += schedule.kg_backlog[product_num][period_num];
 					kg_available = 0;
 
 					if (period_num) {
@@ -388,6 +395,9 @@ namespace stochastic
 				}
 			}
 
+			schedule.objectives[TOTAL_BACKLOG_PENALTY_MEAN] += schedule.kg_backlog[product_num][period_num] * input_data.backlog_penalty_per_kg[product_num];
+			schedule.objectives[TOTAL_KG_SUPPLY_MEAN] += schedule.kg_supply[product_num][period_num];
+			schedule.objectives[TOTAL_REVENUE_MEAN] += schedule.kg_supply[product_num][period_num] * input_data.sell_price_per_kg[product_num];			
 			schedule.kg_inventory[product_num][period_num] = kg_available;
 		}
 
@@ -408,12 +418,10 @@ namespace stochastic
 		*/
 		void EvaluateCampaigns(types::SingleSiteSimpleSchedule &schedule) 
 		{		
-			int product_num, period_num;
-			double kg_demand = 0;
+			int product_num, period_num = 0;
+			double kg_demand;
 	
 			for (product_num = 0; product_num < input_data.num_products; ++product_num) {
-
-				period_num = 0;
 				
 				kg_demand = utils::triangular_distribution(
 					input_data.kg_demand_min[product_num][period_num],
@@ -433,7 +441,14 @@ namespace stochastic
 					for (auto &batch : utils::access_queue_container(schedule.inventory[product_num][period_num - 1])) {
 						schedule.inventory[product_num][period_num].push(std::move(batch));
 					}
-					
+
+					kg_demand = utils::triangular_distribution(
+						input_data.kg_demand_min[product_num][period_num],
+						input_data.kg_demand_mode[product_num][period_num],
+						input_data.kg_demand_max[product_num][period_num],
+						input_data.rng
+					);
+						
 					RemoveExpired(schedule, product_num, period_num);		
 					CheckSupplyDemandBacklogInventory(schedule, product_num, period_num, 0);
 					RemoveExcess(schedule, product_num, period_num);
@@ -473,8 +488,8 @@ namespace stochastic
 			}
 
 			for (int sim; sim != input_data.num_mc_sims; ++sim) {
-				for (const auto &cmpgn : schedule.campaigns) {
-					for (const auto &batch : cmpgn.batches) {
+				for (auto &cmpgn : schedule.campaigns) {
+					for (auto &batch : cmpgn.batches) {
 						batch.kg = utils::triangular_distribution(
 							input_data.kg_yield_per_batch_min[batch.product_num - 1],
 							input_data.kg_yield_per_batch_mode[batch.product_num - 1],
@@ -508,6 +523,10 @@ namespace stochastic
 				);
 
 				schedule.objectives[TOTAL_PROFIT_MEAN] = schedule.objectives[TOTAL_REVENUE_MEAN] - schedule.objectives[TOTAL_COST_MEAN];
+			}
+
+			for (int obj = MEAN_OBJECTIVES_START; obj != MEAN_OBJECTIVES_END; ++obj) {
+				schedule.objectives[obj] /= input_data.num_mc_sims;
 			}
 
 			for (cmpgn_num = 0; cmpgn_num != schedule.campaigns.size(); ++cmpgn_num) {

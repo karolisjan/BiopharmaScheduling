@@ -8,7 +8,7 @@
 
 
 bool display_schedules = false;
-int seed = 0, num_threads = -1;
+int seed = 0, num_threads = 1;
 int num_runs = 10, num_gens = 1000, popsize = 200; 
 
 int starting_length = 1;
