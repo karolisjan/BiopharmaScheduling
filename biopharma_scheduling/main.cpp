@@ -8,7 +8,7 @@
 
 
 bool display_schedules = false;
-int seed = 0, num_threads = -1;
+int seed = 7, num_threads = -1;
 int num_runs = 10, num_gens = 1000, popsize = 200; 
 
 int starting_length = 1;
@@ -248,8 +248,8 @@ void DisplaySchedule(types::SingleSiteMultiSuiteSchedule &schedule)
 	};
 
 	std::vector<std::vector<double>> dsp_changeovers = {
-		{ 10,   10,   10 },
-		{ 10,   10,   10 },
+		{ 10,   10,   10   },
+		{ 10,   10,   10   },
 		{ 12.5, 12.5, 12.5 }
 	};
 
@@ -499,27 +499,27 @@ void Det_SingleSiteSimple_Test()
 		auto top_front = nsgaii.TopFront();
 		solutions.insert(solutions.end(), top_front.begin(), top_front.end());
 
-		types::SingleSiteSimpleSchedule schedule_x, schedule_y;
-		deterministic_fitness.CreateSchedule(top_front[0], schedule_x);
-		deterministic_fitness.CreateSchedule(top_front.back(), schedule_y);
+		// types::SingleSiteSimpleSchedule schedule_x, schedule_y;
+		// deterministic_fitness.CreateSchedule(top_front[0], schedule_x);
+		// deterministic_fitness.CreateSchedule(top_front.back(), schedule_y);
 
 		std::cout << "\n######################## Run: " << run + 1 << ", #solutions: " << top_front.size() << ", elapsed time: " << elapsed_time << " ms ########################\n" << std::endl;
 
-		printf(
-			"Solution X:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f (%.2f)\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
-			top_front[0].objectives[0], schedule_x.objectives[deterministic::TOTAL_KG_THROUGHPUT],
-			top_front[0].objectives[1], schedule_x.objectives[deterministic::TOTAL_KG_INVENTORY_DEFICIT],
-			schedule_x.objectives[deterministic::TOTAL_KG_BACKLOG],
-			schedule_x.objectives[deterministic::TOTAL_KG_WASTE]
-		);
+		// printf(
+		// 	"Solution X:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f (%.2f)\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
+		// 	top_front[0].objectives[0], schedule_x.objectives[deterministic::TOTAL_KG_THROUGHPUT],
+		// 	top_front[0].objectives[1], schedule_x.objectives[deterministic::TOTAL_KG_INVENTORY_DEFICIT],
+		// 	schedule_x.objectives[deterministic::TOTAL_KG_BACKLOG],
+		// 	schedule_x.objectives[deterministic::TOTAL_KG_WASTE]
+		// );
 
-		printf(
-			"Solution Y:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f (%.2f)\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
-			top_front.back().objectives[0], schedule_y.objectives[deterministic::TOTAL_KG_THROUGHPUT],
-			top_front.back().objectives[1], schedule_y.objectives[deterministic::TOTAL_KG_INVENTORY_DEFICIT],
-			schedule_y.objectives[deterministic::TOTAL_KG_BACKLOG],
-			schedule_y.objectives[deterministic::TOTAL_KG_WASTE]
-		);
+		// printf(
+		// 	"Solution Y:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f (%.2f)\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
+		// 	top_front.back().objectives[0], schedule_y.objectives[deterministic::TOTAL_KG_THROUGHPUT],
+		// 	top_front.back().objectives[1], schedule_y.objectives[deterministic::TOTAL_KG_INVENTORY_DEFICIT],
+		// 	schedule_y.objectives[deterministic::TOTAL_KG_BACKLOG],
+		// 	schedule_y.objectives[deterministic::TOTAL_KG_WASTE]
+		// );
 
 		std::cout << std::flush;
 	}
@@ -731,27 +731,27 @@ void Stoch_SingleSiteSimple_Test()
 		auto top_front = nsgaii.TopFront();
 		solutions.insert(solutions.end(), top_front.begin(), top_front.end());
 
-		types::SingleSiteSimpleSchedule schedule_x, schedule_y;
-		stochastic_fitness.CreateSchedule(top_front[0], schedule_x);
-		stochastic_fitness.CreateSchedule(top_front.back(), schedule_y);
+		// types::SingleSiteSimpleSchedule schedule_x, schedule_y;
+		// stochastic_fitness.CreateSchedule(top_front[0], schedule_x);
+		// stochastic_fitness.CreateSchedule(top_front.back(), schedule_y);
 
 		std::cout << "\n######################## Run: " << run + 1 << ", #solutions: " << top_front.size() << ", elapsed time: " << elapsed_time << " ms ########################\n" << std::endl;
 
-		printf(
-			"Solution X:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f (%.2f)\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
-			top_front[0].objectives[0], schedule_x.objectives[stochastic::TOTAL_KG_THROUGHPUT_MEAN],
-			top_front[0].objectives[1], schedule_x.objectives[stochastic::TOTAL_KG_INVENTORY_DEFICIT_MEAN],
-			schedule_x.objectives[stochastic::TOTAL_KG_BACKLOG_MEAN],
-			schedule_x.objectives[stochastic::TOTAL_KG_WASTE_MEAN]
-		);
+		// printf(
+		// 	"Solution X:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f (%.2f)\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
+		// 	top_front[0].objectives[0], schedule_x.objectives[stochastic::TOTAL_KG_THROUGHPUT_MEAN],
+		// 	top_front[0].objectives[1], schedule_x.objectives[stochastic::TOTAL_KG_INVENTORY_DEFICIT_MEAN],
+		// 	schedule_x.objectives[stochastic::TOTAL_KG_BACKLOG_MEAN],
+		// 	schedule_x.objectives[stochastic::TOTAL_KG_WASTE_MEAN]
+		// );
 
-		printf(
-			"Solution Y:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f (%.2f)\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
-			top_front.back().objectives[0], schedule_y.objectives[stochastic::TOTAL_KG_THROUGHPUT_MEAN],
-			top_front.back().objectives[1], schedule_y.objectives[stochastic::TOTAL_KG_INVENTORY_DEFICIT_MEAN],
-			schedule_y.objectives[stochastic::TOTAL_KG_BACKLOG_MEAN],
-			schedule_y.objectives[stochastic::TOTAL_KG_WASTE_MEAN]
-		);
+		// printf(
+		// 	"Solution Y:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f (%.2f)\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
+		// 	top_front.back().objectives[0], schedule_y.objectives[stochastic::TOTAL_KG_THROUGHPUT_MEAN],
+		// 	top_front.back().objectives[1], schedule_y.objectives[stochastic::TOTAL_KG_INVENTORY_DEFICIT_MEAN],
+		// 	schedule_y.objectives[stochastic::TOTAL_KG_BACKLOG_MEAN],
+		// 	schedule_y.objectives[stochastic::TOTAL_KG_WASTE_MEAN]
+		// );
 
 		std::cout << std::flush;
 	}
