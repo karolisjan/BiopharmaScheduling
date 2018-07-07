@@ -3,7 +3,7 @@ from libcpp.string cimport string
 from libcpp.vector cimport vector
 from libcpp.unordered_map cimport unordered_map
 
-from schedule cimport SingleSiteSimpleSchedule, SingleSiteMultiSuiteSchedule
+from ..schedule cimport SingleSiteSimpleSchedule, SingleSiteMultiSuiteSchedule
 
 
 cdef extern from "../input_data.h" namespace "deterministic":

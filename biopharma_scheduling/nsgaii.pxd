@@ -1,7 +1,7 @@
 from libcpp.vector cimport vector
 
 
-cdef extern from "../nsgaii.h" namespace "algorithms" nogil:
+cdef extern from "nsgaii.h" namespace "algorithms" nogil:
     cdef cppclass NSGAII[Chromosome, FitnessFunction]:
         NSGAII()
         NSGAII(FitnessFunction, int seed, int num_threads)

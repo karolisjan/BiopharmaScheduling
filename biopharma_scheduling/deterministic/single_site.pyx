@@ -9,11 +9,11 @@ from libcpp.vector cimport vector
 from libcpp.algorithm cimport sort
 from libcpp.unordered_map cimport unordered_map
 
-from nsgaii cimport NSGAII
-from nsgaii_chromosome cimport NSGAChromosome
-from single_objective_ga cimport SingleObjectiveGA
-from single_objective_chromosome cimport SingleObjectiveChromosome
-from gene cimport SingleSiteSimpleGene, SingleSiteMultiSuiteGene
+from ..nsgaii cimport NSGAII
+from ..nsgaii_chromosome cimport NSGAChromosome
+from ..single_objective_ga cimport SingleObjectiveGA
+from ..single_objective_chromosome cimport SingleObjectiveChromosome
+from ..gene cimport SingleSiteSimpleGene, SingleSiteMultiSuiteGene
 
 from single_site cimport (
     OBJECTIVES, 
@@ -23,10 +23,10 @@ from single_site cimport (
     SingleSiteMultiSuiteModel
 )
 
-from schedule cimport SingleSiteSimpleSchedule, SingleSiteMultiSuiteSchedule
+from ..schedule cimport SingleSiteSimpleSchedule, SingleSiteMultiSuiteSchedule
 
-from pyhv import hypervolume
-from pyschedule import PySingleSiteSimpleSchedule, PySingleSiteMultiSuiteSchedule
+from ..pyhv import hypervolume
+from ..pyschedule import PySingleSiteSimpleSchedule, PySingleSiteMultiSuiteSchedule
 
 
 cdef class SingleSiteSimple:

@@ -5,7 +5,7 @@ from libcpp.unordered_map cimport unordered_map
 from campaign cimport Campaign
 
 
-cdef extern from "../schedule.h" namespace "types":
+cdef extern from "schedule.h" namespace "types":
     cdef struct SingleSiteSimpleSchedule:
         Schedule()
         vector[double] objectives

@@ -551,7 +551,7 @@ void Det_SingleSiteSimple_Test()
 void Stoch_SingleSiteSimple_Test()
 {
 	int mc_seed = 7;
-	int num_mc_sims = 10;
+	int num_mc_sims = 1;
 
 	num_runs = 10;
 	num_gens = 100;
@@ -789,8 +789,8 @@ int main()
 	// printf("\nDeterministic SingleSiteMultiSuite (increased demand for p1) GA test...\n\n");
 	// Det_SingleSiteMultiSuite_IncreasedDemandTest();
 
-	// printf("\nDeterministic SingleSiteSimple GA test\n\n");
-	// Det_SingleSiteSimple_Test();	
+	printf("\nDeterministic SingleSiteSimple GA test\n\n");
+	Det_SingleSiteSimple_Test();	
 
 	printf("\nStochastic SingleSiteSimple GA test\n\n");
 	Stoch_SingleSiteSimple_Test();

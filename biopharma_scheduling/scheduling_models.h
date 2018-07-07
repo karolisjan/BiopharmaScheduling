@@ -36,14 +36,14 @@ namespace stochastic
 			Adds a batch to an inventory priority queue (oldest first) within an appropriate time
 			bucket based on the approval date of the said batch.
 		*/
-		inline void AddToInventory(types::SingleSiteSimpleSchedule &schedule, types::Batch &&new_batch)
+		inline void AddToInventory(types::SingleSiteSimpleSchedule &schedule, types::Batch &new_batch)
 		{
 			// Range based binary search for a time period to fit the batch in 
 			// based on its approval date
 			int period_num = utils::search(input_data.due_dates, new_batch.approved_at);
 
 			if (period_num != -1) {
-				schedule.inventory[new_batch.product_num - 1][period_num].push(std::move(new_batch));
+				schedule.inventory[new_batch.product_num - 1][period_num].push(new_batch);
 			}
 		}
 
@@ -97,6 +97,7 @@ namespace stochastic
 			new_batch.approved_at = new_batch.stored_at + input_data.approval_days[new_cmpgn.product_num - 1];
 			new_batch.expires_at = new_batch.stored_at + input_data.shelf_life_days[new_cmpgn.product_num - 1];
 			
+			new_cmpgn.kg += new_batch.kg;
 			new_cmpgn.batches.reserve(100); 
 			new_cmpgn.batches.push_back(new_batch); 
 
@@ -133,6 +134,7 @@ namespace stochastic
 				new_batch.approved_at = new_batch.stored_at + input_data.approval_days[new_cmpgn.product_num - 1];
 				new_batch.expires_at = new_batch.stored_at + input_data.shelf_life_days[new_cmpgn.product_num - 1];
 				
+				new_cmpgn.kg += new_batch.kg;
 				new_cmpgn.batches.push_back(new_batch);
 			}
 
@@ -174,6 +176,7 @@ namespace stochastic
 			new_batch.approved_at = new_batch.stored_at + input_data.approval_days[new_cmpgn.product_num - 1];
 			new_batch.expires_at = new_batch.stored_at + input_data.shelf_life_days[new_cmpgn.product_num - 1];
 			
+			new_cmpgn.kg += new_batch.kg;
 			new_cmpgn.batches.reserve(100);
 			new_cmpgn.batches.push_back(new_batch);
 
@@ -210,6 +213,7 @@ namespace stochastic
 				new_batch.approved_at = new_batch.stored_at + input_data.approval_days[new_cmpgn.product_num - 1];
 				new_batch.expires_at = new_batch.stored_at + input_data.shelf_life_days[new_cmpgn.product_num - 1];
 				
+				new_cmpgn.kg += new_batch.kg;
 				new_cmpgn.batches.push_back(new_batch);
 			}
 
@@ -257,6 +261,7 @@ namespace stochastic
 				new_batch.approved_at = new_batch.stored_at + input_data.approval_days[prev_cmpgn.product_num - 1];
 				new_batch.expires_at = new_batch.stored_at + input_data.shelf_life_days[prev_cmpgn.product_num - 1];
 				
+				prev_cmpgn.kg += new_batch.kg;
 				prev_cmpgn.batches.push_back(new_batch);
 			}
 
@@ -314,7 +319,7 @@ namespace stochastic
 			) {
 				schedule.kg_waste[product_num][period_num] += schedule.inventory[product_num][period_num].top().kg;
 				schedule.objectives[TOTAL_KG_WASTE_MEAN] += schedule.inventory[product_num][period_num].top().kg;
-				schedule.objectives[TOTAL_WASTE_COST_MEAN] += schedule.inventory[product_num][period_num].top().kg * input_data.waste_cost_per_kg[product_num];				
+				schedule.objectives[TOTAL_WASTE_COST_MEAN] += schedule.inventory[product_num][period_num].top().kg * input_data.waste_cost_per_kg[product_num];
 				schedule.inventory[product_num][period_num].pop();
 			}
 		}
@@ -341,7 +346,7 @@ namespace stochastic
 			double kg_available = GetKgAvailable(schedule, product_num, period_num);
 
 			// No demand and backlog orders -> exit early
-			if (period_num && kg_demand == utils::Approx(0.0) && !schedule.kg_backlog[product_num][period_num - 1]) {
+			if (period_num && !kg_demand && !schedule.kg_backlog[product_num][period_num - 1]) {
 				schedule.kg_inventory[product_num][period_num] = kg_available;
 				return;
 			}
@@ -354,7 +359,7 @@ namespace stochastic
 				}
 				else {
 					schedule.kg_supply[product_num][period_num] = kg_available;
-					schedule.kg_backlog[product_num][period_num] = kg_demand - kg_available;
+					schedule.kg_backlog[product_num][period_num] =  - kg_available;
 					schedule.objectives[TOTAL_KG_BACKLOG_MEAN] += schedule.kg_backlog[product_num][period_num];
 					kg_available = 0;
 
@@ -425,12 +430,14 @@ namespace stochastic
 				
 				period_num = 0;
 
-				kg_demand = utils::triangular_distribution(
-					input_data.kg_demand_min[product_num][period_num],
-					input_data.kg_demand_mode[product_num][period_num],
-					input_data.kg_demand_max[product_num][period_num],
-					input_data.rng
-				);
+				// kg_demand = utils::triangular_distribution(
+				// 	input_data.kg_demand_min[product_num][period_num],
+				// 	input_data.kg_demand_mode[product_num][period_num],
+				// 	input_data.kg_demand_max[product_num][period_num],
+				// 	input_data.rng
+				// );
+
+				kg_demand = input_data.kg_demand_mode[product_num][period_num];
 
 				CreateOpeningStock(schedule, product_num, period_num);
 				RemoveExpired(schedule, product_num, period_num);		
@@ -444,12 +451,14 @@ namespace stochastic
 						schedule.inventory[product_num][period_num].push(std::move(batch));
 					}
 
-					kg_demand = utils::triangular_distribution(
-						input_data.kg_demand_min[product_num][period_num],
-						input_data.kg_demand_mode[product_num][period_num],
-						input_data.kg_demand_max[product_num][period_num],
-						input_data.rng
-					);
+					// kg_demand = utils::triangular_distribution(
+					// 	input_data.kg_demand_min[product_num][period_num],
+					// 	input_data.kg_demand_mode[product_num][period_num],
+					// 	input_data.kg_demand_max[product_num][period_num],
+					// 	input_data.rng
+					// );
+
+					kg_demand = input_data.kg_demand_mode[product_num][period_num];
 						
 					RemoveExpired(schedule, product_num, period_num);		
 					CheckSupplyDemandBacklogInventory(schedule, product_num, period_num, kg_demand);
@@ -469,7 +478,8 @@ namespace stochastic
 			types::SingleSiteSimpleSchedule &schedule
 		)
 		{
-			size_t cmpgn_num = 0;
+			int cmpgn_num = 0;
+
 			schedule.Init(input_data.num_products, input_data.num_periods, NUM_OBJECTIVES);
 
 			if (AddFirstCampaign(individual, schedule)) {
@@ -489,20 +499,22 @@ namespace stochastic
 				}
 			}
 
+			// Monte Carlo simulation loop
 			for (int sim = 0; sim != input_data.num_mc_sims; ++sim) {
 
 				schedule.Reset(input_data.num_products, input_data.num_periods);
 
 				for (auto &cmpgn : schedule.campaigns) {
 					for (auto &batch : cmpgn.batches) {
-						batch.kg = utils::triangular_distribution(
-							input_data.kg_yield_per_batch_min[batch.product_num - 1],
-							input_data.kg_yield_per_batch_mode[batch.product_num - 1],
-							input_data.kg_yield_per_batch_max[batch.product_num - 1],
-							input_data.rng
-						);
+						// batch.kg = utils::triangular_distribution(
+						// 	input_data.kg_yield_per_batch_min[batch.product_num - 1],
+						// 	input_data.kg_yield_per_batch_mode[batch.product_num - 1],
+						// 	input_data.kg_yield_per_batch_max[batch.product_num - 1],
+						// 	input_data.rng
+						// );
+						batch.kg = input_data.kg_yield_per_batch_mode[batch.product_num - 1];
 
-						AddToInventory(schedule, std::move(batch));
+						AddToInventory(schedule, batch);
 					}
 				}
 
@@ -515,12 +527,6 @@ namespace stochastic
 					}
 				}
 
-				for (auto &obj : schedule.objectives) {
-					if (obj < utils::EPSILON) {
-						obj = 0.0;
-					}
-				}
-
 				schedule.objectives[TOTAL_COST_MEAN] = (
 					schedule.objectives[TOTAL_INVENTORY_PENALTY_MEAN] + 
 					schedule.objectives[TOTAL_BACKLOG_PENALTY_MEAN] +
@@ -530,6 +536,12 @@ namespace stochastic
 				);
 
 				schedule.objectives[TOTAL_PROFIT_MEAN] = schedule.objectives[TOTAL_REVENUE_MEAN] - schedule.objectives[TOTAL_COST_MEAN];
+			}
+
+			for (auto &obj : schedule.objectives) {
+				if (obj < utils::EPSILON) {
+					obj = 0.0;
+				}
 			}
 
 			for (int obj = MEAN_OBJECTIVES_START; obj != MEAN_OBJECTIVES_END; ++obj) {
@@ -1571,7 +1583,7 @@ namespace deterministic
 			types::SingleSiteSimpleSchedule &schedule
 		)
 		{
-			size_t cmpgn_num = 0;
+			int cmpgn_num = 0;
 			schedule.Init(input_data.num_products, input_data.num_periods, NUM_OBJECTIVES);
 
 			if (AddFirstCampaign(individual, schedule)) {

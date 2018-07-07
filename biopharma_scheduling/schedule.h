@@ -97,40 +97,6 @@ namespace types
     {       
         SingleSiteSimpleSchedule() {}
 
-        void Init(int num_products, int num_periods, int num_objectives) 
-        {
-            using queue = std::priority_queue<types::Batch, std::vector<types::Batch>, OldestBatchFirst>;
-
-            // Reserve space for the queue (big performance boost)
-            inventory.resize(num_products);
-
-            for (auto &i : inventory) {
-                i.resize(num_periods);
-
-                for (auto &q : i) {
-                    q = queue(oldest_batch_first, make_reserved<types::Batch>(100));
-                }
-            }
-
-            kg_inventory = std::vector<std::vector<double>>(
-                num_products, std::vector<double>(num_periods, 0.0)
-            );
-
-            kg_supply = std::vector<std::vector<double>>(
-                num_products, std::vector<double>(num_periods, 0.0)
-            );
-
-            kg_backlog = std::vector<std::vector<double>>(
-                num_products, std::vector<double>(num_periods, 0.0)
-            );
-            
-            kg_waste = std::vector<std::vector<double>>(
-                num_products, std::vector<double>(num_periods, 0.0)
-            );
-
-            objectives = std::vector<double>(num_objectives, 0.0);
-        }
-
         void Reset(int num_products, int num_periods)
         {
             using queue = std::priority_queue<types::Batch, std::vector<types::Batch>, OldestBatchFirst>;
@@ -161,6 +127,13 @@ namespace types
             kg_waste = std::vector<std::vector<double>>(
                 num_products, std::vector<double>(num_periods, 0.0)
             );
+        }
+
+        void Init(int num_products, int num_periods, int num_objectives) 
+        {
+            Reset(num_products, num_periods);
+
+            objectives = std::vector<double>(num_objectives, 0.0);
         }
 
         std::vector<double> objectives;

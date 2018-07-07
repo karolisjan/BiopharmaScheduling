@@ -1,4 +1,4 @@
-cdef extern from "../batch.h" namespace "types":
+cdef extern from "batch.h" namespace "types":
     cdef struct Batch:
         int product_num
         double kg

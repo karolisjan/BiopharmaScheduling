@@ -293,3 +293,99 @@ class PySingleSiteSimpleSchedule:
     @property
     def kg_waste(self):
         return self.__kg_waste
+
+
+class PySingleSiteMultiSuiteSchedule:
+    def __init__(
+            self, 
+            objectives: dict, 
+            suites_table: list,
+            batches_table: list=None,
+            batch_inventory: list=None,
+            batch_backlog: list=None,
+            batch_supply: list=None,
+            batch_waste: list=None,
+        ):
+        self.__objectives = pd.DataFrame.from_records([objectives], index=['value'])
+        self.__suites = pd.DataFrame.from_records(suites_table)
+        self.__batches = pd.DataFrame.from_records(batches_table) if batches_table else None
+        self.__batch_inventory = pd.DataFrame.from_records(batch_inventory) if batch_inventory else None
+        self.__batch_backlog = pd.DataFrame.from_records(batch_backlog) if batch_backlog else None
+        self.__batch_supply = pd.DataFrame.from_records(batch_supply) if batch_supply else None
+        self.__batch_waste = pd.DataFrame.from_records(batch_waste) if batch_waste else None
+
+        for df in [
+            self.__batch_inventory, 
+            self.__batch_backlog,
+            self.__batch_supply, 
+            self.__batch_waste
+        ]:
+            if df is not None:
+                df.index = pd.to_datetime(df['date'])
+                del df['date']
+
+    def suites_gantt(self, colors: dict=None, layout: dict=None):
+        df = self.__suites.reset_index()
+
+        df['Finish'] = df['End']
+        df['Resource'] = df['Product']
+        df['Task'] = df['Suite']
+        df = df.to_dict('records')
+        
+        gantt = ff.create_gantt(
+            df, 
+            colors=colors, 
+            index_col='Resource', 
+            group_tasks=True,
+            showgrid_x=True, 
+            showgrid_y=True
+        )
+
+        for gantt_row, campaign in zip(gantt['data'], df):
+            text = '<br>'.join([
+                '{}: {}'.format(key, val) 
+                for key, val in campaign.items() 
+                    if key not in {'index', 'Finish', 'Resource', 'Task'}
+            ])
+            gantt_row.update({'text': text})
+
+        if layout is None:
+            gantt['layout'].update({
+                'title': '',
+                'xaxis': {
+                    'tickangle': -30,
+                    'side': 'bottom'
+                }
+            })
+        else:
+            gantt['layout'].update(layout)
+    
+        return opy.iplot(gantt)
+
+    @property
+    def objectives(self):
+        return self.__objectives
+
+    @property
+    def suites(self):
+        return self.__suites
+
+    @property
+    def batches(self):
+        return self.__batches
+
+    @property
+    def batch_inventory(self):
+        return self.__batch_inventory
+
+    @property
+    def batch_backlog(self):
+        return self.__batch_backlog
+
+    @property
+    def batch_supply(self):
+        return self.__batch_supply
+
+    @property
+    def batch_waste(self):
+        return self.__batch_waste
