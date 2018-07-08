@@ -21,6 +21,7 @@
         ],
         "include_dirs": [
             "biopharma_scheduling/deterministic",
+            ".\\biopharma_scheduling",
             ".\\biopharma_scheduling\\deterministic"
         ],
         "language": "c++",
@@ -525,17 +526,17 @@ static CYTHON_INLINE float __PYX_NAN() {
 #include <string>
 #include <vector>
 #include <unordered_map>
-#include "../batch.h"
-#include "../campaign.h"
-#include "../schedule.h"
+#include "batch.h"
+#include "campaign.h"
+#include "schedule.h"
 #include "../input_data.h"
 #include "../scheduling_models.h"
 #include <algorithm>
-#include "../nsgaii.h"
-#include "../nsga_chromosome.h"
-#include "../single_objective_ga.h"
-#include "../single_objective_chromosome.h"
-#include "../gene.h"
+#include "nsgaii.h"
+#include "nsga_chromosome.h"
+#include "single_objective_ga.h"
+#include "single_objective_chromosome.h"
+#include "gene.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif /* _OPENMP */
@@ -1340,25 +1341,25 @@ static PyObject *__pyx_f_20biopharma_scheduling_13deterministic_11single_site_20
 
 /* Module declarations from 'libcpp.unordered_map' */
 
-/* Module declarations from 'biopharma_scheduling.deterministic.batch' */
+/* Module declarations from 'biopharma_scheduling.batch' */
 
-/* Module declarations from 'biopharma_scheduling.deterministic.campaign' */
+/* Module declarations from 'biopharma_scheduling.campaign' */
 
-/* Module declarations from 'biopharma_scheduling.deterministic.schedule' */
+/* Module declarations from 'biopharma_scheduling.schedule' */
 
 /* Module declarations from 'libcpp' */
 
 /* Module declarations from 'libcpp.algorithm' */
 
-/* Module declarations from 'biopharma_scheduling.deterministic.nsgaii' */
+/* Module declarations from 'biopharma_scheduling.nsgaii' */
 
-/* Module declarations from 'biopharma_scheduling.deterministic.nsgaii_chromosome' */
+/* Module declarations from 'biopharma_scheduling.nsgaii_chromosome' */
 
-/* Module declarations from 'biopharma_scheduling.deterministic.single_objective_ga' */
+/* Module declarations from 'biopharma_scheduling.single_objective_ga' */
 
-/* Module declarations from 'biopharma_scheduling.deterministic.single_objective_chromosome' */
+/* Module declarations from 'biopharma_scheduling.single_objective_chromosome' */
 
-/* Module declarations from 'biopharma_scheduling.deterministic.gene' */
+/* Module declarations from 'biopharma_scheduling.gene' */
 
 /* Module declarations from 'biopharma_scheduling.deterministic.single_site' */
 static PyTypeObject *__pyx_ptype_20biopharma_scheduling_13deterministic_11single_site_SingleSiteSimple = 0;
@@ -23007,10 +23008,10 @@ PyMODINIT_FUNC PyInit_single_site(void)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "biopharma_scheduling/deterministic/single_site.pyx":28
- * from schedule cimport SingleSiteSimpleSchedule, SingleSiteMultiSuiteSchedule
+ * from ..schedule cimport SingleSiteSimpleSchedule, SingleSiteMultiSuiteSchedule
  * 
- * from pyhv import hypervolume             # <<<<<<<<<<<<<<
- * from pyschedule import PySingleSiteSimpleSchedule, PySingleSiteMultiSuiteSchedule
+ * from ..pyhv import hypervolume             # <<<<<<<<<<<<<<
+ * from ..pyschedule import PySingleSiteSimpleSchedule, PySingleSiteMultiSuiteSchedule
  * 
  */
   __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 28, __pyx_L1_error)
@@ -23018,7 +23019,7 @@ PyMODINIT_FUNC PyInit_single_site(void)
   __Pyx_INCREF(__pyx_n_s_hypervolume);
   __Pyx_GIVEREF(__pyx_n_s_hypervolume);
   PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s_hypervolume);
-  __pyx_t_2 = __Pyx_Import(__pyx_n_s_pyhv, __pyx_t_1, -1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 28, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_Import(__pyx_n_s_pyhv, __pyx_t_1, 2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 28, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_hypervolume); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 28, __pyx_L1_error)
@@ -23029,8 +23030,8 @@ PyMODINIT_FUNC PyInit_single_site(void)
 
   /* "biopharma_scheduling/deterministic/single_site.pyx":29
  * 
- * from pyhv import hypervolume
- * from pyschedule import PySingleSiteSimpleSchedule, PySingleSiteMultiSuiteSchedule             # <<<<<<<<<<<<<<
+ * from ..pyhv import hypervolume
+ * from ..pyschedule import PySingleSiteSimpleSchedule, PySingleSiteMultiSuiteSchedule             # <<<<<<<<<<<<<<
  * 
  * 
  */
@@ -23042,7 +23043,7 @@ PyMODINIT_FUNC PyInit_single_site(void)
   __Pyx_INCREF(__pyx_n_s_PySingleSiteMultiSuiteSchedule);
   __Pyx_GIVEREF(__pyx_n_s_PySingleSiteMultiSuiteSchedule);
   PyList_SET_ITEM(__pyx_t_2, 1, __pyx_n_s_PySingleSiteMultiSuiteSchedule);
-  __pyx_t_1 = __Pyx_Import(__pyx_n_s_pyschedule, __pyx_t_2, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 29, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_Import(__pyx_n_s_pyschedule, __pyx_t_2, 2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 29, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_2 = __Pyx_ImportFrom(__pyx_t_1, __pyx_n_s_PySingleSiteSimpleSchedule); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 29, __pyx_L1_error)

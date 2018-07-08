@@ -10,3 +10,5 @@ biopharma_scheduling.egg-info/requires.txt
 biopharma_scheduling.egg-info/top_level.txt
 biopharma_scheduling/deterministic/__init__.py
 biopharma_scheduling/deterministic/single_site.cpp
+biopharma_scheduling/deterministic/__init__.py
+biopharma_scheduling/deterministic/single_site.cpp
