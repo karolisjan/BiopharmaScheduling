@@ -1097,15 +1097,15 @@ SCENARIO("stochastic::SingleSiteSimpleModel::CreateSchedule test with determinis
 
 			THEN("CreateSchedule creates a schedule with 8 different campaigns and the correct total kg throughput, inventory deficit, and backlog.")
 			{
-				REQUIRE( schedule.campaigns.size() == known_solution.genes.size() );
-				REQUIRE( schedule.objectives[stochastic::TOTAL_KG_THROUGHPUT_MEAN] == utils::Approx(510.2) );
-				REQUIRE( schedule.objectives[stochastic::TOTAL_KG_INVENTORY_DEFICIT_MEAN] == utils::Approx(14.2) );
-				REQUIRE( schedule.objectives[stochastic::TOTAL_KG_BACKLOG_MEAN] == utils::Approx(0.0) );
-				
 				for (size_t i = 0; i < known_solution.genes.size(); ++i) {
 					REQUIRE( schedule.campaigns[i].product_num == known_solution.genes[i].product_num );
 					REQUIRE( schedule.campaigns[i].num_batches == known_solution.genes[i].num_batches );
 				}
+
+				REQUIRE( schedule.campaigns.size() == known_solution.genes.size() );
+				REQUIRE( schedule.objectives[stochastic::TOTAL_KG_THROUGHPUT_MEAN] == utils::Approx(510.2) );
+				REQUIRE( schedule.objectives[stochastic::TOTAL_KG_INVENTORY_DEFICIT_MEAN] == utils::Approx(14.2) );
+				REQUIRE( schedule.objectives[stochastic::TOTAL_KG_BACKLOG_MEAN] == utils::Approx(0.0) );
 			}
 		}		
 	}

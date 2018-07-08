@@ -102,6 +102,7 @@ namespace types
             using queue = std::priority_queue<types::Batch, std::vector<types::Batch>, OldestBatchFirst>;
 
             // Reserve space for the queue (big performance boost)
+            inventory.clear();
             inventory.resize(num_products);
 
             for (auto &i : inventory) {

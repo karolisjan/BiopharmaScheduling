@@ -61,8 +61,8 @@ namespace stochastic
 			std::vector<double> kg_yield_per_batch_mode,
 			std::vector<double> kg_yield_per_batch_max,
 
-			std::vector<double> kg_storage_limits,
 			std::vector<double> kg_opening_stock,
+			std::vector<double> kg_storage_limits,
 			
 			std::vector<double> inventory_penalty_per_kg,
 			std::vector<double> backlog_penalty_per_kg,
