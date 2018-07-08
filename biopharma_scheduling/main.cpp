@@ -358,7 +358,6 @@ void Det_SingleSiteSimple_Test()
 
 	std::unordered_map<deterministic::OBJECTIVES, int> objectives;
 	objectives.emplace(deterministic::TOTAL_KG_INVENTORY_DEFICIT, -1);
-	
 	objectives.emplace(deterministic::TOTAL_KG_THROUGHPUT, 1);
 
 	std::unordered_map<deterministic::OBJECTIVES, std::pair<int, double>> constraints;
@@ -503,7 +502,7 @@ void Det_SingleSiteSimple_Test()
 		// deterministic_fitness.CreateSchedule(top_front[0], schedule_x);
 		// deterministic_fitness.CreateSchedule(top_front.back(), schedule_y);
 
-		std::cout << "\n######################## Run: " << run + 1 << ", #solutions: " << top_front.size() << ", elapsed time: " << elapsed_time << " ms ########################\n" << std::endl;
+		// std::cout << "\n######################## Run: " << run + 1 << ", #solutions: " << top_front.size() << ", elapsed time: " << elapsed_time << " ms ########################\n" << std::endl;
 
 		// printf(
 		// 	"Solution X:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f (%.2f)\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
@@ -521,7 +520,7 @@ void Det_SingleSiteSimple_Test()
 		// 	schedule_y.objectives[deterministic::TOTAL_KG_WASTE]
 		// );
 
-		std::cout << std::flush;
+		// std::cout << std::flush;
 	}
 
 	solutions = nsgaii.TopFront(solutions);
@@ -565,7 +564,6 @@ void Stoch_SingleSiteSimple_Test()
 
 	std::unordered_map<stochastic::OBJECTIVES, int> objectives;
 	objectives.emplace(stochastic::TOTAL_KG_INVENTORY_DEFICIT_MEAN, -1);
-	
 	objectives.emplace(stochastic::TOTAL_KG_THROUGHPUT_MEAN, 1);
 
 	std::unordered_map<stochastic::OBJECTIVES, std::pair<int, double>> constraints;
@@ -735,7 +733,7 @@ void Stoch_SingleSiteSimple_Test()
 		// stochastic_fitness.CreateSchedule(top_front[0], schedule_x);
 		// stochastic_fitness.CreateSchedule(top_front.back(), schedule_y);
 
-		std::cout << "\n######################## Run: " << run + 1 << ", #solutions: " << top_front.size() << ", elapsed time: " << elapsed_time << " ms ########################\n" << std::endl;
+		// std::cout << "\n######################## Run: " << run + 1 << ", #solutions: " << top_front.size() << ", elapsed time: " << elapsed_time << " ms ########################\n" << std::endl;
 
 		// printf(
 		// 	"Solution X:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f (%.2f)\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
@@ -753,7 +751,7 @@ void Stoch_SingleSiteSimple_Test()
 		// 	schedule_y.objectives[stochastic::TOTAL_KG_WASTE_MEAN]
 		// );
 
-		std::cout << std::flush;
+		// std::cout << std::flush;
 	}
 
 	solutions = nsgaii.TopFront(solutions);
@@ -789,8 +787,8 @@ int main()
 	// printf("\nDeterministic SingleSiteMultiSuite (increased demand for p1) GA test...\n\n");
 	// Det_SingleSiteMultiSuite_IncreasedDemandTest();
 
-	// printf("\nDeterministic SingleSiteSimple GA test\n\n");
-	// Det_SingleSiteSimple_Test();	
+	printf("\nDeterministic SingleSiteSimple GA test\n\n");
+	Det_SingleSiteSimple_Test();	
 
 	printf("\nStochastic SingleSiteSimple GA test\n\n");
 	Stoch_SingleSiteSimple_Test();

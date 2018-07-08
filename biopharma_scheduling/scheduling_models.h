@@ -425,14 +425,14 @@ namespace stochastic
 				
 				period_num = 0;
 
-				kg_demand = utils::triangular_distribution(
-					input_data.kg_demand_min[product_num][period_num],
-					input_data.kg_demand_mode[product_num][period_num],
-					input_data.kg_demand_max[product_num][period_num],
-					input_data.rng
-				);
+				// kg_demand = utils::triangular_distribution(
+				// 	input_data.kg_demand_min[product_num][period_num],
+				// 	input_data.kg_demand_mode[product_num][period_num],
+				// 	input_data.kg_demand_max[product_num][period_num],
+				// 	input_data.rng
+				// );
 
-				// kg_demand = input_data.kg_demand_mode[product_num][period_num];
+				kg_demand = input_data.kg_demand_mode[product_num][period_num];
 
 				CreateOpeningStock(schedule, product_num, period_num);
 				RemoveExpired(schedule, product_num, period_num);		
@@ -446,14 +446,14 @@ namespace stochastic
 						schedule.inventory[product_num][period_num].push(std::move(batch));
 					}
 
-					kg_demand = utils::triangular_distribution(
-						input_data.kg_demand_min[product_num][period_num],
-						input_data.kg_demand_mode[product_num][period_num],
-						input_data.kg_demand_max[product_num][period_num],
-						input_data.rng
-					);
+					// kg_demand = utils::triangular_distribution(
+					// 	input_data.kg_demand_min[product_num][period_num],
+					// 	input_data.kg_demand_mode[product_num][period_num],
+					// 	input_data.kg_demand_max[product_num][period_num],
+					// 	input_data.rng
+					// );
 
-					// kg_demand = input_data.kg_demand_mode[product_num][period_num];
+					kg_demand = input_data.kg_demand_mode[product_num][period_num];
 						
 					RemoveExpired(schedule, product_num, period_num);		
 					CheckSupplyDemandBacklogInventory(schedule, product_num, period_num, kg_demand);
@@ -501,14 +501,14 @@ namespace stochastic
 
 				for (auto &cmpgn : schedule.campaigns) {
 					for (auto &batch : cmpgn.batches) {
-						batch.kg = utils::triangular_distribution(
-							input_data.kg_yield_per_batch_min[batch.product_num - 1],
-							input_data.kg_yield_per_batch_mode[batch.product_num - 1],
-							input_data.kg_yield_per_batch_max[batch.product_num - 1],
-							input_data.rng
-						);
+						// batch.kg = utils::triangular_distribution(
+						// 	input_data.kg_yield_per_batch_min[batch.product_num - 1],
+						// 	input_data.kg_yield_per_batch_mode[batch.product_num - 1],
+						// 	input_data.kg_yield_per_batch_max[batch.product_num - 1],
+						// 	input_data.rng
+						// );
 
-						// batch.kg = input_data.kg_yield_per_batch_mode[batch.product_num - 1];
+						batch.kg = input_data.kg_yield_per_batch_mode[batch.product_num - 1];
 
 						schedule.objectives[TOTAL_KG_THROUGHPUT_MEAN] += batch.kg;
 						schedule.objectives[TOTAL_PRODUCTION_COST_MEAN] += batch.kg * input_data.production_cost_per_kg[batch.product_num - 1];
