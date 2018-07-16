@@ -341,10 +341,10 @@ namespace stochastic
 			double kg_available = GetKgAvailable(schedule, product_num, period_num);
 
 			// No demand and backlog orders -> exit early
-			if (period_num && !kg_demand && !schedule.kg_backlog[product_num][period_num - 1]) {
-				schedule.kg_inventory[product_num][period_num] = kg_available;
-				return;
-			}
+			// if (period_num && !kg_demand && !schedule.kg_backlog[product_num][period_num - 1]) {
+			// 	schedule.kg_inventory[product_num][period_num] = kg_available;
+			// 	return;
+			// }
 
 			// Check that there is indeed a demand for a given product
 			if (kg_demand) {
@@ -354,7 +354,7 @@ namespace stochastic
 				}
 				else {
 					schedule.kg_supply[product_num][period_num] = kg_available;
-					schedule.kg_backlog[product_num][period_num] =  - kg_available;
+					schedule.kg_backlog[product_num][period_num] = kg_demand - kg_available;
 					schedule.objectives[TOTAL_KG_BACKLOG_MEAN] += schedule.kg_backlog[product_num][period_num];
 					kg_available = 0;
 
@@ -517,14 +517,23 @@ namespace stochastic
 					}
 				}
 
+				// for (int p = 0; p != input_data.num_products; ++p) {
+				// 	for (int t = 0; t != input_data.num_periods; ++t) {
+				// 		printf("%d    ", schedule.inventory[p][t].size());
+				// 	}
+				// 	printf("\n");
+				// }
+				// printf("\n");
+
 				EvaluateCampaigns(schedule);				
 
-				for (int p = 0; p != input_data.num_products; ++p) {
-					for (int t = 0; t != input_data.num_periods; ++t) {
-						printf("%d    ", schedule.inventory[p][t].size());
-					}
-					printf("\n");
-				}
+				// for (int p = 0; p != input_data.num_products; ++p) {
+				// 	for (int t = 0; t != input_data.num_periods; ++t) {
+				// 		printf("%d    ", schedule.inventory[p][t].size());
+				// 	}
+				// 	printf("\n");
+				// }
+				// printf("\n");
 
 				schedule.objectives[TOTAL_COST_MEAN] = (
 					schedule.objectives[TOTAL_INVENTORY_PENALTY_MEAN] + 
@@ -1469,10 +1478,10 @@ namespace deterministic
 			double kg_available = GetKgAvailable(schedule, product_num, period_num);
 
 			// No demand and backlog orders -> exit early
-			if (period_num && !input_data.kg_demand[product_num][period_num] && !schedule.kg_backlog[product_num][period_num - 1]) {
-				schedule.kg_inventory[product_num][period_num] = kg_available;
-				return;
-			}
+			// if (period_num && !input_data.kg_demand[product_num][period_num] && !schedule.kg_backlog[product_num][period_num - 1]) {
+			// 	schedule.kg_inventory[product_num][period_num] = kg_available;
+			// 	return;
+			// }
 
 			// Check that there is indeed a demand for a given product
 			if (input_data.kg_demand[product_num][period_num]) {
@@ -1602,14 +1611,23 @@ namespace deterministic
 				}
 			}
 
+			// for (int p = 0; p != input_data.num_products; ++p) {
+			// 	for (int t = 0; t != input_data.num_periods; ++t) {
+			// 		printf("%d    ", schedule.inventory[p][t].size());
+			// 	}
+			// 	printf("\n");
+			// }
+			// printf("\n");
+
 			EvaluateCampaigns(schedule);
 
-			for (int p = 0; p != input_data.num_products; ++p) {
-				for (int t = 0; t != input_data.num_periods; ++t) {
-					printf("%d    ", schedule.inventory[p][t].size());
-				}
-				printf("\n");
-			}
+			// for (int p = 0; p != input_data.num_products; ++p) {
+			// 	for (int t = 0; t != input_data.num_periods; ++t) {
+			// 		printf("%d    ", schedule.inventory[p][t].size());
+			// 	}
+			// 	printf("\n");
+			// }
+			// printf("\n");
 
 			// TODO: check the final throughput against the storage constraints
 			for (const auto &cmpgn : schedule.campaigns) {

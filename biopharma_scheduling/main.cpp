@@ -346,7 +346,7 @@ void DisplaySchedule(types::SingleSiteMultiSuiteSchedule &schedule)
 
 void Det_SingleSiteSimple_Test()
 {
-	num_runs = 0;
+	num_runs = 10;
 	num_gens = 100;
 	popsize = 100;
 
@@ -458,25 +458,6 @@ void Det_SingleSiteSimple_Test()
 	);
 
 	deterministic::SingleSiteSimpleModel deterministic_fitness(input_data);
-
-	types::NSGAChromosome<types::SingleSiteSimpleGene> known_solution;
-	known_solution.genes.resize(7);
-	known_solution.genes[0].product_num = 3;
-	known_solution.genes[0].num_batches = 10;
-	known_solution.genes[1].product_num = 1;
-	known_solution.genes[1].num_batches = 21;
-	known_solution.genes[2].product_num = 2;
-	known_solution.genes[2].num_batches = 3;
-	known_solution.genes[3].product_num = 4;
-	known_solution.genes[3].num_batches = 20;
-	known_solution.genes[4].product_num = 1;
-	known_solution.genes[4].num_batches = 16;
-	known_solution.genes[5].product_num = 3;
-	known_solution.genes[5].num_batches = 16;
-	known_solution.genes[6].product_num = 1;
-	known_solution.genes[6].num_batches = 45;
-	types::SingleSiteSimpleSchedule schedule;
-	deterministic_fitness.CreateSchedule(known_solution, schedule);
 	
 	printf("\nRunning Multi-Objective GA (displaying Pareto front boundary solutions X and Y only)...\n");
 	algorithms::NSGAII<types::NSGAChromosome<types::SingleSiteSimpleGene>, deterministic::SingleSiteSimpleModel> nsgaii(
@@ -573,7 +554,7 @@ void Stoch_SingleSiteSimple_Test()
 	int mc_seed = 7;
 	int num_mc_sims = 1;
 
-	num_runs = 0;
+	num_runs = 10;
 	num_gens = 100;
 	popsize = 100;
 
@@ -593,7 +574,7 @@ void Stoch_SingleSiteSimple_Test()
 	// Kg demand
 	std::vector<std::vector<double>> kg_demand_min = {
 		{ 0,0,3.1,0,0,3.1,0,3.1,3.1,3.1,0,6.2,6.2,3.1,6.2,0,3.1,9.3,0,6.2,6.2,0,6.2,9.3,0,9.3,6.2,3.1,6.2,3.1,0,9.3,6.2,9.3,6.2,0 },
-		{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6.2,0,0,0,0,0,6.2,0,0,0,0,0,0,6.2 },
+	    { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6.2,0,0,0,0,0,6.2,0,0,0,0,0,0,6.2 },
 		{ 0,0,0,0,0,0,4.9,4.9,0,0,0,9.8,4.9,0,4.9,0,0,4.9,9.8,0,0,0,4.9,4.9,0,9.8,0,0,4.9,9.8,9.8,0,4.9,9.8,4.9,0 },
 		{ 0,5.5,5.5,0,5.5,5.5,5.5,5.5,5.5,0,11,5.5,0,5.5,5.5,11,5.5,5.5,0,5.5,5.5,5.5,11,5.5,0,11,0,11,5.5,5.5,0,11,11,0,5.5,5.5 },
 	};
@@ -607,7 +588,7 @@ void Stoch_SingleSiteSimple_Test()
 
 	std::vector<std::vector<double>> kg_demand_max = {
 		{ 0,0,3.1,0,0,3.1,0,3.1,3.1,3.1,0,6.2,6.2,3.1,6.2,0,3.1,9.3,0,6.2,6.2,0,6.2,9.3,0,9.3,6.2,3.1,6.2,3.1,0,9.3,6.2,9.3,6.2,0 },
-		{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6.2,0,0,0,0,0,6.2,0,0,0,0,0,0,6.2 },
+	    { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6.2,0,0,0,0,0,6.2,0,0,0,0,0,0,6.2 },
 		{ 0,0,0,0,0,0,4.9,4.9,0,0,0,9.8,4.9,0,4.9,0,0,4.9,9.8,0,0,0,4.9,4.9,0,9.8,0,0,4.9,9.8,9.8,0,4.9,9.8,4.9,0 },
 		{ 0,5.5,5.5,0,5.5,5.5,5.5,5.5,5.5,0,11,5.5,0,5.5,5.5,11,5.5,5.5,0,5.5,5.5,5.5,11,5.5,0,11,0,11,5.5,5.5,0,11,11,0,5.5,5.5 },
 	};
@@ -710,25 +691,6 @@ void Stoch_SingleSiteSimple_Test()
 	);
 
 	stochastic::SingleSiteSimpleModel stochastic_fitness(input_data);
-	
-	types::NSGAChromosome<types::SingleSiteSimpleGene> known_solution;
-	known_solution.genes.resize(7);
-	known_solution.genes[0].product_num = 3;
-	known_solution.genes[0].num_batches = 10;
-	known_solution.genes[1].product_num = 1;
-	known_solution.genes[1].num_batches = 21;
-	known_solution.genes[2].product_num = 2;
-	known_solution.genes[2].num_batches = 3;
-	known_solution.genes[3].product_num = 4;
-	known_solution.genes[3].num_batches = 20;
-	known_solution.genes[4].product_num = 1;
-	known_solution.genes[4].num_batches = 16;
-	known_solution.genes[5].product_num = 3;
-	known_solution.genes[5].num_batches = 16;
-	known_solution.genes[6].product_num = 1;
-	known_solution.genes[6].num_batches = 45;
-	types::SingleSiteSimpleSchedule schedule;
-	stochastic_fitness.CreateSchedule(known_solution, schedule);
 	
 	printf("\nRunning Multi-Objective GA (displaying Pareto front boundary solutions X and Y only)...\n");
 	algorithms::NSGAII<types::NSGAChromosome<types::SingleSiteSimpleGene>, stochastic::SingleSiteSimpleModel> nsgaii(
