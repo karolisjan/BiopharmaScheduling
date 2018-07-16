@@ -50,7 +50,6 @@ namespace stochastic
 			int num_mc_sims, 
 			
 			std::unordered_map<OBJECTIVES, int> objectives,
-
 			std::vector<int> days_per_period,
 
 			std::vector< std::vector<double>> kg_demand_min,
