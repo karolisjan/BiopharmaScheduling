@@ -346,7 +346,7 @@ void DisplaySchedule(types::SingleSiteMultiSuiteSchedule &schedule)
 
 void Det_SingleSiteSimple_Test()
 {
-	num_runs = 10;
+	num_runs = 0;
 	num_gens = 100;
 	popsize = 100;
 
@@ -458,6 +458,25 @@ void Det_SingleSiteSimple_Test()
 	);
 
 	deterministic::SingleSiteSimpleModel deterministic_fitness(input_data);
+
+	types::NSGAChromosome<types::SingleSiteSimpleGene> known_solution;
+	known_solution.genes.resize(7);
+	known_solution.genes[0].product_num = 3;
+	known_solution.genes[0].num_batches = 10;
+	known_solution.genes[1].product_num = 1;
+	known_solution.genes[1].num_batches = 21;
+	known_solution.genes[2].product_num = 2;
+	known_solution.genes[2].num_batches = 3;
+	known_solution.genes[3].product_num = 4;
+	known_solution.genes[3].num_batches = 20;
+	known_solution.genes[4].product_num = 1;
+	known_solution.genes[4].num_batches = 16;
+	known_solution.genes[5].product_num = 3;
+	known_solution.genes[5].num_batches = 16;
+	known_solution.genes[6].product_num = 1;
+	known_solution.genes[6].num_batches = 45;
+	types::SingleSiteSimpleSchedule schedule;
+	deterministic_fitness.CreateSchedule(known_solution, schedule);
 	
 	printf("\nRunning Multi-Objective GA (displaying Pareto front boundary solutions X and Y only)...\n");
 	algorithms::NSGAII<types::NSGAChromosome<types::SingleSiteSimpleGene>, deterministic::SingleSiteSimpleModel> nsgaii(
@@ -523,12 +542,13 @@ void Det_SingleSiteSimple_Test()
 		// std::cout << std::flush;
 	}
 
-	solutions = nsgaii.TopFront(solutions);
-	types::SingleSiteSimpleSchedule schedule_x, schedule_y;
-	deterministic_fitness.CreateSchedule(solutions[0], schedule_x);
-	deterministic_fitness.CreateSchedule(solutions.back(), schedule_y);
+	if (solutions.size()) {
+		solutions = nsgaii.TopFront(solutions);
+		types::SingleSiteSimpleSchedule schedule_x, schedule_y;
+		deterministic_fitness.CreateSchedule(solutions[0], schedule_x);
+		deterministic_fitness.CreateSchedule(solutions.back(), schedule_y);
 
-	std::cout << "\n######################## After " << num_runs << " num_runs, #best solutions: " << solutions.size() << " ########################\n" << std::endl;
+		std::cout << "\n######################## After " << num_runs << " num_runs, #best solutions: " << solutions.size() << " ########################\n" << std::endl;
 
 		printf(
 			"Solution X:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f (%.2f)\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
@@ -545,6 +565,7 @@ void Det_SingleSiteSimple_Test()
 			schedule_y.objectives[deterministic::TOTAL_KG_BACKLOG],
 			schedule_y.objectives[deterministic::TOTAL_KG_WASTE]
 		);
+	}
 }
 
 void Stoch_SingleSiteSimple_Test()
@@ -552,7 +573,7 @@ void Stoch_SingleSiteSimple_Test()
 	int mc_seed = 7;
 	int num_mc_sims = 1;
 
-	num_runs = 10;
+	num_runs = 0;
 	num_gens = 100;
 	popsize = 100;
 
@@ -690,6 +711,25 @@ void Stoch_SingleSiteSimple_Test()
 
 	stochastic::SingleSiteSimpleModel stochastic_fitness(input_data);
 	
+	types::NSGAChromosome<types::SingleSiteSimpleGene> known_solution;
+	known_solution.genes.resize(7);
+	known_solution.genes[0].product_num = 3;
+	known_solution.genes[0].num_batches = 10;
+	known_solution.genes[1].product_num = 1;
+	known_solution.genes[1].num_batches = 21;
+	known_solution.genes[2].product_num = 2;
+	known_solution.genes[2].num_batches = 3;
+	known_solution.genes[3].product_num = 4;
+	known_solution.genes[3].num_batches = 20;
+	known_solution.genes[4].product_num = 1;
+	known_solution.genes[4].num_batches = 16;
+	known_solution.genes[5].product_num = 3;
+	known_solution.genes[5].num_batches = 16;
+	known_solution.genes[6].product_num = 1;
+	known_solution.genes[6].num_batches = 45;
+	types::SingleSiteSimpleSchedule schedule;
+	stochastic_fitness.CreateSchedule(known_solution, schedule);
+	
 	printf("\nRunning Multi-Objective GA (displaying Pareto front boundary solutions X and Y only)...\n");
 	algorithms::NSGAII<types::NSGAChromosome<types::SingleSiteSimpleGene>, stochastic::SingleSiteSimpleModel> nsgaii(
 		stochastic_fitness,
@@ -754,12 +794,13 @@ void Stoch_SingleSiteSimple_Test()
 		// std::cout << std::flush;
 	}
 
-	solutions = nsgaii.TopFront(solutions);
-	types::SingleSiteSimpleSchedule schedule_x, schedule_y;
-	stochastic_fitness.CreateSchedule(solutions[0], schedule_x);
-	stochastic_fitness.CreateSchedule(solutions.back(), schedule_y);
+	if (solutions.size()) {
+		solutions = nsgaii.TopFront(solutions);
+		types::SingleSiteSimpleSchedule schedule_x, schedule_y;
+		stochastic_fitness.CreateSchedule(solutions[0], schedule_x);
+		stochastic_fitness.CreateSchedule(solutions.back(), schedule_y);
 
-	std::cout << "\n######################## After " << num_runs << " num_runs, #best solutions: " << solutions.size() << " ########################\n" << std::endl;
+		std::cout << "\n######################## After " << num_runs << " num_runs, #best solutions: " << solutions.size() << " ########################\n" << std::endl;
 
 		printf(
 			"Solution X:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f (%.2f)\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
@@ -776,6 +817,7 @@ void Stoch_SingleSiteSimple_Test()
 			schedule_y.objectives[stochastic::TOTAL_KG_BACKLOG_MEAN],
 			schedule_y.objectives[stochastic::TOTAL_KG_WASTE_MEAN]
 		);
+	}
 }
 
 

@@ -519,6 +519,13 @@ namespace stochastic
 
 				EvaluateCampaigns(schedule);				
 
+				for (int p = 0; p != input_data.num_products; ++p) {
+					for (int t = 0; t != input_data.num_periods; ++t) {
+						printf("%d    ", schedule.inventory[p][t].size());
+					}
+					printf("\n");
+				}
+
 				schedule.objectives[TOTAL_COST_MEAN] = (
 					schedule.objectives[TOTAL_INVENTORY_PENALTY_MEAN] + 
 					schedule.objectives[TOTAL_BACKLOG_PENALTY_MEAN] +
@@ -1596,6 +1603,13 @@ namespace deterministic
 			}
 
 			EvaluateCampaigns(schedule);
+
+			for (int p = 0; p != input_data.num_products; ++p) {
+				for (int t = 0; t != input_data.num_periods; ++t) {
+					printf("%d    ", schedule.inventory[p][t].size());
+				}
+				printf("\n");
+			}
 
 			// TODO: check the final throughput against the storage constraints
 			for (const auto &cmpgn : schedule.campaigns) {
