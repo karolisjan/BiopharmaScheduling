@@ -552,7 +552,7 @@ void Det_SingleSiteSimple_Test()
 void Stoch_SingleSiteSimple_Test()
 {
 	int mc_seed = 7;
-	int num_mc_sims = 1;
+	int num_mc_sims = 100;
 
 	num_runs = 10;
 	num_gens = 100;

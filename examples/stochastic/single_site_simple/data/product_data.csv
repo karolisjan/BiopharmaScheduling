@@ -1,5 +1,0 @@
-product,inoculation_days,seed_days,production_days,usp_days,dsp_days,approval_days,shelf_life_days,kg_yield_per_batch_min,kg_yield_per_batch_mode,kg_yield_per_batch_max,kg_storage_limits,kg_opening_stock,min_batches_per_campaign,max_batches_per_campaign,batches_multiples_of_per_campaign,production_cost_per_kg,sell_price_per_kg,inventory_penalty_per_kg,backlog_penalty_per_kg,storage_cost_per_kg,waste_cost_per_kg
-A,20,11,14,45,7,90,365,3.1,3.1,3.1,250,18.6,2,50,1,1,1,1,1,1,1
-B,15,7,14,36,11,90,365,6.2,6.2,6.2,250,0,2,50,1,1,1,1,1,1,1
-C,20,11,14,45,7,90,365,4.9,4.9,4.9,250,19.6,2,50,1,1,1,1,1,1,1
-D,26,9,14,49,7,90,365,5.5,5.5,5.5,250,110,2,50,1,1,1,1,1,1,1

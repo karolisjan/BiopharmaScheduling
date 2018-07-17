@@ -93,6 +93,82 @@ namespace types
         > inventory;    
     };
 
+    struct StochasticSingleSiteSimpleSchedule
+    {       
+        StochasticSingleSiteSimpleSchedule() {}
+
+        void Reset(int num_products, int num_periods, int num_mc_sims)
+        {
+            using queue = std::priority_queue<types::Batch, std::vector<types::Batch>, OldestBatchFirst>;
+
+            // Reserve space for the queue (big performance boost)
+            inventory.clear();
+            inventory.resize(num_products);
+
+            for (auto &i : inventory) {
+                i.resize(num_periods);
+
+                for (auto &q : i) {
+                    q = queue(OldestBatchFirst(), make_reserved<types::Batch>(100));
+                }
+            }
+
+            kg_inventory = std::vector<std::vector<std::vector<double>>>(
+                num_mc_sims, std::vector<std::vector<double>>(
+                    num_products, std::vector<double>(num_periods, 0.0)
+                )
+            );
+
+            kg_supply = std::vector<std::vector<std::vector<double>>>(
+                num_mc_sims, std::vector<std::vector<double>>(
+                    num_products, std::vector<double>(num_periods, 0.0)
+                )
+            );
+
+            kg_backlog = std::vector<std::vector<std::vector<double>>>(
+                num_mc_sims, std::vector<std::vector<double>>(
+                    num_products, std::vector<double>(num_periods, 0.0)
+                )
+            );
+
+            kg_waste = std::vector<std::vector<std::vector<double>>>(
+                num_mc_sims, std::vector<std::vector<double>>(
+                    num_products, std::vector<double>(num_periods, 0.0)
+                )
+            );
+        }
+
+        void Init(int num_products, int num_periods, int num_mc_sims, int num_objectives) 
+        {
+            Reset(num_products, num_periods, num_mc_sims);
+
+            objectives = std::vector<double>(num_objectives, 0.0);
+            objectives_distribution = std::vector<std::vector<double>>(
+                num_objectives, std::vector<double>(num_mc_sims, 0.0)
+            );
+        }
+
+        std::vector<double> objectives;
+        std::vector<std::vector<double>> objectives_distribution;
+
+        std::vector<types::Campaign> campaigns; 
+
+        std::vector<std::vector<std::vector<double>>> kg_inventory;  
+        std::vector<std::vector<std::vector<double>>> kg_supply; 
+        std::vector<std::vector<std::vector<double>>> kg_backlog;
+        std::vector<std::vector<std::vector<double>>> kg_waste;
+
+        std::vector< 
+            std::vector<
+                std::priority_queue<
+                    types::Batch, 
+                    std::vector<types::Batch>,
+                    OldestBatchFirst
+                > 
+            >
+        > inventory;    
+    };
+
     struct SingleSiteSimpleSchedule
     {       
         SingleSiteSimpleSchedule() {}
@@ -143,7 +219,8 @@ namespace types
 
         std::vector<std::vector<double>> kg_inventory;  
         std::vector<std::vector<double>> kg_supply; 
-        std::vector<std::vector<double>> kg_backlog, kg_waste;
+        std::vector<std::vector<double>> kg_backlog;
+        std::vector<std::vector<double>> kg_waste;
 
         std::vector< 
             std::vector<
