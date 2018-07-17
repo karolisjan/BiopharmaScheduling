@@ -9,11 +9,11 @@ from libcpp.vector cimport vector
 from libcpp.algorithm cimport sort
 from libcpp.unordered_map cimport unordered_map
 
-from nsgaii cimport NSGAII
-from nsgaii_chromosome cimport NSGAChromosome
-from single_objective_ga cimport SingleObjectiveGA
-from single_objective_chromosome cimport SingleObjectiveChromosome
-from gene cimport SingleSiteSimpleGene, SingleSiteMultiSuiteGene
+from ..nsgaii cimport NSGAII
+from ..nsgaii_chromosome cimport NSGAChromosome
+from ..single_objective_ga cimport SingleObjectiveGA
+from ..single_objective_chromosome cimport SingleObjectiveChromosome
+from ..gene cimport SingleSiteSimpleGene, SingleSiteMultiSuiteGene
 
 from single_site cimport (
     OBJECTIVES, 
@@ -23,17 +23,17 @@ from single_site cimport (
     SingleSiteMultiSuiteModel
 )
 
-from schedule cimport SingleSiteSimpleSchedule
+from ..schedule cimport SingleSiteSimpleSchedule
 
-from pyhv import hypervolume
-from pyschedule import PySingleSiteSimpleSchedule, PySingleSiteMultiSuiteSchedule
+from ..pyhv import hypervolume
+from ..pyschedule import PySingleSiteSimpleSchedule, PySingleSiteMultiSuiteSchedule
 
 
 cdef class SingleSiteSimple:
     '''
         Continuous-time capacity planning of a single multi-product
-        biopharmaceutical facility using a Deterministic Single/Multi-Objective 
-        Genetic Algorithm.
+        biopharmaceutical facility using a Single/Multi-Objective 
+        Genetic Algorithm and Monte Carlo simulation.
 
         See 'SingleSiteSimple.AVAILABLE_OBJECTIVES' for the objectives
         and constraints available in this model.
@@ -68,32 +68,32 @@ cdef class SingleSiteSimple:
         double p_gene_swap
 
     AVAILABLE_OBJECTIVES = {
-        'total_kg_inventory_deficit',
-        'total_kg_throughput',
-        'total_kg_backlog',
-        'total_kg_supply',
-        'total_kg_waste',
-        'total_inventory_penalty',
-        'total_backlog_penalty',
-        'total_production_cost',
-        'total_storage_cost',
-        'total_waste_cost',
-        'total_revenue',
-        'total_profit',
-        'total_cost',
+        'total_kg_inventory_deficit_mean',
+        'total_kg_throughput_mean',
+        'total_kg_backlog_mean',
+        'total_kg_supply_mean',
+        'total_kg_waste_mean',
+        'total_inventory_penalty_mean',
+        'total_backlog_penalty_mean',
+        'total_production_cost_mean',
+        'total_storage_cost_mean',
+        'total_waste_cost_mean',
+        'total_revenue_mean',
+        'total_profit_mean',
+        'total_cost_mean',
     }
 
     def __init__(
         self,
-        num_runs: int=10,
-        num_gens: int=1000,
+        num_runs: int=20,
+        num_gens: int=100,
         popsize: int=100,
         starting_length: int=1,
-        p_xo: float=0.820769,
-        p_product_mut: float=0.141214,
-        p_plus_batch_mut: float=0.121224,
-        p_minus_batch_mut: float=0.213939,
-        p_gene_swap: float=0.766782,
+        p_xo: float=0.130878,
+        p_product_mut: float=0.017718,
+        p_plus_batch_mut: float=0.707202,
+        p_minus_batch_mut: float=0.834735,
+        p_gene_swap: float=0.531073,
         num_threads: int=1,
         random_state: int=None,
         verbose: bool=False,
@@ -184,150 +184,39 @@ cdef class SingleSiteSimple:
         self.save_history = save_history
 
         self.objectives = {
-            'total_kg_inventory_deficit': OBJECTIVES.TOTAL_KG_INVENTORY_DEFICIT,
-            'total_kg_throughput': OBJECTIVES.TOTAL_KG_THROUGHPUT,
-            'total_kg_backlog': OBJECTIVES.TOTAL_KG_BACKLOG,
-            'total_kg_supply': OBJECTIVES.TOTAL_KG_SUPPLY,
-            'total_kg_waste': OBJECTIVES.TOTAL_KG_WASTE,
-            'total_inventory_penalty': OBJECTIVES.TOTAL_INVENTORY_PENALTY,
-            'total_backlog_penalty': OBJECTIVES.TOTAL_BACKLOG_PENALTY,
-            'total_production_cost': OBJECTIVES.TOTAL_PRODUCTION_COST,
-            'total_storage_cost': OBJECTIVES.TOTAL_STORAGE_COST,
-            'total_waste_cost': OBJECTIVES.TOTAL_WASTE_COST,
-            'total_revenue': OBJECTIVES.TOTAL_REVENUE,
-            'total_profit': OBJECTIVES.TOTAL_PROFIT,
-            'total_cost': OBJECTIVES.TOTAL_COST
+            'total_kg_inventory_deficit_mean': OBJECTIVES.TOTAL_KG_INVENTORY_DEFICIT_MEAN,
+            'total_kg_throughput_mean': OBJECTIVES.TOTAL_KG_THROUGHPUT_MEAN,
+            'total_kg_backlog_mean': OBJECTIVES.TOTAL_KG_BACKLOG_MEAN,
+            'total_kg_supply_mean': OBJECTIVES.TOTAL_KG_SUPPLY_MEAN,
+            'total_kg_waste_mean': OBJECTIVES.TOTAL_KG_WASTE_MEAN,
+            'total_inventory_penalty_mean': OBJECTIVES.TOTAL_INVENTORY_PENALTY_MEAN,
+            'total_backlog_penalty_mean': OBJECTIVES.TOTAL_BACKLOG_PENALTY_MEAN,
+            'total_production_cost_mean': OBJECTIVES.TOTAL_PRODUCTION_COST_MEAN,
+            'total_storage_cost_mean': OBJECTIVES.TOTAL_STORAGE_COST_MEAN,
+            'total_waste_cost_mean': OBJECTIVES.TOTAL_WASTE_COST_MEAN,
+            'total_revenue_mean': OBJECTIVES.TOTAL_REVENUE_MEAN,
+            'total_profit_mean': OBJECTIVES.TOTAL_PROFIT_MEAN,
+            'total_cost_mean': OBJECTIVES.TOTAL_COST_MEAN
         }
 
     def fit(
         self,
         start_date: str,
         objectives: dict,
-        kg_demand: pd.core.frame.DataFrame,
+        kg_demand_min: pd.core.frame.DataFrame,
+        kg_demand_mode: pd.core.frame.DataFrame,
+        kg_demand_max: pd.core.frame.DataFrame,
         product_data: pd.core.frame.DataFrame,
         changeover_days: pd.core.frame.DataFrame,
         kg_inventory_target: pd.core.frame.DataFrame=None,
         constraints: dict=None,
     ):
-        '''
-            Runs the deterministic multi-objective genetic algorithm and generates optimal schedule(s)
-            based on the given objectives, constraints, and input data. Returns an instance of 
-            'SingleSiteSimple'
-
-            INPUT:
-
-                start_date: str
-                    Start date of the schedule. Must be in the '%Y-%d-%m' format and earlier than the
-                    earliest product demand due date.
-
-                objectives: dict
-                    Objectives to optimise with a corresponding coefficient indicating whether to 
-                    maximise (1) or minimise (-1). Choose from AVAILABLE_OBJECTIVES.
-
-                    If 'total_kg_inventory_deficit' is passed as an objective then 
-                    'kg_inventory_target' needs to be provided as well.
-
-                kg_demand: pd.core.frame.DataFrame
-                    The DataFrame should have an index named as 'date' with due dates 
-                    in the '%Y-%d-%m' format. The remaining columns should be named after the 
-                    product and contain the amount in kg due at the corresponding date from 
-                    the 'Dates' column. For example:
-
-                          date    A    B    C     D
-                    2017-01-01  0.0  0.0  0.0   0.0
-                    2017-02-01  0.0  0.0  0.0   5.5
-                    2017-03-01  3.1  0.0  0.0   5.5
-                    2017-04-01  0.0  0.0  0.0   0.0
-                    2017-05-01  0.0  0.0  0.0   5.5 
-                    ...
-
-                product_data: pd.core.frame.DataFrame
-                    Pandas DataFrame containing the following columns:
-                        'product': product labels (have to match the 'kg_demand' and 
-                            'kg_inventory_target').
-                        'production_cost_per_kg'
-                        'sell_price_per_kg'
-                        'inventory_penalty_per_kg': penalty applied whenever inventory level
-                            is below 'kg_inventory_target'.
-                        'backlog_penalty_per_kg'
-                        'storage_cost_per_kg'
-                        'waste_cost_per_kg'
-                        'inoculation_days': number of days to prepare inoculum for 1 batch.
-                        'seed_days': number of days to prepare seed for 1 batch.
-                        'production_days': number of days at the main bioreactor.
-                        'usp_days': number of USP days per 1 batch.
-                        'dsp_days': number of DSP days per 1 batch.
-                        'approval_days': number of days it takes to approve 1 batch.
-                        'shelf_life_days': shelf-life of 1 batch.
-                        'min_batches_per_campaign'
-                        'max_batches_per_campaign'
-                        'batches_multiples_of_per_campaign': constraint the campaign to produce
-                            batches in multiples of a given number
-                        'kg_yield_per_batch': kg yield per 1 batch.
-                        'kg_storage_limits': max kg of a specific product that can be stored in 
-                            the facility. 
-                        'kg_opening_stock': available kg before the start of the schedule.
-
-                    For example:
-
-                    product  price_per_g  cog  usp_days  dsp_days  approval_days  
-                          A            2   10        45         7             90
-                          B            2   12        36        11             90
-                          C            2   11        45         7             90
-                          D            2    9        49         7             90
-
-                    shelf_life_days  kg_yield_per_batch  kg_storage_limits  kg_opening_stock
-                               1000                 3.1               1000              18.6
-                               1000                 6.2               1000               0.0
-                               1000                 4.9               1000              19.6
-                               1000                 5.5               1000             110.0 
-                    ...
-                               
-                changeover_days: pd.core.frame.DataFrame
-                    Pandas DataFrame containing table product-dependent changeover days. 
-                    The DataFrame needs to contain a column labelled 'product' with product 
-                    labels indicating a switch FROM product. The remaining columns have to be
-                    named after the products indicating a switch TO product. For example:
-
-                    product   A   B   C   D
-                          A   0  20  20  20
-                          B  20   0  20  20
-                          C  20  20   0  20
-                          D  20  20  20   0
-
-                kg_inventory_target: pd.core.frame.DataFrame, optional
-                    Only used when 'total_kg_inventory_deficit' was specified in either 'objectives' 
-                    or  'constraints'. Needs to have the same format as 'kg_demand', i.e. needs to
-                    have an index named as 'date' with due dates in the '%Y-%d-%m' format. The 
-                    remaining  columns should be named after the product and contain the amount in kg. 
-                    The 'date' column and needs to match the 'date' column from the 'kg_demand'
-                    DataFrame. The product labels need also to be the same as in the 'kg_demand'.
-                    For example:
-
-                          date     A    B     C     D
-                    2017-01-01   6.2  0.0   0.0  22.0
-                    2017-02-01   6.2  0.0   4.9  27.5
-                    2017-03-01   9.3  0.0   9.8  27.5
-                    2017-04-01   9.3  0.0   9.8  27.5
-                    2017-05-01  12.4  0.0   9.8  27.5     
-
-                constraints: dict, optional
-                    Constraints take the priority over the objectives. Choose from AVAILABLE_OBJECTIVES.
-                    
-                    Example:
-                    
-                    'total_kg_backlog <= 0' (total kg backlog must not exceed 0)
-
-                    {
-                        'total_kg_backlog': [-1, 0] 
-                    }        
-
-                    i.e. 'constraint': [-1 if <= or 1 if >=, bound]
-        '''
         self.__validate_input(
             objectives,
             constraints,
-            kg_demand,
+            kg_demand_min,
+            kg_demand_mode,
+            kg_demand_max,
             kg_inventory_target,
             product_data, 
             changeover_days

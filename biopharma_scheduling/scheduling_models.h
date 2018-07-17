@@ -425,14 +425,12 @@ namespace stochastic
 				
 				period_num = 0;
 
-				// kg_demand = utils::triangular_distribution(
-				// 	input_data.kg_demand_min[product_num][period_num],
-				// 	input_data.kg_demand_mode[product_num][period_num],
-				// 	input_data.kg_demand_max[product_num][period_num],
-				// 	input_data.rng
-				// );
-
-				kg_demand = input_data.kg_demand_mode[product_num][period_num];
+				kg_demand = utils::triangular_distribution(
+					input_data.kg_demand_min[product_num][period_num],
+					input_data.kg_demand_mode[product_num][period_num],
+					input_data.kg_demand_max[product_num][period_num],
+					input_data.rng
+				);
 
 				CreateOpeningStock(schedule, product_num, period_num);
 				RemoveExpired(schedule, product_num, period_num);		
@@ -446,14 +444,12 @@ namespace stochastic
 						schedule.inventory[product_num][period_num].push(std::move(batch));
 					}
 
-					// kg_demand = utils::triangular_distribution(
-					// 	input_data.kg_demand_min[product_num][period_num],
-					// 	input_data.kg_demand_mode[product_num][period_num],
-					// 	input_data.kg_demand_max[product_num][period_num],
-					// 	input_data.rng
-					// );
-
-					kg_demand = input_data.kg_demand_mode[product_num][period_num];
+					kg_demand = utils::triangular_distribution(
+						input_data.kg_demand_min[product_num][period_num],
+						input_data.kg_demand_mode[product_num][period_num],
+						input_data.kg_demand_max[product_num][period_num],
+						input_data.rng
+					);
 						
 					RemoveExpired(schedule, product_num, period_num);		
 					CheckSupplyDemandBacklogInventory(schedule, product_num, period_num, kg_demand);
@@ -501,14 +497,12 @@ namespace stochastic
 
 				for (auto &cmpgn : schedule.campaigns) {
 					for (auto &batch : cmpgn.batches) {
-						// batch.kg = utils::triangular_distribution(
-						// 	input_data.kg_yield_per_batch_min[batch.product_num - 1],
-						// 	input_data.kg_yield_per_batch_mode[batch.product_num - 1],
-						// 	input_data.kg_yield_per_batch_max[batch.product_num - 1],
-						// 	input_data.rng
-						// );
-
-						batch.kg = input_data.kg_yield_per_batch_mode[batch.product_num - 1];
+						batch.kg = utils::triangular_distribution(
+							input_data.kg_yield_per_batch_min[batch.product_num - 1],
+							input_data.kg_yield_per_batch_mode[batch.product_num - 1],
+							input_data.kg_yield_per_batch_max[batch.product_num - 1],
+							input_data.rng
+						);
 
 						schedule.objectives[TOTAL_KG_THROUGHPUT_MEAN] += batch.kg;
 						schedule.objectives[TOTAL_PRODUCTION_COST_MEAN] += batch.kg * input_data.production_cost_per_kg[batch.product_num - 1];
@@ -517,23 +511,7 @@ namespace stochastic
 					}
 				}
 
-				// for (int p = 0; p != input_data.num_products; ++p) {
-				// 	for (int t = 0; t != input_data.num_periods; ++t) {
-				// 		printf("%d    ", schedule.inventory[p][t].size());
-				// 	}
-				// 	printf("\n");
-				// }
-				// printf("\n");
-
 				EvaluateCampaigns(schedule);				
-
-				// for (int p = 0; p != input_data.num_products; ++p) {
-				// 	for (int t = 0; t != input_data.num_periods; ++t) {
-				// 		printf("%d    ", schedule.inventory[p][t].size());
-				// 	}
-				// 	printf("\n");
-				// }
-				// printf("\n");
 
 				schedule.objectives[TOTAL_COST_MEAN] = (
 					schedule.objectives[TOTAL_INVENTORY_PENALTY_MEAN] + 
@@ -1611,23 +1589,7 @@ namespace deterministic
 				}
 			}
 
-			// for (int p = 0; p != input_data.num_products; ++p) {
-			// 	for (int t = 0; t != input_data.num_periods; ++t) {
-			// 		printf("%d    ", schedule.inventory[p][t].size());
-			// 	}
-			// 	printf("\n");
-			// }
-			// printf("\n");
-
 			EvaluateCampaigns(schedule);
-
-			// for (int p = 0; p != input_data.num_products; ++p) {
-			// 	for (int t = 0; t != input_data.num_periods; ++t) {
-			// 		printf("%d    ", schedule.inventory[p][t].size());
-			// 	}
-			// 	printf("\n");
-			// }
-			// printf("\n");
 
 			// TODO: check the final throughput against the storage constraints
 			for (const auto &cmpgn : schedule.campaigns) {
