@@ -13,24 +13,24 @@
 #include "campaign.h"
 
 
-struct OldestBatchFirst
-{
-    bool operator()(const types::Batch &b1, const types::Batch &b2)
-    {
-        return b1.expires_at > b2.expires_at;
-    }
-} oldest_batch_first;
-
-template <class T>
-std::vector<T> make_reserved(const std::size_t size)
-{
-    std::vector<T> v;
-    v.reserve(size);
-    return std::move(v);
-}
-
 namespace types
-{   
+{
+    struct OldestBatchFirst
+    {
+        bool operator()(const types::Batch &b1, const types::Batch &b2)
+        {
+            return b1.expires_at > b2.expires_at;
+        }
+    };
+
+    template <class T>
+    std::vector<T> make_reserved(const std::size_t size)
+    {
+        std::vector<T> v;
+        v.reserve(size);
+        return std::move(v);
+    }
+
     struct SingleSiteMultiSuiteSchedule
     {       
         SingleSiteMultiSuiteSchedule() {}
@@ -46,7 +46,7 @@ namespace types
                 i.resize(num_periods);
 
                 for (auto &q : i) {
-                    q = queue(oldest_batch_first, make_reserved<types::Batch>(100));
+                    q = queue(OldestBatchFirst(), make_reserved<types::Batch>(100));
                 }
             }
 
@@ -109,7 +109,7 @@ namespace types
                 i.resize(num_periods);
 
                 for (auto &q : i) {
-                    q = queue(oldest_batch_first, make_reserved<types::Batch>(100));
+                    q = queue(OldestBatchFirst(), make_reserved<types::Batch>(100));
                 }
             }
 

@@ -292,4 +292,5 @@ __pycache__/
 .vscode
 *plist
 *out
+*so
 sandbox*

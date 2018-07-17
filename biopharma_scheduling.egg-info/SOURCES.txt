@@ -8,5 +8,6 @@ biopharma_scheduling.egg-info/SOURCES.txt
 biopharma_scheduling.egg-info/dependency_links.txt
 biopharma_scheduling.egg-info/requires.txt
 biopharma_scheduling.egg-info/top_level.txt
-biopharma_scheduling/deterministic/__init__.py
-biopharma_scheduling/deterministic/single_site.cpp
+biopharma_scheduling/single_site/__init__.py
+biopharma_scheduling/single_site/deterministic.cpp
+biopharma_scheduling/single_site/stochastic.cpp
