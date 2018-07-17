@@ -37,7 +37,8 @@ if __name__ == "__main__":
             Extension(
                 '*',
                 [
-                    'biopharma_scheduling/deterministic/single_site.pyx'
+                    'biopharma_scheduling/deterministic_single_site.pyx',
+                    'biopharma_scheduling/stochastic_single_site.pyx'
                 ],
                 language='c++',
                 extra_compile_args=extra_compile_args

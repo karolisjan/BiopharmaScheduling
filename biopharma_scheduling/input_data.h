@@ -144,7 +144,13 @@ namespace stochastic
 				}
 			}
 
-			rng.init();
+			if (mc_seed != -1) {
+				std::vector<int> seed = { mc_seed };
+				rng.init(seed);
+			}
+			else {
+				rng.init();
+			}
 		}
 
 		std::vector<std::pair<OBJECTIVES, int>> objectives;
