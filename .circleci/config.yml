@@ -14,20 +14,19 @@ jobs:
       - checkout
 
       - run:
-          name: install dependencies
+          name: build base 
           command: |
-            apt-get --force-yes update && apt-get --assume-yes install g++-8
-            python3 -m venv venv
-            . venv/bin/activate
-            python -m pip install -r requirements.txt
-            export CC=g++-8 && export CXX=g++-8 && python setup.py && pip install dist/*cp36*linux*
+            docker build -t biopharma-scheduling/base -f ./docker/base.docker .
         
       - run:
-          name: run tests
+          name: build lab
           command: |
-            . venv/bin/activate
-            cd tests            
-            python tests.py
+            docker build -t biopharma-scheduling/lab -f ./docker/base.lab .
+
+      - run:
+          name: run Python tests
+          command: |
+            docker run -it biopharma-scheduling/lab bash -c "cd tests && python tests.py"
 
       - store_artifacts:
           path: test-reports

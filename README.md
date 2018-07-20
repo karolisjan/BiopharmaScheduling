@@ -1,6 +1,8 @@
 <a id='index'></a>
 # Biopharma Scheduling
 
+[![CircleCI](https://circleci.com/gh/karolisjan/Project.svg?style=svg)](https://circleci.com/gh/karolisjan/Project)
+
 > Work in progress...
 
 * [Introduction](#intro)
