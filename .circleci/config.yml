@@ -16,7 +16,6 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            echo "deb http://ftp.de.debian.org/debian testing main" >> /etc/apt/sources.list
             apt-get --force-yes update && apt-get --assume-yes install g++-8
             python -m pip install -r requirements.txt
             export CC=g++-8 && export CXX=g++-8 && python setup.py && pip install dist/*cp36*linux*
