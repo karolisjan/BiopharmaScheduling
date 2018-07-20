@@ -1,7 +1,7 @@
 <a id='index'></a>
 # Biopharma Scheduling
 
-[![CircleCI](https://circleci.com/gh/karolisjan/Project.svg?style=svg)](https://circleci.com/gh/karolisjan/Project)
+[![CircleCI](https://circleci.com/gh/karolisjan/Project/tree/master.svg?style=svg)](https://circleci.com/gh/karolisjan/Project/tree/master)
 
 > Work in progress...
 

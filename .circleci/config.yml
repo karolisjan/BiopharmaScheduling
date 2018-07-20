@@ -13,6 +13,12 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
+
+      - run: 
+          name: merge to master
+          command: |
+            git checkout origin/master
+            git merge --no-edit $CIRCLE_BRANCH
       
       - run:
           name: build base 
