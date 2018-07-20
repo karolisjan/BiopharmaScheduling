@@ -17,13 +17,16 @@ jobs:
           name: install dependencies
           command: |
             apt-get --force-yes update && apt-get --assume-yes install g++-8
+            python3 -m venv venv
+            . venv/bin/activate
             python -m pip install -r requirements.txt
             export CC=g++-8 && export CXX=g++-8 && python setup.py && pip install dist/*cp36*linux*
         
       - run:
           name: run tests
           command: |
-            cd tests
+            . venv/bin/activate
+            cd tests            
             python tests.py
 
       - store_artifacts:
