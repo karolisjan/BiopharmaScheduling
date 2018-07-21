@@ -36,7 +36,7 @@ jobs:
       - run:
           name: run C++ tests
           command: |
-            docker run -it biopharma-scheduling/lab bash -c "g++-8 biopharma_scheduling/tests.cpp -std=c++14 -fopenmp -m64 -O3 -o tests.out && ./tests.out"
+            docker run -it biopharma-scheduling/lab bash -c "g++-8 biopharma_scheduling/tests.cpp -std=c++14 -fopenmp -m64 -O2 -o tests.out && ./tests.out"
     
       - run:
           name: run Python tests

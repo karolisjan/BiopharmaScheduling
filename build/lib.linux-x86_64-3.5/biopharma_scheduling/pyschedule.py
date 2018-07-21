@@ -190,7 +190,7 @@ class PySingleSiteSimpleSchedule:
             text = '<br>'.join([
                 '{}: {}'.format(key, val) 
                 for key, val in campaign.items() 
-                    if key not in {'index', 'Finish', 'Resource', 'Task'}
+                if key not in { 'index', 'Finish', 'Resource', 'Task' }
             ])
             gantt_row.update({'text': text})
 
@@ -245,7 +245,7 @@ class PySingleSiteSimpleSchedule:
             text = '<br>'.join([
                 '{}: {}'.format(key, val) 
                 for key, val in campaign.items() 
-                    if key not in {'index', 'Resource'}
+                if key not in {'index', 'Resource'}
             ])
             gantt_row.update({'text': text})
 
@@ -299,7 +299,7 @@ class PySingleSiteMultiSuiteSchedule:
     def __init__(
             self, 
             objectives: dict, 
-            suites_table: list,
+            campaigns_table: list,
             batches_table: list=None,
             batch_inventory: list=None,
             batch_backlog: list=None,
@@ -307,7 +307,7 @@ class PySingleSiteMultiSuiteSchedule:
             batch_waste: list=None,
         ):
         self.__objectives = pd.DataFrame.from_records([objectives], index=['value'])
-        self.__suites = pd.DataFrame.from_records(suites_table)
+        self.__campaigns = pd.DataFrame.from_records(campaigns_table)
         self.__batches = pd.DataFrame.from_records(batches_table) if batches_table else None
         self.__batch_inventory = pd.DataFrame.from_records(batch_inventory) if batch_inventory else None
         self.__batch_backlog = pd.DataFrame.from_records(batch_backlog) if batch_backlog else None
@@ -324,13 +324,22 @@ class PySingleSiteMultiSuiteSchedule:
                 df.index = pd.to_datetime(df['date'])
                 del df['date']
 
-    def suites_gantt(self, colors: dict=None, layout: dict=None):
-        df = self.__suites.reset_index()
+    def campaigns_gantt(self, colors: dict=None, layout: dict=None):
+        df = self.__campaigns.reset_index()
 
         df['Finish'] = df['End']
         df['Resource'] = df['Product']
         df['Task'] = df['Suite']
         df = df.to_dict('records')
+        
+        gantt = ff.create_gantt(
+            df, 
+            colors=colors, 
+            index_col='Resource', 
+            group_tasks=True,
+            showgrid_x=True, 
+            showgrid_y=True
+        )
         
         gantt = ff.create_gantt(
             df, 
@@ -367,8 +376,8 @@ class PySingleSiteMultiSuiteSchedule:
         return self.__objectives
 
     @property
-    def suites(self):
-        return self.__suites
+    def campaigns(self):
+        return self.__campaigns
 
     @property
     def batches(self):

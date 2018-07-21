@@ -1,49 +1,104 @@
-#    This file is part of DEAP.
-#
-#    Copyright (C) 2010 Simon Wessing
-#    TU Dortmund University
-#
-#    In personal communication, the original authors authorized DEAP team
-#    to use this file under the Lesser General Public License.
-#
-#    You can find the original library here :
-#    http://ls11-www.cs.uni-dortmund.de/_media/rudolph/hypervolume/hv_python.zip
-#
-#    DEAP is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU Lesser General Public License as
-#    published by the Free Software Foundation, either version 3 of
-#    the License, or (at your option) any later version.
-#
-#    DEAP is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-#    GNU Lesser General Public License for more details.
-#
-#    You should have received a copy of the GNU Lesser General Public
-#    License along with DEAP. If not, see <http://www.gnu.org/licenses/>.
-
 import numpy
 import random
 from math import log, floor
 
 
-def hypervolume(pointset, ref):
-    """Compute the absolute hypervolume of a *pointset* according to the
-    reference point *ref*.
-    """
-    hv = _HyperVolume(ref)
-    return hv.compute(pointset)
+def hypervolume(schedules: list, objectives: dict, ref_point: dict=None, ideal_point: dict=None):
+    '''
+        When the number of objectives >= 2, estimates the hypervolume 
+        of the top non-dominated front, otherwise - returns the max 
+        objective function value of 'num_runs'.
+
+        Utilised 'hypervolume' benchmark utility from 'deap - Distributed 
+        Evolutionary Algorithms in Python' (https://github.com/DEAP/deap).
+
+        INPUT:
+
+            schedules: list
+                A list of PySingleSiteMultiSuiteSchedule objects obtain from DetSingleSiteMultiSuite.schedules 
+                once the model is fit. 
+
+            objectives: list
+                Objectives dictionary.
+
+                For example:
+
+                {
+                    'total_kg_througput': 1, # maximise throughput
+                    'total_kg_inventory_deficit': -1 # minimise inventory deficit
+                }
+
+            ref_point: dict, optional, default None
+                A dictionary of objective name and value pairs. It is used
+                as a reference point for hypervolume estimation. If 'ref_point'
+                is None then, the worst value for each objective +1 is used.
+
+                For example:
+
+                {
+                    'total_kg_inventory_deficit': 2007.7,
+                    'total_kg_throughput': 106.9
+                }
+
+            ideal_point: dict, optional, default None
+                A dictionary of objective name and value pairs. If 'ideal_point'
+                is not None, then it is used to normalise the hypervolume in
+                range 0.0 - 1.0. 'ideal_point' is ignored if the number of 
+                objectives is 1. 
+    '''
+    assert type(schedules) is list and len(schedules) > 0
+
+    objectives_coefficients = [(obj, coef) for obj, coef in objectives.items()]
+
+    points = numpy.array([
+        [schedule.objectives[obj].values[0] * coef * -1 for (obj, coef) in objectives_coefficients]
+        for schedule in schedules
+    ])
+
+    if ref_point is not None:
+        ref_point = [ref_point[obj] * coef * -1 for (obj, coef) in objectives_coefficients]
+    else:
+        ref_point = (numpy.max(points, axis=0) + 1).tolist()
+
+    hv = __HyperVolume(ref_point).compute(points)
+
+    if ideal_point is not None:
+        ideal_point = numpy.array([[ideal_point[obj] * coef * -1 for (obj, coef) in objectives_coefficients]])
+        hv /= __HyperVolume(ref_point).compute(ideal_point)
+
+    return hv   
 
 
-class _HyperVolume:
+class __HyperVolume:
     """
+    Copyright (C) 2010 Simon Wessing
+    TU Dortmund University
+
+    In personal communication, the original authors authorized DEAP team
+    to use this file under the Lesser General Public License.
+
+    You can find the original library here :
+    http://ls11-www.cs.uni-dortmund.de/_media/rudolph/hypervolume/hv_python.zip
+
+    DEAP is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+
+    DEAP is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public
+    License along with DEAP. If not, see <http://www.gnu.org/licenses/>.
+
     Hypervolume computation based on variant 3 of the algorithm in the paper:
     C. M. Fonseca, L. Paquete, and M. Lopez-Ibanez. An improved dimension-sweep
     algorithm for the hypervolume indicator. In IEEE Congress on Evolutionary
     Computation, pages 1157-1163, Vancouver, Canada, July 2006.
 
     Minimization is implicitly assumed here!
-
     """
     def __init__(self, referencePoint):
         """Constructor."""

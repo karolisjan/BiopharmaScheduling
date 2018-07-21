@@ -1,6 +1,6 @@
 '''
     Run `python setup.py` to build the whl package
-    Install with `pip install dist/*whl`
+    Install with `pip install dist/*<operating-system>*`
 '''
 import os
 from setuptools import setup, Extension
@@ -16,7 +16,7 @@ class BinaryDistribution(Distribution):
 if __name__ == "__main__":
 
     if os.name == 'posix':
-        os.environ['CFLAGS'] = '-std=c++14 -fopenmp -m64 -O3'
+        os.environ['CFLAGS'] = '-std=c++14 -fopenmp -m64 -O2'
         os.environ['CPPFLAGS'] = os.environ['CFLAGS']
         extra_compile_args = []
     else:
@@ -57,7 +57,7 @@ if __name__ == "__main__":
         version='1.0',
         description='''
             Experimental tool for capacity planning and scheduling of biopharmaceutical facilities.
-            ''',
+        ''',
         author='Karolis Jankauskas',
         author_email='karolis.jankauskas@gmail.com',
         url='https://github.com/karolisjan/Project',

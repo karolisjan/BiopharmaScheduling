@@ -15,7 +15,7 @@ from ..single_objective_ga cimport SingleObjectiveGA
 from ..single_objective_chromosome cimport SingleObjectiveChromosome
 from ..gene cimport SingleSiteSimpleGene, SingleSiteMultiSuiteGene
 
-from ..pyhv import hypervolume
+from ..utils import hypervolume
 from ..pyschedule import PySingleSiteSimpleSchedule, PySingleSiteMultiSuiteSchedule
 
 from stochastic cimport (
@@ -579,7 +579,6 @@ cdef class StochSingleSiteSimple:
             pbar.close()
 
     cdef __make_pyschedule(self, SingleSiteSimpleSchedule &schedule):
-
         def get_date_of(delta):
             return pd.Timedelta('%d days' % delta) + pd.to_datetime(self.start_date).date()
 
@@ -658,45 +657,49 @@ cdef class StochSingleSiteSimple:
                     )                
                 ]))
 
-        kg_inventory, kg_backlog, kg_supply, kg_waste = [], [], [], []
+        kg_inventory = []
+        kg_backlog = []
+        kg_supply = []
+        kg_waste = []
 
         for i, due_date in enumerate(self.due_dates):
             kg_inventory.append({
                 product_label: schedule.kg_inventory[j][i] 
                 for j, product_label in enumerate(self.product_labels)
             })
-            kg_inventory[-1].update({'date': due_date})
 
             kg_backlog.append({
                 product_label: schedule.kg_backlog[j][i] 
                 for j, product_label in enumerate(self.product_labels)
             })
-            kg_backlog[-1].update({'date': due_date})
 
             kg_supply.append({
                 product_label: schedule.kg_supply[j][i] 
                 for j, product_label in enumerate(self.product_labels)
             })
-            kg_supply[-1].update({'date': due_date})
 
             kg_waste.append({
                 product_label: schedule.kg_waste[j][i] 
                 for j, product_label in enumerate(self.product_labels)
             })
+
+            kg_inventory[-1].update({'date': due_date})
+            kg_backlog[-1].update({'date': due_date})
+            kg_supply[-1].update({'date': due_date})
             kg_waste[-1].update({'date': due_date})
 
         return PySingleSiteSimpleSchedule(
-            {
+            objectives={ 
                 obj: schedule.objectives[self.objectives[obj]] 
-                for obj in self.AVAILABLE_OBJECTIVES
+                for obj in self.AVAILABLE_OBJECTIVES 
             }, 
-            campaigns_table,
-            batches_table,
-            tasks_table,
-            kg_inventory,
-            kg_backlog,
-            kg_supply,
-            kg_waste
+            campaigns_table=campaigns_table,
+            batches_table=batches_table,
+            tasks_table=tasks_table,
+            kg_inventory=kg_inventory,
+            kg_backlog=kg_backlog,
+            kg_supply=kg_supply,
+            kg_waste=kg_waste
         )
 
     @property
@@ -706,59 +709,3 @@ cdef class StochSingleSiteSimple:
     @property
     def history(self):
         return self.history
-
-    def score(self, schedules: list, ref_point: dict=None, ideal_point: dict=None):
-        '''
-            When the number of objectives >= 2, estimates the hypervolume 
-            of the top non-dominated front, otherwise - returns the max 
-            objective function value of 'num_runs'.
-
-            Utilised 'hypervolume' benchmark utility from 'deap - Distributed 
-            Evolutionary Algorithms in Python' (https://github.com/DEAP/deap).
-
-            INPUT:
-
-                schedules: list
-                    A list of PySingleSiteSimpleSchedule objects obtain from DeterministicSingleSite.schedules 
-                    once the model is fit. 
-
-                ref_point: dict, optional, default None
-                    A dictionary of objective name and value pairs. It is used
-                    as a reference point for hypervolume estimation. If 'ref_point'
-                    is None then, the worst value for each objective +1 is used.
-
-                    For example:
-
-                    {
-                        'total_kg_inventory_deficit': 2007.7,
-                        'total_kg_throughput': 106.9
-                    }
-
-                ideal_point: dict, optional, default None
-                    A dictionary of objective name and value pairs. If 'ideal_point'
-                    is not None, then it is used to normalise the hypervolume in
-                    range 0.0 - 1.0. 'ideal_point' is ignored if the number of 
-                    objectives is 1. 
-        '''
-        assert type(schedules) is list and len(schedules) > 0
-
-        if len(self.objectives_coefficients_list) == 1:
-            return schedules[0].objectives[self.objectives_coefficients_list[0][0]]
-
-        points = np.array([
-            [schedule.objectives[obj].values[0] * coef * -1 for (obj, coef) in self.objectives_coefficients_list]
-            for schedule in schedules
-        ])
-
-        if ref_point is not None:
-            ref_point = [ref_point[obj] * coef * -1 for (obj, coef) in self.objectives_coefficients_list]
-        else:
-            ref_point = (np.max(points, axis=0) + 1).tolist()
-
-        hv = hypervolume(points, ref_point)
-
-        if ideal_point is not None:
-            ideal_point = np.array([[ideal_point[obj] * coef * -1 for (obj, coef) in self.objectives_coefficients_list]])
-            hv /= hypervolume(ideal_point, ref_point)
-
-        return hv           

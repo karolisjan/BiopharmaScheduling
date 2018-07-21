@@ -108,8 +108,9 @@ namespace algorithms
 
 			// First front
 			F.resize(1);
-			for (size_t p = 0; p != R.size(); ++p) {
-				for (size_t q = p + 1; q != R.size(); ++q) {
+
+			for (int p = 0; p != R.size(); ++p) {
+				for (int q = p + 1; q != R.size(); ++q) {
 					auto domination_flag = CheckDominance(R[p], R[q]);
 
 					// If p dominates q
@@ -130,14 +131,14 @@ namespace algorithms
 				}
 			}
 
-			size_t i = 0;
+			int i = 0;
 			Population Q;
 
 			while (1) {
 				Q.resize(0);
 
 				for (auto &p : F[i]) {
-					for (size_t q : p.S) {
+					for (int q : p.S) {
 						--R[q].n;
 
 						if (R[q].n == 0) {
@@ -162,18 +163,24 @@ namespace algorithms
 				i.d = 0;
 			}
 
-			I[0].d = I.back().d = std::numeric_limits<int>::infinity();
+			I[0].d = std::numeric_limits<int>::infinity();
+			I.back().d = std::numeric_limits<int>::infinity();
 
 			if (I.size() > 2) {
-				for (size_t m = 0; m != I[0].objectives.size(); ++m) {
+				for (int m = 0; m != I[0].objectives.size(); ++m) {
 					std::sort(I.begin(), I.end(), [&m](const auto &i1, const auto &i2) { return i1.objectives[m] < i2.objectives[m]; });
 
 					double min = I[0].objectives[m], max = I.back().objectives[m], abs_max_min = std::fabs(max - min);
 
 					if (abs_max_min != utils::Approx(0.0)) {
-						for (size_t k = 1; k != I.size() - 1; ++k) {
-							I[k].d += (std::fabs(I[k + 1].objectives[m] - I[k - 1].objectives[m]) / abs_max_min);
+						for (int k = 1; k != I.size() - 1; ++k) {
+							I[k].d = (std::fabs(I[k + 1].objectives[m] - I[k - 1].objectives[m]) / abs_max_min);
 						}
+					}
+					else {
+						for (int k = 1; k != I.size() - 1; ++k) {
+							I[k].d = std::numeric_limits<int>::infinity();
+						}					
 					}
 				}
 			}
@@ -181,7 +188,7 @@ namespace algorithms
 
 		void Rank()
 		{
-			size_t popsize = parents.size();
+			int popsize = parents.size();
 
 			parents.insert(
 				parents.end(), 
@@ -193,7 +200,7 @@ namespace algorithms
 			NonDominatedSort(parents, F);
 
 			parents.resize(0);
-			size_t i = 0;
+			int i = 0;
 
 			for (; i != F.size(); ++i) {
 				CalculateCrowdingDistance(F[i]);

@@ -344,53 +344,44 @@ void DisplaySchedule(types::SingleSiteMultiSuiteSchedule &schedule)
  	}
 }
 
-void Det_SingleSiteSimple_Test()
+void Det_SingleSiteSimple_SingleObjective_Test()
 {
-	num_runs = 10;
+	seed = 7;
+
+	num_runs = 20;
 	num_gens = 100;
 	popsize = 100;
 
 	p_xo = 0.130878;
-	p_product_mut = 0.017718;
+	p_product_mut = 0.017718;	
 	p_plus_batch_mut = 0.707202;
 	p_minus_batch_mut = 0.834735;
 	p_gene_swap = 0.531073;
 
 	std::unordered_map<deterministic::OBJECTIVES, int> objectives;
-	objectives.emplace(deterministic::TOTAL_KG_INVENTORY_DEFICIT, -1);
 	objectives.emplace(deterministic::TOTAL_KG_THROUGHPUT, 1);
 
 	std::unordered_map<deterministic::OBJECTIVES, std::pair<int, double>> constraints;
 	constraints.emplace(deterministic::TOTAL_KG_BACKLOG, std::make_pair(-1, 0));
-	// constraints.emplace(deterministic::TOTAL_KG_WASTE, std::make_pair(-1, 100));
+	constraints.emplace(deterministic::TOTAL_KG_WASTE, std::make_pair(-1, 0));
 
 	// Kg demand
 	std::vector<std::vector<double>> kg_demand = { 
-		{ 0,0,3.1,0,0,3.1,0,3.1,3.1,3.1,0,6.2,6.2,3.1,6.2,0,3.1,9.3,0,6.2,6.2,0,6.2,9.3,0,9.3,6.2,3.1,6.2,3.1,0,9.3,6.2,9.3,6.2,0 },
-	    { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6.2,0,0,0,0,0,6.2,0,0,0,0,0,0,6.2 },
-		{ 0,0,0,0,0,0,4.9,4.9,0,0,0,9.8,4.9,0,4.9,0,0,4.9,9.8,0,0,0,4.9,4.9,0,9.8,0,0,4.9,9.8,9.8,0,4.9,9.8,4.9,0 },
-		{ 0,5.5,5.5,0,5.5,5.5,5.5,5.5,5.5,0,11,5.5,0,5.5,5.5,11,5.5,5.5,0,5.5,5.5,5.5,11,5.5,0,11,0,11,5.5,5.5,0,11,11,0,5.5,5.5 },
+		{ 0.0,0.0,3.1,0.0,0.0,3.1,0.0,3.1,3.1,3.1,0.0,6.2,6.2,3.1,6.2,0.0,3.1,9.3,0.0,6.2,6.2,0.0,6.2,9.3,0.0,9.3,6.2,3.1,6.2,3.1,0.0,9.3,6.2,9.3,6.2,0.0 },
+		{ 0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,6.2,0.0,0.0,0.0,0.0,0.0,6.2,0.0,0.0,0.0,0.0,0.0,0.0,6.2 },
+		{ 0.0,0.0,0.0,0.0,0.0,0.0,4.9,4.9,0.0,0.0,0.0,9.8,4.9,0.0,4.9,0.0,0.0,4.9,9.8,0.0,0.0,0.0,4.9,4.9,0.0,9.8,0.0,0.0,4.9,9.8,9.8,0.0,4.9,9.8,4.9,0.0 },
+		{ 0.0,5.5,5.5,0.0,5.5,5.5,5.5,5.5,5.5,0.0,11.0,5.5,0.0,5.5,5.5,11.0,5.5,5.5,0.0,5.5,5.5,5.5,11.0,5.5,0.0,11.0,0.0,11.0,5.5,5.5,0.0,11.0,11.0,0.0,5.5,5.5 }
 	};
+	
+	int num_products = kg_demand.size();
 
 	// 6-month kg inventoy safety levels
-	int num_products = kg_demand.size();
-	size_t num_months = 6, p = 0, t;
-	std::vector< std::vector<double> > kg_inventory_target(num_products);
-	for (; p < num_products; ++p) {
-		for (t = 0; t < kg_demand[p].size() - num_months; ++t) {
-			kg_inventory_target[p].push_back(std::accumulate(kg_demand[p].begin() + t, kg_demand[p].begin() + t + num_months, 0.0));
-		}
-
-		for (; t < kg_demand[p].size(); ++t) {
-			kg_inventory_target[p].push_back(std::accumulate(kg_demand[p].begin() + t, kg_demand[p].end(), 0.0));
-		}
-
-		for (t = 1; t < kg_demand[p].size() - num_months; ++t) {
-			if (kg_inventory_target[p][t] == 0) {
-				kg_inventory_target[p][t] = kg_inventory_target[p][t - 1];
-			}
-		}
-	}
+	std::vector<std::vector<double>> kg_inventory_target = {
+		{ 6.2,6.2,9.3,9.3,12.4,12.4,15.5,21.7,21.7,24.8,21.7,24.8,27.9,21.7,24.8,24.8,24.8,27.9,27.9,27.9,31.0,31.0,34.1,34.1,27.9,27.9,27.9,27.9,34.1,34.1,31.0,31.0,21.7,15.5,6.2,0.0 },
+		{ 0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2 },
+		{ 0.0,4.9,9.8,9.8,9.8,9.8,19.6,19.6,14.7,19.6,19.6,19.6,14.7,19.6,19.6,14.7,14.7,19.6,19.6,9.8,19.6,19.6,19.6,19.6,24.5,34.3,24.5,29.4,39.2,39.2,29.4,19.6,19.6,14.7,4.9,0.0 },
+		{ 22.0,27.5,27.5,27.5,27.5,33.0,33.0,27.5,27.5,27.5,38.5,33.0,33.0,33.0,33.0,33.0,27.5,33.0,33.0,33.0,38.5,33.0,38.5,33.0,33.0,33.0,33.0,44.0,33.0,33.0,33.0,33.0,22.0,11.0,11.0,5.5 },
+	};
 
 	std::vector<int> days_per_period = std::vector<int>{ 
 		31,31,28,31,30,31,30,31,31,30,31,30,31,31,28,31,30,31,30,31,31,30,31,30,31,31,28,31,30,31,30,31,31,30,31,30
@@ -417,6 +408,7 @@ void Det_SingleSiteSimple_Test()
 	std::vector<int> min_batches_per_campaign = { 2, 2, 2, 3 };
 	std::vector<int> max_batches_per_campaign = { 50, 50, 50, 30 };
 	std::vector<int> batches_multiples_of_per_campaign = { 1, 1, 1, 3 };
+
 	std::vector<std::vector<int>> changeover_days = {
 		{ 0,  10, 16, 20 },
 		{ 16,  0, 16, 20 },
@@ -424,6 +416,184 @@ void Det_SingleSiteSimple_Test()
 		{ 18, 10, 18,  0 }
 	};
 
+	deterministic::SingleSiteSimpleInputData input_data(
+		objectives,
+		kg_demand,
+		days_per_period,
+
+		kg_opening_stock,
+		kg_yield_per_batch,
+		kg_storage_limits,
+
+		inventory_penalty_per_kg,
+		backlog_penalty_per_kg,
+		production_cost_per_kg,
+		storage_cost_per_kg,
+		waste_cost_per_kg,
+		sell_price_per_kg,		
+
+		inoculation_days,
+		seed_days,
+		production_days,
+		usp_days,
+		dsp_days,
+		approval_days,
+		shelf_life_days,
+		min_batches_per_campaign,
+		max_batches_per_campaign,
+		batches_multiples_of_per_campaign,
+		changeover_days,
+
+		&kg_inventory_target,
+		&constraints
+	);
+
+	deterministic::SingleSiteSimpleModel deterministic_fitness(input_data);
+	
+	printf("\nRunning Single-Objective GA...\n");
+	algorithms::SingleObjectiveGA<types::SingleObjectiveChromosome<types::SingleSiteSimpleGene>, deterministic::SingleSiteSimpleModel> ga(
+		deterministic_fitness,
+		seed,
+		num_threads
+	);
+
+	std::vector<types::SingleObjectiveChromosome<types::SingleSiteSimpleGene>> solutions;
+
+	for (int run = 0; run < num_runs; ++run) {
+
+		auto start = std::chrono::steady_clock::now();
+
+		ga.Init(
+			popsize,
+
+			//Individual Params + GeneParams
+			starting_length,
+			p_xo,
+			p_gene_swap,
+
+			//GeneParams 
+			num_products,
+			p_product_mut,
+			p_plus_batch_mut,
+			p_minus_batch_mut
+		);
+
+		for (int gen = 0; gen < num_gens; ++gen) {
+			ga.Update();
+		}			
+
+		auto elapsed_time = std::chrono::duration_cast<
+			std::chrono::milliseconds
+		>(std::chrono::steady_clock::now() - start).count();
+
+		auto solution = ga.Top();
+		solutions.push_back(solution);
+
+		types::SingleSiteSimpleSchedule schedule;
+		deterministic_fitness.CreateSchedule(solution, schedule);
+
+		std::cout << "\n######################## Run: " << run + 1 << ", elapsed time: " << elapsed_time << " ms ########################\n" << std::endl;
+
+		printf(
+			"Top Solution:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
+			solution.objective, schedule.objectives[deterministic::TOTAL_KG_THROUGHPUT],
+			schedule.objectives[deterministic::TOTAL_KG_INVENTORY_DEFICIT],
+			schedule.objectives[deterministic::TOTAL_KG_BACKLOG],
+			schedule.objectives[deterministic::TOTAL_KG_WASTE]
+		);
+
+		std::cout << std::flush;
+	}
+
+	if (solutions.size()) {
+		auto solution = ga.Top(solutions);
+		types::SingleSiteSimpleSchedule schedule;;
+		deterministic_fitness.CreateSchedule(solution, schedule);
+
+		std::cout << "\n######################## After " << num_runs << " num_runs, #best solutions: " << solutions.size() << " ########################\n" << std::endl;
+
+		printf(
+			"Top Solution:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
+			solution.objective, schedule.objectives[deterministic::TOTAL_KG_THROUGHPUT],
+			schedule.objectives[deterministic::TOTAL_KG_INVENTORY_DEFICIT],
+			schedule.objectives[deterministic::TOTAL_KG_BACKLOG],
+			schedule.objectives[deterministic::TOTAL_KG_WASTE]
+		);
+	}
+}
+
+void Det_SingleSiteSimple_MultiObjective_Test()
+{
+	seed = 7;
+
+	num_runs = 20;
+	num_gens = 100;
+	popsize = 100;
+
+	p_xo = 0.130878;
+	p_product_mut = 0.017718;
+	p_plus_batch_mut = 0.707202;
+	p_minus_batch_mut = 0.834735;
+	p_gene_swap = 0.531073;
+
+	std::unordered_map<deterministic::OBJECTIVES, int> objectives;
+	objectives.emplace(deterministic::TOTAL_KG_INVENTORY_DEFICIT, -1);
+	objectives.emplace(deterministic::TOTAL_KG_THROUGHPUT, 1);
+
+	std::unordered_map<deterministic::OBJECTIVES, std::pair<int, double>> constraints;
+	constraints.emplace(deterministic::TOTAL_KG_BACKLOG, std::make_pair(-1, 0));
+	constraints.emplace(deterministic::TOTAL_KG_WASTE, std::make_pair(-1, 0));
+
+	// Kg demand
+	std::vector<std::vector<double>> kg_demand = { 
+		{ 0.0,0.0,3.1,0.0,0.0,3.1,0.0,3.1,3.1,3.1,0.0,6.2,6.2,3.1,6.2,0.0,3.1,9.3,0.0,6.2,6.2,0.0,6.2,9.3,0.0,9.3,6.2,3.1,6.2,3.1,0.0,9.3,6.2,9.3,6.2,0.0 },
+		{ 0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,6.2,0.0,0.0,0.0,0.0,0.0,6.2,0.0,0.0,0.0,0.0,0.0,0.0,6.2 },
+		{ 0.0,0.0,0.0,0.0,0.0,0.0,4.9,4.9,0.0,0.0,0.0,9.8,4.9,0.0,4.9,0.0,0.0,4.9,9.8,0.0,0.0,0.0,4.9,4.9,0.0,9.8,0.0,0.0,4.9,9.8,9.8,0.0,4.9,9.8,4.9,0.0 },
+		{ 0.0,5.5,5.5,0.0,5.5,5.5,5.5,5.5,5.5,0.0,11.0,5.5,0.0,5.5,5.5,11.0,5.5,5.5,0.0,5.5,5.5,5.5,11.0,5.5,0.0,11.0,0.0,11.0,5.5,5.5,0.0,11.0,11.0,0.0,5.5,5.5 }
+	};
+	
+	int num_products = kg_demand.size();
+
+	// 6-month kg inventoy safety levels
+	std::vector<std::vector<double>> kg_inventory_target = {
+		{ 6.2,6.2,9.3,9.3,12.4,12.4,15.5,21.7,21.7,24.8,21.7,24.8,27.9,21.7,24.8,24.8,24.8,27.9,27.9,27.9,31.0,31.0,34.1,34.1,27.9,27.9,27.9,27.9,34.1,34.1,31.0,31.0,21.7,15.5,6.2,0.0 },
+		{ 0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2 },
+		{ 0.0,4.9,9.8,9.8,9.8,9.8,19.6,19.6,14.7,19.6,19.6,19.6,14.7,19.6,19.6,14.7,14.7,19.6,19.6,9.8,19.6,19.6,19.6,19.6,24.5,34.3,24.5,29.4,39.2,39.2,29.4,19.6,19.6,14.7,4.9,0.0 },
+		{ 22.0,27.5,27.5,27.5,27.5,33.0,33.0,27.5,27.5,27.5,38.5,33.0,33.0,33.0,33.0,33.0,27.5,33.0,33.0,33.0,38.5,33.0,38.5,33.0,33.0,33.0,33.0,44.0,33.0,33.0,33.0,33.0,22.0,11.0,11.0,5.5 },
+	};
+
+	std::vector<int> days_per_period = std::vector<int>{ 
+		31,31,28,31,30,31,30,31,31,30,31,30,31,31,28,31,30,31,30,31,31,30,31,30,31,31,28,31,30,31,30,31,31,30,31,30
+	};
+
+	std::vector<double> kg_yield_per_batch = { 3.1, 6.2, 4.9, 5.5 };
+	std::vector<double> kg_storage_limits = { 250, 250, 250, 250 }; // set high to ignore
+	std::vector<double> kg_opening_stock = { 18.6, 0, 19.6, 32.0 };
+
+	std::vector<double> inventory_penalty_per_kg = { 1, 1, 1, 1 };
+	std::vector<double> backlog_penalty_per_kg = { 1, 1, 1, 1 };
+	std::vector<double> production_cost_per_kg = { 1, 1, 1, 1 };
+	std::vector<double> storage_cost_per_kg = { 1, 1, 1, 1 };
+	std::vector<double> waste_cost_per_kg = { 1, 1, 1, 1 };
+	std::vector<double> sell_price_per_kg = { 1, 1, 1, 1 };
+
+	std::vector<int> inoculation_days = { 20, 15, 20, 26 };
+	std::vector<int> seed_days = { 11, 7, 11, 9 };
+	std::vector<int> production_days = { 14, 14, 14, 14 };
+	std::vector<int> usp_days = { 45, 36, 45, 49 }; //
+	std::vector<int> dsp_days = { 7, 11, 7, 7 };
+	std::vector<int> shelf_life_days = { 730, 730, 730, 730 }; // set high to ignore
+	std::vector<int> approval_days = { 90, 90, 90, 90 };
+	std::vector<int> min_batches_per_campaign = { 2, 2, 2, 3 };
+	std::vector<int> max_batches_per_campaign = { 50, 50, 50, 30 };
+	std::vector<int> batches_multiples_of_per_campaign = { 1, 1, 1, 3 };
+
+	std::vector<std::vector<int>> changeover_days = {
+		{ 0,  10, 16, 20 },
+		{ 16,  0, 16, 20 },
+		{ 16, 10,  0, 20 },
+		{ 18, 10, 18,  0 }
+	};
 
 	deterministic::SingleSiteSimpleInputData input_data(
 		objectives,
@@ -498,29 +668,29 @@ void Det_SingleSiteSimple_Test()
 		auto top_front = nsgaii.TopFront();
 		solutions.insert(solutions.end(), top_front.begin(), top_front.end());
 
-		// types::SingleSiteSimpleSchedule schedule_x, schedule_y;
-		// deterministic_fitness.CreateSchedule(top_front[0], schedule_x);
-		// deterministic_fitness.CreateSchedule(top_front.back(), schedule_y);
+		types::SingleSiteSimpleSchedule schedule_x, schedule_y;
+		deterministic_fitness.CreateSchedule(top_front[0], schedule_x);
+		deterministic_fitness.CreateSchedule(top_front.back(), schedule_y);
 
-		// std::cout << "\n######################## Run: " << run + 1 << ", #solutions: " << top_front.size() << ", elapsed time: " << elapsed_time << " ms ########################\n" << std::endl;
+		std::cout << "\n######################## Run: " << run + 1 << ", #solutions: " << top_front.size() << ", elapsed time: " << elapsed_time << " ms ########################\n" << std::endl;
 
-		// printf(
-		// 	"Solution X:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f (%.2f)\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
-		// 	top_front[0].objectives[0], schedule_x.objectives[deterministic::TOTAL_KG_THROUGHPUT],
-		// 	top_front[0].objectives[1], schedule_x.objectives[deterministic::TOTAL_KG_INVENTORY_DEFICIT],
-		// 	schedule_x.objectives[deterministic::TOTAL_KG_BACKLOG],
-		// 	schedule_x.objectives[deterministic::TOTAL_KG_WASTE]
-		// );
+		printf(
+			"Solution X:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f (%.2f)\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
+			top_front[0].objectives[0], schedule_x.objectives[deterministic::TOTAL_KG_THROUGHPUT],
+			top_front[0].objectives[1], schedule_x.objectives[deterministic::TOTAL_KG_INVENTORY_DEFICIT],
+			schedule_x.objectives[deterministic::TOTAL_KG_BACKLOG],
+			schedule_x.objectives[deterministic::TOTAL_KG_WASTE]
+		);
 
-		// printf(
-		// 	"Solution Y:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f (%.2f)\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
-		// 	top_front.back().objectives[0], schedule_y.objectives[deterministic::TOTAL_KG_THROUGHPUT],
-		// 	top_front.back().objectives[1], schedule_y.objectives[deterministic::TOTAL_KG_INVENTORY_DEFICIT],
-		// 	schedule_y.objectives[deterministic::TOTAL_KG_BACKLOG],
-		// 	schedule_y.objectives[deterministic::TOTAL_KG_WASTE]
-		// );
+		printf(
+			"Solution Y:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f (%.2f)\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
+			top_front.back().objectives[0], schedule_y.objectives[deterministic::TOTAL_KG_THROUGHPUT],
+			top_front.back().objectives[1], schedule_y.objectives[deterministic::TOTAL_KG_INVENTORY_DEFICIT],
+			schedule_y.objectives[deterministic::TOTAL_KG_BACKLOG],
+			schedule_y.objectives[deterministic::TOTAL_KG_WASTE]
+		);
 
-		// std::cout << std::flush;
+		std::cout << std::flush;
 	}
 
 	if (solutions.size()) {
@@ -791,11 +961,14 @@ int main()
 	// printf("\nDeterministic SingleSiteMultiSuite (increased demand for p1) GA test...\n\n");
 	// Det_SingleSiteMultiSuite_IncreasedDemandTest();
 
-	printf("\nDeterministic SingleSiteSimple GA test\n\n");
-	Det_SingleSiteSimple_Test();	
+	// printf("\nDeterministic SingleSiteSimple Single-Objective GA test\n\n");
+	// Det_SingleSiteSimple_SingleObjective_Test();	
 
-	printf("\nStochastic SingleSiteSimple GA test\n\n");
-	Stoch_SingleSiteSimple_Test();
+	printf("\nDeterministic SingleSiteSimple Multi-Objective GA test\n\n");
+	Det_SingleSiteSimple_MultiObjective_Test();	
+
+	// printf("\nStochastic SingleSiteSimple GA test\n\n");
+	// Stoch_SingleSiteSimple_Test();
 
 	printf("\n");
 

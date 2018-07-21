@@ -95,6 +95,17 @@ class DetSingleSiteMultiSuiteTest(unittest.TestCase):
 
 class DetSingleSiteSimpleTest(unittest.TestCase):
     def setUp(self):
+        self.ga_params = {
+            'num_runs': 20,
+            'num_gens': 100,
+            'popsize': 100,
+            'starting_length': 1,
+            'p_xo': 0.130878,
+            'p_product_mut': 0.017718,
+            'p_plus_batch_mut': 0.707202,
+            'p_minus_batch_mut': 0.834735,
+            'p_gene_swap': 0.531073,
+        }
         self.start_date = '2016-12-01'
         self.kg_demand = pd.read_csv('data/deterministic_single_site_simple/kg_demand.csv', index_col='date')
         self.kg_inventory_target = pd.read_csv('data/deterministic_single_site_simple/kg_inventory_target.csv', index_col='date')
@@ -117,7 +128,7 @@ class DetSingleSiteSimpleTest(unittest.TestCase):
         }
 
         for _ in range(3):
-            model = DetSingleSiteSimple(random_state=7, num_threads=-1).fit(
+            model = DetSingleSiteSimple(**self.ga_params, random_state=7, num_threads=-1).fit(
                 self.start_date,
                 objectives,
                 self.kg_demand,
@@ -148,7 +159,7 @@ class DetSingleSiteSimpleTest(unittest.TestCase):
         }
 
         for i in range(3):
-            model = DetSingleSiteSimple(random_state=7, num_threads=-1).fit(
+            model = DetSingleSiteSimple(**self.ga_params, random_state=7, num_threads=-1).fit(
                 self.start_date,
                 objectives,
                 self.kg_demand,
@@ -181,7 +192,7 @@ class DetSingleSiteSimpleTest(unittest.TestCase):
         }
 
         for _ in range(3):
-            model = DetSingleSiteSimple(random_state=7, num_threads=-1).fit(
+            model = DetSingleSiteSimple(**self.ga_params, random_state=7, num_threads=-1).fit(
                 self.start_date,
                 objectives,
                 self.kg_demand,
@@ -193,15 +204,15 @@ class DetSingleSiteSimpleTest(unittest.TestCase):
             
             # Solution X
             solution_x = min(model.schedules, key=lambda s: s.objectives.total_kg_throughput[0])
-            self.assertAlmostEqual(solution_x.objectives.total_kg_throughput[0], 573.8)
-            self.assertAlmostEqual(solution_x.objectives.total_kg_inventory_deficit[0], 191.5)
+            self.assertAlmostEqual(solution_x.objectives.total_kg_throughput[0], 575.8)
+            self.assertAlmostEqual(solution_x.objectives.total_kg_inventory_deficit[0], 204.6)
             self.assertAlmostEqual(solution_x.objectives.total_kg_backlog[0], 0.0)
             self.assertAlmostEqual(solution_x.objectives.total_kg_waste[0], 0.0)
 
             # Solution Y
             solution_y = max(model.schedules, key=lambda s: s.objectives.total_kg_throughput[0])
-            self.assertAlmostEqual(solution_y.objectives.total_kg_throughput[0], 630.4)
-            self.assertAlmostEqual(solution_y.objectives.total_kg_inventory_deficit[0], 469.3)
+            self.assertAlmostEqual(solution_y.objectives.total_kg_throughput[0], 617.0)
+            self.assertAlmostEqual(solution_y.objectives.total_kg_inventory_deficit[0], 408.1)
             self.assertAlmostEqual(solution_y.objectives.total_kg_backlog[0], 0.0)
             self.assertAlmostEqual(solution_y.objectives.total_kg_waste[0], 0.0)
 

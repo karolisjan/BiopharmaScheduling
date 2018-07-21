@@ -15,7 +15,6 @@ from ..single_objective_ga cimport SingleObjectiveGA
 from ..single_objective_chromosome cimport SingleObjectiveChromosome
 from ..gene cimport SingleSiteSimpleGene, SingleSiteMultiSuiteGene
 
-from ..pyhv import hypervolume
 from ..pyschedule import PySingleSiteSimpleSchedule, PySingleSiteMultiSuiteSchedule
 
 from deterministic cimport (
@@ -25,6 +24,7 @@ from deterministic cimport (
     SingleSiteSimpleModel,
     SingleSiteMultiSuiteModel,
     SingleSiteSimpleSchedule,
+    SingleSiteMultiSuiteSchedule
 )
 
 
@@ -49,12 +49,12 @@ cdef class DetSingleSiteSimple:
         object product_labels
         object due_dates
         object objectives
-        object objectives_coefficients_list
 
         int num_runs
         int num_gens
         int popsize
         int starting_length
+        int num_products
         int num_threads
         int random_state
         int verbose
@@ -101,12 +101,12 @@ cdef class DetSingleSiteSimple:
         '''
             PARAMETERS:
 
-                num_runs: int, default 10
+                num_runs: int, default 20
                     Number of times the genetic algorithm will be run with different seeds
                     for the random number generator. The population is re-generated before 
                     the start of each run.
 
-                num_gens: int, default 1000
+                num_gens: int, default 100
                     Number of generations of the genetic algorithm for a single run.
 
                 popsize: int, default 100
@@ -115,19 +115,19 @@ cdef class DetSingleSiteSimple:
                 starting_length: int, default 1
                     Starting length of candidate chromosome, i.e. number of genes.
 
-                p_xo: float, default 0.820769
+                p_xo: float, default 0.130878
                     Uniform crossover probability [0.0 - 1.0].
 
-                p_product_mut: float, default 0.141214
+                p_product_mut: float, default 0.017718
                     Product label mutation probability (per campaign) [0.0 - 1.0].
 
-                p_plus_batch_mut: float, default 0.121224
+                p_plus_batch_mut: float, default 0.707202
                     Probability (per campaign) of increasing the number of batches by 1 [0.0 - 1.0].
 
-                p_minus_batch_mut: float, default 0.213939
+                p_minus_batch_mut: float, default 0.834735
                     Probability (per campaign) of decreasing the number of batches by 1 [0.0 - 1.0].
 
-                p_gene_swap: float, default 0.766782
+                p_gene_swap: float, default 0.531073
                     Probability (per chromosome) of swapping two genes within the chromosome 
                     at random [0.0 - 1.0].
 
@@ -136,7 +136,7 @@ cdef class DetSingleSiteSimple:
                     If num_threads = -1, all CPUs are used. If num_threads = 0 or 1, 1 CPU is used.
 
                 random_state, int, optional, default None
-                    If int, random_state is the seed used by the random number generator.
+                    If not None, random_state is the seed used by the random number generator.
                 
                 verbose: bool, default False
                     If True, will print out the progress of the algorithm and display a progress bar.
@@ -145,41 +145,44 @@ cdef class DetSingleSiteSimple:
                     If True, will save best solution(s) from each GA run.
 
         '''
-        assert num_runs >= 1, "'num_runs' needs to be a positive integer number." 
+        assert num_runs >= 1, "'num_runs' must be a positive integer number." 
         self.num_runs = num_runs
 
-        assert num_gens >= 1, "'num_gens' needs to be a positive integer number." 
+        assert num_gens >= 1, "'num_gens' must be a positive integer number." 
         self.num_gens = num_gens
 
-        assert popsize >= 1, "'popsize' needs to be a positive integer number." 
+        assert popsize >= 1, "'popsize' must be a positive integer number." 
         self.popsize = popsize
 
-        assert starting_length >= 1, "'starting_length' needs to be a positive integer number." 
+        assert starting_length >= 1, "'starting_length' must be a positive integer number." 
         self.starting_length = starting_length
 
-        assert p_xo >= 0.0 and p_xo <= 1.0, \
-        "'p_xo' needs to be a positive floating point number in range [0.0 - 1.0]."
+        assert p_xo >= 0.0 and p_xo <= 1.0, "'p_xo' must be a positive floating point number in range [0.0 - 1.0]."
         self.p_xo = p_xo
 
-        assert p_product_mut >= 0.0 and p_product_mut <= 1.0, \
-        "'p_product_mut' needs to be a positive floating point number in range [0.0 - 1.0]."
+        assert p_product_mut >= 0.0 and p_product_mut <= 1.0, "'p_product_mut' must be a positive floating point number in range [0.0 - 1.0]."
         self.p_product_mut = p_product_mut
 
-        assert p_plus_batch_mut >= 0.0 and p_plus_batch_mut <= 1.0, \
-        "'p_plus_batch_mut' needs to be a positive floating point number in range [0.0 - 1.0]."
+        assert p_plus_batch_mut >= 0.0 and p_plus_batch_mut <= 1.0, "'p_plus_batch_mut' must be a positive floating point number in range [0.0 - 1.0]."
         self.p_plus_batch_mut = p_plus_batch_mut
 
-        assert p_minus_batch_mut >= 0.0 and p_minus_batch_mut <= 1.0, \
-        "'p_minus_batch_mut' needs to be a positive floating point number in range [0.0 - 1.0]."
+        assert p_minus_batch_mut >= 0.0 and p_minus_batch_mut <= 1.0, "'p_minus_batch_mut' must be a positive floating point number in range [0.0 - 1.0]."
         self.p_minus_batch_mut = p_minus_batch_mut
 
-        assert p_gene_swap >= 0.0 and p_gene_swap <= 1.0, \
-        "'p_gene_swap' needs to be a positive floating point number in range [0.0 - 1.0]."
+        assert p_gene_swap >= 0.0 and p_gene_swap <= 1.0, "'p_gene_swap' must be a positive floating point number in range [0.0 - 1.0]."
         self.p_gene_swap = p_gene_swap
 
+        assert type(num_threads) is int, "'num_threads must be an integer number."
         self.num_threads = num_threads
-        self.random_state = random_state if random_state else -1
+        
+        if random_state is not None:
+            assert type(random_state) is int, "'random_state' must be an integer number"
+            self.random_state = random_state if random_state else -1
+
+        assert type(verbose) is bool, "'verbose' must have a bool value" 
         self.verbose = verbose
+
+        assert type(save_history) is bool, "'save_history' must have a bool value" 
         self.save_history = save_history
 
         self.objectives = {
@@ -224,7 +227,7 @@ cdef class DetSingleSiteSimple:
                     maximise (1) or minimise (-1). Choose from AVAILABLE_OBJECTIVES.
 
                     If 'total_kg_inventory_deficit' is passed as an objective then 
-                    'kg_inventory_target' needs to be provided as well.
+                    'kg_inventory_target' must be provided as well.
 
                 kg_demand: pd.core.frame.DataFrame
                     The DataFrame should have an index named as 'date' with due dates 
@@ -284,7 +287,7 @@ cdef class DetSingleSiteSimple:
                                
                 changeover_days: pd.core.frame.DataFrame
                     Pandas DataFrame containing table product-dependent changeover days. 
-                    The DataFrame needs to contain a column labelled 'product' with product 
+                    The DataFrame must contain a column labelled 'product' with product 
                     labels indicating a switch FROM product. The remaining columns have to be
                     named after the products indicating a switch TO product. For example:
 
@@ -296,10 +299,10 @@ cdef class DetSingleSiteSimple:
 
                 kg_inventory_target: pd.core.frame.DataFrame, optional
                     Only used when 'total_kg_inventory_deficit' was specified in either 'objectives' 
-                    or  'constraints'. Needs to have the same format as 'kg_demand', i.e. needs to
+                    or  'constraints'. Needs to have the same format as 'kg_demand', i.e. must
                     have an index named as 'date' with due dates in the '%Y-%d-%m' format. The 
                     remaining  columns should be named after the product and contain the amount in kg. 
-                    The 'date' column and needs to match the 'date' column from the 'kg_demand'
+                    The 'date' column and must match the 'date' column from the 'kg_demand'
                     DataFrame. The product labels need also to be the same as in the 'kg_demand'.
                     For example:
 
@@ -332,53 +335,53 @@ cdef class DetSingleSiteSimple:
             changeover_days
         )
 
-        days_per_period = self.__count_days(start_date, kg_demand.index.values.tolist())
+        days_per_period = self.__count_days(start_date, kg_demand.index.values)
 
-        self.objectives_coefficients_list = []
-        cdef unordered_map[OBJECTIVES, int] cpp_objectives
+        cdef:
+            pair[int, double] p
+            unordered_map[OBJECTIVES, int] cpp_objectives
+            unordered_map[OBJECTIVES, pair[int, double]] cpp_constraints
+            vector[vector[double]] cpp_kg_inventory_target
+
         for obj, coef in objectives.items():
             cpp_objectives[self.objectives[obj]] = coef
-            self.objectives_coefficients_list.append((obj, coef))
 
-        cdef pair[int, double] p
-        cdef unordered_map[OBJECTIVES, pair[int, double]] cpp_constraints
         if constraints:
             for cons, [coef, bound] in constraints.items():
                 p.first = coef
                 p.second = bound
                 cpp_constraints[self.objectives[cons]] = p 
 
-        cdef vector[vector[double]] cpp_kg_inventory_target
         if kg_inventory_target is not None:
-            cpp_kg_inventory_target = kg_inventory_target.fillna(0).transpose().values.tolist()
+            cpp_kg_inventory_target = kg_inventory_target.fillna(0).transpose().values.astype(float)
 
         self.input_data = SingleSiteSimpleInputData(
             cpp_objectives,
-            kg_demand.fillna(0).transpose().values.tolist(),
-            days_per_period,
+            kg_demand.fillna(0).transpose().values.astype(float),
+            days_per_period.astype(int),
 
-            product_data.kg_opening_stock.fillna(0).values.tolist(),
-            product_data.kg_yield_per_batch.fillna(0).values,
-            product_data.kg_storage_limits.fillna(0).values.tolist(),
+            product_data.kg_opening_stock.fillna(0).values.astype(float),
+            product_data.kg_yield_per_batch.fillna(0).astype(float).values,
+            product_data.kg_storage_limits.fillna(0).values.astype(float),
 
-            product_data.inventory_penalty_per_kg.fillna(0).values.tolist(),
-            product_data.backlog_penalty_per_kg.fillna(0).values.tolist(),
-            product_data.production_cost_per_kg.fillna(0).values.tolist(),
-            product_data.storage_cost_per_kg.fillna(0).values.tolist(),
-            product_data.waste_cost_per_kg.fillna(0).values.tolist(),
-            product_data.sell_price_per_kg.fillna(0).values.tolist(),
+            product_data.inventory_penalty_per_kg.fillna(0).values.astype(float),
+            product_data.backlog_penalty_per_kg.fillna(0).values.astype(float),
+            product_data.production_cost_per_kg.fillna(0).values.astype(float),
+            product_data.storage_cost_per_kg.fillna(0).values.astype(float),
+            product_data.waste_cost_per_kg.fillna(0).values.astype(float),
+            product_data.sell_price_per_kg.fillna(0).values.astype(float),
 
-            product_data.inoculation_days.fillna(0).values.tolist(),
-            product_data.seed_days.fillna(0).values.tolist(),
-            product_data.production_days.fillna(0).values.tolist(),
-            product_data.usp_days.fillna(0).values.tolist(),
-            product_data.dsp_days.fillna(0).values.tolist(),
-            product_data.approval_days.fillna(0).values.tolist(),
-            product_data.shelf_life_days.fillna(0).values.tolist(),
-            product_data.min_batches_per_campaign.fillna(0).values.tolist(),
-            product_data.max_batches_per_campaign.fillna(0).values.tolist(),
-            product_data.batches_multiples_of_per_campaign.fillna(0).values.tolist(),
-            changeover_days.drop('product', axis=1).fillna(0).values.tolist(),
+            product_data.inoculation_days.fillna(0).values.astype(int),
+            product_data.seed_days.fillna(0).values.astype(int),
+            product_data.production_days.fillna(0).values.astype(int),
+            product_data.usp_days.fillna(0).values.astype(int),
+            product_data.dsp_days.fillna(0).values.astype(int),
+            product_data.approval_days.fillna(0).values.astype(int),
+            product_data.shelf_life_days.fillna(0).values.astype(int),
+            product_data.min_batches_per_campaign.fillna(0).values.astype(int),
+            product_data.max_batches_per_campaign.fillna(0).values.astype(int),
+            product_data.batches_multiples_of_per_campaign.fillna(0).values.astype(int),
+            changeover_days.drop('product', axis=1).fillna(0).values.astype(int),
 
             &cpp_kg_inventory_target if kg_inventory_target is not None else NULL,
             &cpp_constraints if constraints is not None else NULL 
@@ -402,42 +405,28 @@ cdef class DetSingleSiteSimple:
         product_data: pd.core.frame.DataFrame, 
         changeover_days: pd.core.frame.DataFrame,
     ):
-        assert type(objectives) is dict, \
-        "'objectives' needs to be a 'dict', is a '{}'.".format(type(objectives))
+        assert type(objectives) is dict, "'objectives' must be a 'dict', is a '{}'.".format(type(objectives))
         for obj in objectives:
-            assert obj in self.AVAILABLE_OBJECTIVES, \
-            "'{}' is not allowed as an objective.".format(obj)
-            assert objectives[obj] in [-1, 1], \
-            "Objective coefficient can only be -1 or 1."
+            assert obj in self.AVAILABLE_OBJECTIVES, "'{}' is not allowed as an objective.".format(obj)
+            assert objectives[obj] in [-1, 1], "Objective coefficient can only be -1 or 1."
 
         if constraints is not None:
-            assert type(constraints) is dict, \
-            "'constraints' needs to be a 'dict', is a '{}'.".format(type(constraints))
+            assert type(constraints) is dict, "'constraints' must be a 'dict', is a '{}'.".format(type(constraints))
             for cons in constraints:
-                assert cons in self.AVAILABLE_OBJECTIVES, \
-                "'{}' is not allowed as a constraint.".format(cons)
-                assert type(constraints[cons]) is list and len(constraints[cons]) == 2, \
-                "'constraints' are expected to hold a coeffcient and a bound."
-                assert constraints[cons][0] in [-1, 1], \
-                "Constraint coefficient can only be -1 or 1."
+                assert cons in self.AVAILABLE_OBJECTIVES, "'{}' is not allowed as a constraint.".format(cons)
+                assert type(constraints[cons]) is list and len(constraints[cons]) == 2, "'constraints' are expected to hold a coeffcient and a bound."
+                assert constraints[cons][0] in [-1, 1], "Constraint coefficient can only be -1 or 1."
 
         for df in [kg_demand, product_data, changeover_days]:
-            assert type(df) is pd.core.frame.DataFrame, \
-            "Input data must be a 'pd.core.frame.DataFrame', is a '{}'".format(type(df))
+            assert type(df) is pd.core.frame.DataFrame, "Input data must be a 'pd.core.frame.DataFrame', is a '{}'".format(type(df))
 
-        assert 'date' == kg_demand.index.name, \
-        "'kg_demand' must have a 'date' index." 
+        assert 'date' == kg_demand.index.name, "'kg_demand' must have a 'date' index." 
 
         if kg_inventory_target is not None:
-            assert type(kg_inventory_target) is pd.core.frame.DataFrame, \
-            "Input data must be a 'pd.core.frame.DataFrame', is a '{}'".format(type(kg_inventory_target))
-            assert 'date' == kg_inventory_target.index.name, \
-            "'kg_inventory_target' must have a 'date' index." 
-            assert kg_demand.index.all() == kg_inventory_target.index.all(), \
-            "'date' indices from 'kg_demand' and 'kg_inventory_target' do not match."
-            assert set(kg_demand.columns) == set(kg_inventory_target.columns) and \
-                   len(kg_demand.columns) == len(kg_inventory_target.columns), \
-                   "Product labels from 'kg_demand' and 'kg_inventory_target' do not match."
+            assert type(kg_inventory_target) is pd.core.frame.DataFrame, "Input data must be a 'pd.core.frame.DataFrame', is a '{}'".format(type(kg_inventory_target))
+            assert 'date' == kg_inventory_target.index.name, "'kg_inventory_target' must have a 'date' index." 
+            assert kg_demand.index.all() == kg_inventory_target.index.all(), "'date' indices from 'kg_demand' and 'kg_inventory_target' do not match."
+            assert set(kg_demand.columns) == set(kg_inventory_target.columns) and len(kg_demand.columns) == len(kg_inventory_target.columns), "Product labels from 'kg_demand' and 'kg_inventory_target' do not match."
 
         for col in [
             'product', 
@@ -464,32 +453,34 @@ cdef class DetSingleSiteSimple:
             assert col in product_data, "'product_data' is missing '{}' column.".format(col)
         
         self.product_labels = kg_demand.columns.values.tolist()
+        self.num_products = len(self.product_labels)
 
-        assert len(self.product_labels) == len(product_data['product']) and \
-               set(self.product_labels) == set(product_data['product']), \
+        assert len(self.product_labels) == len(product_data['product']) and set(self.product_labels) == set(product_data['product']), \
                "Product labels from 'kg_demand' and 'product_data' do not match."
 
         assert 'product' in changeover_days, "'product' column is missing in 'changeover_days'."
-        assert len(self.product_labels) == len(changeover_days['product']) and \
-               set(self.product_labels) == set(changeover_days['product']), \
+
+        assert len(self.product_labels) == len(changeover_days['product']) and set(self.product_labels) == set(changeover_days['product']), \
                "Product labels from 'kg_demand' and 'changeover_days' do not match."
 
         changeover_days_product_columns = changeover_days.columns.values.tolist()
         changeover_days_product_columns.remove('product')
 
-        assert len(self.product_labels) == len(changeover_days_product_columns) and \
-               set(self.product_labels) == set(changeover_days_product_columns), \
+        assert len(self.product_labels) == len(changeover_days_product_columns) and set(self.product_labels) == set(changeover_days_product_columns), \
                "Product labels in 'product' column do not match with the actual product columns in 'changeover_days_product_columns'."
 
     def __count_days(self, start_date: str, due_dates: list):
         self.start_date = start_date
         self.due_dates = due_dates
+
         start_date = pd.to_datetime(start_date)
         due_dates = pd.to_datetime(due_dates)
         days_per_period = [(due_dates[0] - start_date).days]
+
         for i in range(1, len(due_dates), 1):
             days_per_period.append((due_dates[i] - due_dates[i - 1]).days)
-        return days_per_period
+
+        return np.array(days_per_period)
 
     def __run_single_objective_ga(self):
         cdef:
@@ -498,7 +489,7 @@ cdef class DetSingleSiteSimple:
             vector[SingleObjectiveChromosome[SingleSiteSimpleGene]] solutions 
             
             SingleObjectiveGA[SingleObjectiveChromosome[SingleSiteSimpleGene], SingleSiteSimpleModel] ga = \
-                SingleObjectiveGA[SingleObjectiveChromosome[SingleSiteSimpleGene], SingleSiteSimpleModel](
+            SingleObjectiveGA[SingleObjectiveChromosome[SingleSiteSimpleGene], SingleSiteSimpleModel](
                 self.single_site_simple,
                 self.random_state,
                 self.num_threads   
@@ -516,7 +507,7 @@ cdef class DetSingleSiteSimple:
                 self.starting_length,
                 self.p_xo,
                 self.p_gene_swap,
-                len(self.product_labels),
+                self.num_products,
                 self.p_product_mut,
                 self.p_plus_batch_mut,
                 self.p_minus_batch_mut,
@@ -544,14 +535,10 @@ cdef class DetSingleSiteSimple:
         if self.verbose:
             pbar.set_description('Collecting schedules')
 
-        self.schedules = []
         top_solution = ga.Top(solutions)
-        solutions.resize(1)
-        solutions[0] = top_solution
-        for solution in solutions:
-            schedule = SingleSiteSimpleSchedule()
-            self.single_site_simple.CreateSchedule(solution, schedule)
-            self.schedules.append(self.__make_pyschedule(schedule))
+        schedule = SingleSiteSimpleSchedule()
+        self.single_site_simple.CreateSchedule(top_solution, schedule)
+        self.schedules = [self.__make_pyschedule(schedule)]
 
         if self.verbose: 
             pbar.set_description('Done')
@@ -564,7 +551,7 @@ cdef class DetSingleSiteSimple:
             vector[NSGAChromosome[SingleSiteSimpleGene]] solutions, top_front
             
             NSGAII[NSGAChromosome[SingleSiteSimpleGene], SingleSiteSimpleModel] nsgaii = \
-                NSGAII[NSGAChromosome[SingleSiteSimpleGene], SingleSiteSimpleModel](
+            NSGAII[NSGAChromosome[SingleSiteSimpleGene], SingleSiteSimpleModel](
                 self.single_site_simple,
                 self.random_state,
                 self.num_threads   
@@ -582,7 +569,7 @@ cdef class DetSingleSiteSimple:
                 self.starting_length,
                 self.p_xo,
                 self.p_gene_swap,
-                len(self.product_labels),
+                self.num_products,
                 self.p_product_mut,
                 self.p_plus_batch_mut,
                 self.p_minus_batch_mut,
@@ -627,7 +614,6 @@ cdef class DetSingleSiteSimple:
             pbar.close()
 
     cdef __make_pyschedule(self, SingleSiteSimpleSchedule &schedule):
-
         def get_date_of(delta):
             return pd.Timedelta('%d days' % delta) + pd.to_datetime(self.start_date).date()
 
@@ -669,6 +655,7 @@ cdef class DetSingleSiteSimple:
                         )
                     )
                 ]))
+
                 tasks_table.append(OrderedDict([
                     ('Product', self.product_labels[campaign.product_num - 1]),
                     ('Task', 'Seed'),
@@ -681,6 +668,7 @@ cdef class DetSingleSiteSimple:
                         )
                     )                
                 ]))
+
                 tasks_table.append(OrderedDict([
                     ('Product', self.product_labels[campaign.product_num - 1]),
                     ('Task', 'Production'),
@@ -693,6 +681,7 @@ cdef class DetSingleSiteSimple:
                         )
                     )                
                 ]))
+
                 tasks_table.append(OrderedDict([
                     ('Product', self.product_labels[campaign.product_num - 1]),
                     ('Task', 'DSP'),
@@ -706,45 +695,49 @@ cdef class DetSingleSiteSimple:
                     )                
                 ]))
 
-        kg_inventory, kg_backlog, kg_supply, kg_waste = [], [], [], []
+        kg_inventory = []
+        kg_backlog = []
+        kg_supply = [] 
+        kg_waste = []
 
         for i, due_date in enumerate(self.due_dates):
             kg_inventory.append({
                 product_label: schedule.kg_inventory[j][i] 
                 for j, product_label in enumerate(self.product_labels)
             })
-            kg_inventory[-1].update({'date': due_date})
 
             kg_backlog.append({
                 product_label: schedule.kg_backlog[j][i] 
                 for j, product_label in enumerate(self.product_labels)
             })
-            kg_backlog[-1].update({'date': due_date})
-
+            
             kg_supply.append({
                 product_label: schedule.kg_supply[j][i] 
                 for j, product_label in enumerate(self.product_labels)
             })
-            kg_supply[-1].update({'date': due_date})
 
             kg_waste.append({
                 product_label: schedule.kg_waste[j][i] 
                 for j, product_label in enumerate(self.product_labels)
             })
+
+            kg_inventory[-1].update({'date': due_date})
+            kg_backlog[-1].update({'date': due_date})
+            kg_supply[-1].update({'date': due_date})
             kg_waste[-1].update({'date': due_date})
 
         return PySingleSiteSimpleSchedule(
-            {
+            objectives={
                 obj: schedule.objectives[self.objectives[obj]] 
                 for obj in self.AVAILABLE_OBJECTIVES
             }, 
-            campaigns_table,
-            batches_table,
-            tasks_table,
-            kg_inventory,
-            kg_backlog,
-            kg_supply,
-            kg_waste
+            campaigns_table=campaigns_table,
+            batches_table=batches_table,
+            tasks_table=tasks_table,
+            kg_inventory=kg_inventory,
+            kg_backlog=kg_backlog,
+            kg_supply=kg_supply,
+            kg_waste=kg_waste
         )
 
     @property
@@ -754,63 +747,6 @@ cdef class DetSingleSiteSimple:
     @property
     def history(self):
         return self.history
-
-    def score(self, schedules: list, ref_point: dict=None, ideal_point: dict=None):
-        '''
-            When the number of objectives >= 2, estimates the hypervolume 
-            of the top non-dominated front, otherwise - returns the max 
-            objective function value of 'num_runs'.
-
-            Utilised 'hypervolume' benchmark utility from 'deap - Distributed 
-            Evolutionary Algorithms in Python' (https://github.com/DEAP/deap).
-
-            INPUT:
-
-                schedules: list
-                    A list of PySingleSiteSimpleSchedule objects obtain from DeterministicSingleSite.schedules 
-                    once the model is fit. 
-
-                ref_point: dict, optional, default None
-                    A dictionary of objective name and value pairs. It is used
-                    as a reference point for hypervolume estimation. If 'ref_point'
-                    is None then, the worst value for each objective +1 is used.
-
-                    For example:
-
-                    {
-                        'total_kg_inventory_deficit': 2007.7,
-                        'total_kg_throughput': 106.9
-                    }
-
-                ideal_point: dict, optional, default None
-                    A dictionary of objective name and value pairs. If 'ideal_point'
-                    is not None, then it is used to normalise the hypervolume in
-                    range 0.0 - 1.0. 'ideal_point' is ignored if the number of 
-                    objectives is 1. 
-        '''
-        assert type(schedules) is list and len(schedules) > 0
-
-        if len(self.objectives_coefficients_list) == 1:
-            return schedules[0].objectives[self.objectives_coefficients_list[0][0]]
-
-        points = np.array([
-            [schedule.objectives[obj].values[0] * coef * -1 for (obj, coef) in self.objectives_coefficients_list]
-            for schedule in schedules
-        ])
-
-        if ref_point is not None:
-            ref_point = [ref_point[obj] * coef * -1 for (obj, coef) in self.objectives_coefficients_list]
-        else:
-            ref_point = (np.max(points, axis=0) + 1).tolist()
-
-        hv = hypervolume(points, ref_point)
-
-        if ideal_point is not None:
-            ideal_point = np.array([[ideal_point[obj] * coef * -1 for (obj, coef) in self.objectives_coefficients_list]])
-            hv /= hypervolume(ideal_point, ref_point)
-
-        return hv        
-
 
 
 cdef class DetSingleSiteMultiSuite:
@@ -822,8 +758,6 @@ cdef class DetSingleSiteMultiSuite:
         object schedules
         object start_date
         object product_labels
-        object num_usp_suites
-        object num_dsp_suites
         object due_dates
         object objectives
         object objectives_coefficients_list
@@ -831,6 +765,9 @@ cdef class DetSingleSiteMultiSuite:
         int num_runs
         int num_gens
         int popsize
+        int num_dsp_suites
+        int num_usp_suites
+        int num_products
         int starting_length
         int num_threads
         int random_state
@@ -877,45 +814,47 @@ cdef class DetSingleSiteMultiSuite:
         verbose: bool=False,
         save_history: bool=False,
     ):
-        assert num_runs >= 1, "'num_runs' needs to be a positive integer number." 
+        assert num_runs >= 1, "'num_runs' must be a positive integer number." 
         self.num_runs = num_runs
 
-        assert num_gens >= 1, "'num_gens' needs to be a positive integer number." 
+        assert num_gens >= 1, "'num_gens' must be a positive integer number." 
         self.num_gens = num_gens
 
-        assert popsize >= 1, "'popsize' needs to be a positive integer number." 
+        assert popsize >= 1, "'popsize' must be a positive integer number." 
         self.popsize = popsize
 
-        assert starting_length >= 1, "'starting_length' needs to be a positive integer number." 
+        assert starting_length >= 1, "'starting_length' must be a positive integer number." 
         self.starting_length = starting_length
 
-        assert p_xo >= 0.0 and p_xo <= 1.0, \
-        "'p_xo' needs to be a positive floating point number in range [0.0 - 1.0]."
+        assert p_xo >= 0.0 and p_xo <= 1.0, "'p_xo' must be a positive floating point number in range [0.0 - 1.0]."
         self.p_xo = p_xo
 
-        assert p_product_mut >= 0.0 and p_product_mut <= 1.0, \
-        "'p_product_mut' needs to be a positive floating point number in range [0.0 - 1.0]."
+        assert p_product_mut >= 0.0 and p_product_mut <= 1.0, "'p_product_mut' must be a positive floating point number in range [0.0 - 1.0]."
         self.p_product_mut = p_product_mut
 
-        assert p_usp_suite_mut >= 0.0 and p_usp_suite_mut <= 1.0, \
-        "'p_usp_suite_mut' needs to be a positive floating point number in range [0.0 - 1.0]."
+        assert p_usp_suite_mut >= 0.0 and p_usp_suite_mut <= 1.0, "'p_usp_suite_mut' must be a positive floating point number in range [0.0 - 1.0]."
         self.p_usp_suite_mut = p_usp_suite_mut
 
-        assert p_plus_batch_mut >= 0.0 and p_plus_batch_mut <= 1.0, \
-        "'p_plus_batch_mut' needs to be a positive floating point number in range [0.0 - 1.0]."
+        assert p_plus_batch_mut >= 0.0 and p_plus_batch_mut <= 1.0, "'p_plus_batch_mut' must be a positive floating point number in range [0.0 - 1.0]."
         self.p_plus_batch_mut = p_plus_batch_mut
 
-        assert p_minus_batch_mut >= 0.0 and p_minus_batch_mut <= 1.0, \
-        "'p_minus_batch_mut' needs to be a positive floating point number in range [0.0 - 1.0]."
+        assert p_minus_batch_mut >= 0.0 and p_minus_batch_mut <= 1.0, "'p_minus_batch_mut' must be a positive floating point number in range [0.0 - 1.0]."
         self.p_minus_batch_mut = p_minus_batch_mut
 
-        assert p_gene_swap >= 0.0 and p_gene_swap <= 1.0, \
-        "'p_gene_swap' needs to be a positive floating point number in range [0.0 - 1.0]."
+        assert p_gene_swap >= 0.0 and p_gene_swap <= 1.0, "'p_gene_swap' must be a positive floating point number in range [0.0 - 1.0]."
         self.p_gene_swap = p_gene_swap
 
+        assert type(num_threads) is int, "'num_threads must be an integer number."
         self.num_threads = num_threads
-        self.random_state = random_state if random_state else -1
+        
+        if random_state is not None:
+            assert type(random_state) is int, "'random_state' must be an integer number"
+            self.random_state = random_state if random_state else -1
+
+        assert type(verbose) is bool, "'verbose' must have a bool value" 
         self.verbose = verbose
+
+        assert type(save_history) is bool, "'save_history' must have a bool value" 
         self.save_history = save_history
 
         self.objectives = {
@@ -960,11 +899,9 @@ cdef class DetSingleSiteMultiSuite:
 
         days_per_period = self.__count_days(start_date, batch_demand.index.values.tolist())
 
-        self.objectives_coefficients_list = []
         cdef unordered_map[OBJECTIVES, int] cpp_objectives
         for obj, coef in objectives.items():
             cpp_objectives[self.objectives[obj]] = coef
-            self.objectives_coefficients_list.append((obj, coef))
 
         cdef pair[int, double] p
         cdef unordered_map[OBJECTIVES, pair[int, double]] cpp_constraints
@@ -981,25 +918,25 @@ cdef class DetSingleSiteMultiSuite:
             num_dsp_suites,
             
             batch_demand.fillna(0).transpose().values.tolist(),
-            days_per_period,
+            days_per_period.astype(int),
 
-            product_data.usp_days.fillna(0).values.tolist(),
-            product_data.dsp_days.fillna(0).values.tolist(),
+            product_data.usp_days.fillna(0).values.astype(float),
+            product_data.dsp_days.fillna(0).values.astype(float),
             
-            product_data.shelf_life_days.fillna(0).values.tolist(),
-            product_data.batch_storage_limits.fillna(0).values.tolist(),
+            product_data.shelf_life_days.fillna(0).values.astype(float),
+            product_data.batch_storage_limits.fillna(0).values.astype(float),
 
-            product_data.sell_price_per_batch.fillna(0).values.tolist(),
-            product_data.storage_cost_per_batch.fillna(0).values.tolist(),
-            product_data.backlog_penalty_per_batch.fillna(0).values.tolist(),
-            product_data.waste_cost_per_batch.fillna(0).values.tolist(),
-            product_data.usp_production_cost_per_batch.fillna(0).values.tolist(),
-            product_data.dsp_production_cost_per_batch.fillna(0).values.tolist(),
-            product_data.usp_changeover_cost.fillna(0).values.tolist(),
-            product_data.dsp_changeover_cost.fillna(0).values.tolist(),
+            product_data.sell_price_per_batch.fillna(0).values.astype(float),
+            product_data.storage_cost_per_batch.fillna(0).values.astype(float),
+            product_data.backlog_penalty_per_batch.fillna(0).values.astype(float),
+            product_data.waste_cost_per_batch.fillna(0).values.astype(float),
+            product_data.usp_production_cost_per_batch.fillna(0).values.astype(float),
+            product_data.dsp_production_cost_per_batch.fillna(0).values.astype(float),
+            product_data.usp_changeover_cost.fillna(0).values.astype(float),
+            product_data.dsp_changeover_cost.fillna(0).values.astype(float),
 
-            usp_changeover_days.drop('product', axis=1).fillna(0).values.tolist(),
-            dsp_changeover_days.drop('product', axis=1).fillna(0).values.tolist(),
+            usp_changeover_days.drop('product', axis=1).fillna(0).values.astype(float),
+            dsp_changeover_days.drop('product', axis=1).fillna(0).values.astype(float),
 
             &cpp_constraints if constraints is not None else NULL 
         )
@@ -1022,31 +959,22 @@ cdef class DetSingleSiteMultiSuite:
         usp_changeover_days: pd.core.frame.DataFrame,
         dsp_changeover_days: pd.core.frame.DataFrame
     ):
-        assert type(objectives) is dict, \
-        "'objectives' needs to be a 'dict', is a '{}'.".format(type(objectives))
+        assert type(objectives) is dict, "'objectives' must be a 'dict', is a '{}'.".format(type(objectives))
         for obj in objectives:
-            assert obj in self.AVAILABLE_OBJECTIVES, \
-            "'{}' is not allowed as an objective.".format(obj)
-            assert objectives[obj] in [-1, 1], \
-            "Objective coefficient can only be -1 or 1."
+            assert obj in self.AVAILABLE_OBJECTIVES, "'{}' is not allowed as an objective.".format(obj)
+            assert objectives[obj] in [-1, 1], "Objective coefficient can only be -1 or 1."
 
         if constraints is not None:
-            assert type(constraints) is dict, \
-            "'constraints' needs to be a 'dict', is a '{}'.".format(type(constraints))
+            assert type(constraints) is dict, "'constraints' must be a 'dict', is a '{}'.".format(type(constraints))
             for cons in constraints:
-                assert cons in self.AVAILABLE_OBJECTIVES, \
-                "'{}' is not allowed as a constraint.".format(cons)
-                assert type(constraints[cons]) is list and len(constraints[cons]) == 2, \
-                "'constraints' are expected to hold a coeffcient and a bound."
-                assert constraints[cons][0] in [-1, 1], \
-                "Constraint coefficient can only be -1 or 1."
+                assert cons in self.AVAILABLE_OBJECTIVES, "'{}' is not allowed as a constraint.".format(cons)
+                assert type(constraints[cons]) is list and len(constraints[cons]) == 2, "'constraints' are expected to hold a coeffcient and a bound."
+                assert constraints[cons][0] in [-1, 1], "Constraint coefficient can only be -1 or 1."
 
         for df in [batch_demand, product_data, usp_changeover_days, dsp_changeover_days]:
-            assert type(df) is pd.core.frame.DataFrame, \
-            "Input data must be a 'pd.core.frame.DataFrame', is a '{}'".format(type(df))
+            assert type(df) is pd.core.frame.DataFrame, "Input data must be a 'pd.core.frame.DataFrame', is a '{}'".format(type(df))
 
-        assert 'date' == batch_demand.index.name, \
-        "'batch_demand' must have a 'date' index." 
+        assert 'date' == batch_demand.index.name, "'batch_demand' must have a 'date' index." 
 
         for col in [
             'product', 
@@ -1066,45 +994,44 @@ cdef class DetSingleSiteMultiSuite:
             assert col in product_data, "'product_data' is missing '{}' column.".format(col)
         
         self.product_labels = batch_demand.columns.values.tolist()
+        self.num_products = len(self.product_labels)
 
-        assert len(self.product_labels) == len(product_data['product']) and \
-               set(self.product_labels) == set(product_data['product']), \
+        assert len(self.product_labels) == len(product_data['product']) and set(self.product_labels) == set(product_data['product']), \
                "Product labels from 'batch_demand' and 'product_data' do not match."
 
         assert 'product' in usp_changeover_days, "'product' column is missing in 'usp_changeover_days'."
-        assert len(self.product_labels) == len(usp_changeover_days['product']) and \
-               set(self.product_labels) == set(usp_changeover_days['product']), \
+        assert len(self.product_labels) == len(usp_changeover_days['product']) and set(self.product_labels) == set(usp_changeover_days['product']), \
                "Product labels from 'batch_demand' and 'usp_changeover_days' do not match."
 
         assert 'product' in dsp_changeover_days, "'product' column is missing in 'dsp_changeover_days'."
-        assert len(self.product_labels) == len(dsp_changeover_days['product']) and \
-               set(self.product_labels) == set(dsp_changeover_days['product']), \
+        assert len(self.product_labels) == len(dsp_changeover_days['product']) and set(self.product_labels) == set(dsp_changeover_days['product']), \
                "Product labels from 'batch_demand' and 'dsp_changeover_days' do not match."
 
         usp_changeover_days_product_columns = usp_changeover_days.columns.values.tolist()
         usp_changeover_days_product_columns.remove('product')
 
-        assert len(self.product_labels) == len(usp_changeover_days_product_columns) and \
-               set(self.product_labels) == set(usp_changeover_days_product_columns), \
+        assert len(self.product_labels) == len(usp_changeover_days_product_columns) and set(self.product_labels) == set(usp_changeover_days_product_columns), \
                "Product labels in 'product' column do not match with the actual product columns in 'usp_changeover_days_product_columns'."
 
         dsp_changeover_days_product_columns = dsp_changeover_days.columns.values.tolist()
         dsp_changeover_days_product_columns.remove('product')
 
-        assert len(self.product_labels) == len(dsp_changeover_days_product_columns) and \
-               set(self.product_labels) == set(dsp_changeover_days_product_columns), \
+        assert len(self.product_labels) == len(dsp_changeover_days_product_columns) and set(self.product_labels) == set(dsp_changeover_days_product_columns), \
                "Product labels in 'product' column do not match with the actual product columns in 'dsp_changeover_days_product_columns'."
 
 
     def __count_days(self, start_date: str, due_dates: list):
         self.start_date = start_date
         self.due_dates = due_dates
+
         start_date = pd.to_datetime(start_date)
         due_dates = pd.to_datetime(due_dates)
         days_per_period = [(due_dates[0] - start_date).days]
+
         for i in range(1, len(due_dates), 1):
             days_per_period.append((due_dates[i] - due_dates[i - 1]).days)
-        return days_per_period
+
+        return np.array(days_per_period)
 
     def __run_single_objective_ga(self):
         cdef:
@@ -1113,7 +1040,7 @@ cdef class DetSingleSiteMultiSuite:
             vector[SingleObjectiveChromosome[SingleSiteMultiSuiteGene]] solutions 
             
             SingleObjectiveGA[SingleObjectiveChromosome[SingleSiteMultiSuiteGene], SingleSiteMultiSuiteModel] ga = \
-                SingleObjectiveGA[SingleObjectiveChromosome[SingleSiteMultiSuiteGene], SingleSiteMultiSuiteModel](
+            SingleObjectiveGA[SingleObjectiveChromosome[SingleSiteMultiSuiteGene], SingleSiteMultiSuiteModel](
                 self.single_site_multi_suite,
                 self.random_state,
                 self.num_threads   
@@ -1131,7 +1058,7 @@ cdef class DetSingleSiteMultiSuite:
                 self.starting_length,
                 self.p_xo,
                 self.p_gene_swap,
-                len(self.product_labels),
+                self.num_products,
                 self.num_usp_suites,
                 self.p_product_mut,
                 self.p_usp_suite_mut,
@@ -1161,14 +1088,10 @@ cdef class DetSingleSiteMultiSuite:
         if self.verbose:
             pbar.set_description('Collecting schedules')
 
-        self.schedules = []
         top_solution = ga.Top(solutions)
-        solutions.resize(1)
-        solutions[0] = top_solution
-        for solution in solutions:
-            schedule = SingleSiteMultiSuiteSchedule()
-            self.single_site_multi_suite.CreateSchedule(solution, schedule)
-            self.schedules.append(self.__make_pyschedule(schedule))
+        schedule = SingleSiteMultiSuiteSchedule()
+        self.single_site_multi_suite.CreateSchedule(top_solution, schedule)
+        self.schedules = [self.__make_pyschedule(schedule)]
 
         if self.verbose: 
             pbar.set_description('Done')
@@ -1181,7 +1104,7 @@ cdef class DetSingleSiteMultiSuite:
             vector[NSGAChromosome[SingleSiteMultiSuiteGene]] solutions, top_front
             
             NSGAII[NSGAChromosome[SingleSiteMultiSuiteGene], SingleSiteMultiSuiteModel] nsgaii = \
-                NSGAII[NSGAChromosome[SingleSiteMultiSuiteGene], SingleSiteMultiSuiteModel](
+            NSGAII[NSGAChromosome[SingleSiteMultiSuiteGene], SingleSiteMultiSuiteModel](
                 self.single_site_multi_suite,
                 self.random_state,
                 self.num_threads   
@@ -1199,7 +1122,7 @@ cdef class DetSingleSiteMultiSuite:
                 self.starting_length,
                 self.p_xo,
                 self.p_gene_swap,
-                len(self.product_labels),
+                self.num_products,
                 self.num_usp_suites,
                 self.p_product_mut,
                 self.p_usp_suite_mut,
@@ -1246,7 +1169,6 @@ cdef class DetSingleSiteMultiSuite:
             pbar.close()
 
     cdef __make_pyschedule(self, SingleSiteMultiSuiteSchedule &schedule):
-
         def get_date_of(delta):
             return pd.Timedelta('%d days' % delta) + pd.to_datetime(self.start_date).date()
 
@@ -1255,7 +1177,6 @@ cdef class DetSingleSiteMultiSuite:
 
         for suite in schedule.suites: 
             for campaign in suite:
-
                 campaigns_table.append(OrderedDict([
                     ('Product', self.product_labels[campaign.product_num - 1]),
                     ('Suite', 'USP%d' % campaign.suite_num if campaign.suite_num <= self.num_usp_suites else 'DSP%d' % (campaign.suite_num - self.num_usp_suites)),
@@ -1265,7 +1186,6 @@ cdef class DetSingleSiteMultiSuite:
                 ])) 
 
                 for batch in campaign.batches:
-
                     batches_table.append(OrderedDict([
                         ('Product', self.product_labels[batch.product_num - 1]),
                         ('Suite', 'USP%d' % campaign.suite_num if campaign.suite_num <= self.num_usp_suites else 'DSP%d' % (campaign.suite_num - self.num_usp_suites)),
@@ -1274,44 +1194,48 @@ cdef class DetSingleSiteMultiSuite:
                         ('Expires on', get_date_of(batch.expires_at)),
                     ]))
 
-        batch_inventory, batch_backlog, batch_supply, batch_waste = [], [], [], []
+        batch_inventory = []
+        batch_backlog = []
+        batch_supply = []
+        batch_waste = []
 
         for i, due_date in enumerate(self.due_dates):
             batch_inventory.append({
                 product_label: schedule.batch_inventory[j][i] 
                 for j, product_label in enumerate(self.product_labels)
             })
-            batch_inventory[-1].update({'date': due_date})
 
             batch_backlog.append({
                 product_label: schedule.batch_backlog[j][i] 
                 for j, product_label in enumerate(self.product_labels)
             })
-            batch_backlog[-1].update({'date': due_date})
 
             batch_supply.append({
                 product_label: schedule.batch_supply[j][i] 
                 for j, product_label in enumerate(self.product_labels)
             })
-            batch_supply[-1].update({'date': due_date})
 
             batch_waste.append({
                 product_label: schedule.batch_waste[j][i] 
                 for j, product_label in enumerate(self.product_labels)
             })
+
+            batch_inventory[-1].update({'date': due_date})
+            batch_backlog[-1].update({'date': due_date})
+            batch_supply[-1].update({'date': due_date})
             batch_waste[-1].update({'date': due_date})
 
         return PySingleSiteMultiSuiteSchedule(
-            {
+            objectives={
                 obj: schedule.objectives[self.objectives[obj]] 
                 for obj in self.AVAILABLE_OBJECTIVES
             }, 
-            campaigns_table,
-            batches_table,
-            batch_inventory,
-            batch_backlog,
-            batch_supply,
-            batch_waste
+            campaigns_table=campaigns_table,
+            batches_table=batches_table,
+            batch_inventory=batch_inventory,
+            batch_backlog=batch_backlog,
+            batch_supply=batch_supply,
+            batch_waste=batch_waste
         )
 
     @property
@@ -1320,60 +1244,4 @@ cdef class DetSingleSiteMultiSuite:
 
     @property
     def history(self):
-        return self.history
-
-    def score(self, schedules: list, ref_point: dict=None, ideal_point: dict=None):
-        '''
-            When the number of objectives >= 2, estimates the hypervolume 
-            of the top non-dominated front, otherwise - returns the max 
-            objective function value of 'num_runs'.
-
-            Utilised 'hypervolume' benchmark utility from 'deap - Distributed 
-            Evolutionary Algorithms in Python' (https://github.com/DEAP/deap).
-
-            INPUT:
-
-                schedules: list
-                    A list of PySingleSiteMultiSuiteSchedule objects obtain from DetSingleSiteMultiSuite.schedules 
-                    once the model is fit. 
-
-                ref_point: dict, optional, default None
-                    A dictionary of objective name and value pairs. It is used
-                    as a reference point for hypervolume estimation. If 'ref_point'
-                    is None then, the worst value for each objective +1 is used.
-
-                    For example:
-
-                    {
-                        'total_kg_inventory_deficit': 2007.7,
-                        'total_kg_throughput': 106.9
-                    }
-
-                ideal_point: dict, optional, default None
-                    A dictionary of objective name and value pairs. If 'ideal_point'
-                    is not None, then it is used to normalise the hypervolume in
-                    range 0.0 - 1.0. 'ideal_point' is ignored if the number of 
-                    objectives is 1. 
-        '''
-        assert type(schedules) is list and len(schedules) > 0
-
-        if len(self.objectives_coefficients_list) == 1:
-            return schedules[0].objectives[self.objectives_coefficients_list[0][0]]
-
-        points = np.array([
-            [schedule.objectives[obj].values[0] * coef * -1 for (obj, coef) in self.objectives_coefficients_list]
-            for schedule in schedules
-        ])
-
-        if ref_point is not None:
-            ref_point = [ref_point[obj] * coef * -1 for (obj, coef) in self.objectives_coefficients_list]
-        else:
-            ref_point = (np.max(points, axis=0) + 1).tolist()
-
-        hv = hypervolume(points, ref_point)
-
-        if ideal_point is not None:
-            ideal_point = np.array([[ideal_point[obj] * coef * -1 for (obj, coef) in self.objectives_coefficients_list]])
-            hv /= hypervolume(ideal_point, ref_point)
-
-        return hv        
+        return self.history     

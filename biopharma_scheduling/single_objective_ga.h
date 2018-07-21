@@ -131,7 +131,6 @@ namespace algorithms
 		// Returns top parent individual.
 		Chromosome Top()
 		{
-			// No need to sort parents because of the merge in Replace().
 			return parents[0];
 		}
 

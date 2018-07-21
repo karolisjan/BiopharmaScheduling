@@ -1,8 +1,8 @@
 README.md
 setup.py
 biopharma_scheduling/__init__.py
-biopharma_scheduling/pyhv.py
 biopharma_scheduling/pyschedule.py
+biopharma_scheduling/utils.py
 biopharma_scheduling.egg-info/PKG-INFO
 biopharma_scheduling.egg-info/SOURCES.txt
 biopharma_scheduling.egg-info/dependency_links.txt
