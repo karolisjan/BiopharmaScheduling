@@ -1,0 +1,4 @@
+product,usp_days,dsp_days,shelf_life_days,batch_storage_limits,sell_price_per_batch,usp_production_cost_per_batch,dsp_production_cost_per_batch,storage_cost_per_batch,waste_cost_per_batch,backlog_penalty_per_batch,usp_changeover_cost,dsp_changeover_cost
+p1,20,10,180,40,20,2,2,1,5,20,1,1
+p2,22.2,10,180,40,20,2,2,1,5,20,1,1
+p3,12.5,10,180,40,20,2,2,1,5,20,1,1

@@ -3,10 +3,9 @@ FROM biopharma-scheduling/base
 # Copy the codebase
 COPY . /BiopharmaScheduling 
 
-# Setup and install biopharma-scheduling
-RUN python /BiopharmaScheduling/setup.py && pip install /BiopharmaScheduling/dist/*linux*whl
-
-# Install additional libs for the examples
+# Install additional libs 
 RUN pip install -r requirements.txt
+
+RUN export CC=g++-8 && export CXX=g++-8 && python /BiopharmaScheduling/setup.py && pip install /BiopharmaScheduling/dist/*cp36*linux*
 
 EXPOSE 8888

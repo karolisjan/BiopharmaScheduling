@@ -1,0 +1,48 @@
+# Python CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-python/ for more details
+#
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.6
+      
+    working_directory: ~/BiopharmaScheduling
+
+    steps:
+      - checkout
+      - setup_remote_docker
+
+      - run: 
+          name: merge to master
+          command: |
+            git fetch
+            git config --global user.email "circle@aiden.ai"
+            git config --global user.name "Circle CI"
+            git checkout origin/master
+            git merge --no-edit $CIRCLE_BRANCH
+      
+      - run:
+          name: build base 
+          command: |
+            docker build -t biopharma-scheduling/base -f ./docker/base.docker .
+        
+      - run:
+          name: build lab
+          command: |
+            docker build -t biopharma-scheduling/lab -f ./docker/lab.docker .
+
+      - run:
+          name: run C++ tests
+          command: |
+            docker run -it biopharma-scheduling/lab bash -c "g++-8 biopharma_scheduling/tests.cpp -std=c++14 -fopenmp -m64 -O3 -o tests.out && ./tests.out"
+    
+      - run:
+          name: run Python tests
+          command: |
+            docker run -it biopharma-scheduling/lab bash -c "cd tests && python tests.py"
+
+      - store_artifacts:
+          path: test-reports
+          destination: test-reports

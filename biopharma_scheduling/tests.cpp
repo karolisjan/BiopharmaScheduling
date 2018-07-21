@@ -941,3 +941,172 @@ SCENARIO("deterministic::SingleSiteMultiSuiteModel::CreateSchedule test")
 		}
 	}
 }
+
+SCENARIO("stochastic::SingleSiteSimpleModel::CreateSchedule test with deterministic input and without additional storage limits and shelf-life constraints.") 
+{
+	int mc_seed = 7;
+	int num_mc_sims = 100;
+
+	std::unordered_map<stochastic::OBJECTIVES, int> objectives;
+	objectives.emplace(stochastic::TOTAL_KG_INVENTORY_DEFICIT_MEAN, -1);
+	objectives.emplace(stochastic::TOTAL_KG_THROUGHPUT_MEAN, 1);
+
+	std::unordered_map<stochastic::OBJECTIVES, std::pair<int, double>> constraints;
+	constraints.emplace(stochastic::TOTAL_KG_BACKLOG_MEAN, std::make_pair(-1, 0));
+
+	// Kg demand
+	std::vector<std::vector<double>> kg_demand_min = {
+		{ 0,0,3.1,0,0,3.1,0,3.1,3.1,3.1,0,6.2,6.2,3.1,6.2,0,3.1,9.3,0,6.2,6.2,0,6.2,9.3,0,9.3,6.2,3.1,6.2,3.1,0,9.3,6.2,9.3,6.2,0 },
+		{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6.2,0,0,0,0,0,6.2,0,0,0,0,0,0,6.2 },
+		{ 0,0,0,0,0,0,4.9,4.9,0,0,0,9.8,4.9,0,4.9,0,0,4.9,9.8,0,0,0,4.9,4.9,0,9.8,0,0,4.9,9.8,9.8,0,4.9,9.8,4.9,0 },
+		{ 0,5.5,5.5,0,5.5,5.5,5.5,5.5,5.5,0,11,5.5,0,5.5,5.5,11,5.5,5.5,0,5.5,5.5,5.5,11,5.5,0,11,0,11,5.5,5.5,0,11,11,0,5.5,5.5 },
+	};
+
+	std::vector<std::vector<double>> kg_demand_mode = {
+		{ 0,0,3.1,0,0,3.1,0,3.1,3.1,3.1,0,6.2,6.2,3.1,6.2,0,3.1,9.3,0,6.2,6.2,0,6.2,9.3,0,9.3,6.2,3.1,6.2,3.1,0,9.3,6.2,9.3,6.2,0 },
+	    { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6.2,0,0,0,0,0,6.2,0,0,0,0,0,0,6.2 },
+		{ 0,0,0,0,0,0,4.9,4.9,0,0,0,9.8,4.9,0,4.9,0,0,4.9,9.8,0,0,0,4.9,4.9,0,9.8,0,0,4.9,9.8,9.8,0,4.9,9.8,4.9,0 },
+		{ 0,5.5,5.5,0,5.5,5.5,5.5,5.5,5.5,0,11,5.5,0,5.5,5.5,11,5.5,5.5,0,5.5,5.5,5.5,11,5.5,0,11,0,11,5.5,5.5,0,11,11,0,5.5,5.5 },
+	};
+
+	std::vector<std::vector<double>> kg_demand_max = {
+		{ 0,0,3.1,0,0,3.1,0,3.1,3.1,3.1,0,6.2,6.2,3.1,6.2,0,3.1,9.3,0,6.2,6.2,0,6.2,9.3,0,9.3,6.2,3.1,6.2,3.1,0,9.3,6.2,9.3,6.2,0 },
+		{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6.2,0,0,0,0,0,6.2,0,0,0,0,0,0,6.2 },
+		{ 0,0,0,0,0,0,4.9,4.9,0,0,0,9.8,4.9,0,4.9,0,0,4.9,9.8,0,0,0,4.9,4.9,0,9.8,0,0,4.9,9.8,9.8,0,4.9,9.8,4.9,0 },
+		{ 0,5.5,5.5,0,5.5,5.5,5.5,5.5,5.5,0,11,5.5,0,5.5,5.5,11,5.5,5.5,0,5.5,5.5,5.5,11,5.5,0,11,0,11,5.5,5.5,0,11,11,0,5.5,5.5 },
+	};
+
+
+	// 6-month kg inventoy target
+	size_t num_months = 6, p = 0, t;
+	std::vector< std::vector<double> > kg_inventory_target(kg_demand_mode.size());
+	for (; p < kg_demand_mode.size(); ++p) {		
+		for (t = 0; t < kg_demand_mode[p].size() - num_months; ++t) {
+			kg_inventory_target[p].push_back(std::accumulate(kg_demand_mode[p].begin() + t, kg_demand_mode[p].begin() + t + num_months, 0.0));
+		}
+		for (; t < kg_demand_mode[p].size(); ++t) {
+			kg_inventory_target[p].push_back(kg_inventory_target[p].back());
+		}
+	}
+
+	std::vector<int> days_per_period = std::vector<int>{ 
+		31,31,28,31,30,31,30,31,31,30,31,30,31,31,28,31,30,31,30,31,31,30,31,30,31,31,29,31,30,31,30,31,31,30,31,30
+	};
+
+	std::vector<double> kg_yield_per_batch_min = { 3.1, 6.2, 4.9, 5.5 };
+	std::vector<double> kg_yield_per_batch_mode = { 3.1, 6.2, 4.9, 5.5 };
+	std::vector<double> kg_yield_per_batch_max = { 3.1, 6.2, 4.9, 5.5 };
+
+	std::vector<double> kg_storage_limits = { 3000, 3000, 3000, 3000 }; // set high to ignore
+	std::vector<double> kg_opening_stock = { 18.6, 0, 19.6, 110 };
+
+	std::vector<double> inventory_penalty_per_kg = { 0, 0, 0, 0 };
+	std::vector<double> backlog_penalty_per_kg = { 0, 0, 0, 0 };
+	std::vector<double> production_cost_per_kg = { 0, 0, 0, 0 };
+	std::vector<double> storage_cost_per_kg = { 0, 0, 0, 0 };
+	std::vector<double> waste_cost_per_kg = { 0, 0, 0, 0 };
+	std::vector<double> sell_price_per_kg = { 0, 0, 0, 0 };
+
+	std::vector<int> inoculation_days = { 20, 15, 20, 26 };
+	std::vector<int> seed_days = { 11, 7, 11, 9 };
+	std::vector<int> production_days = { 14, 14, 14, 14 };
+	std::vector<int> usp_days = { 45, 36, 45, 49 };
+	std::vector<int> dsp_days = { 7, 11, 7, 7 };
+	std::vector<int> shelf_life_days = { 3000, 3000, 3000, 3000 }; // set high to ignore
+	std::vector<int> approval_days = { 90, 90, 90, 90 };
+	std::vector<int> min_batches_per_campaign = { 1, 1, 1, 1 };
+	std::vector<int> max_batches_per_campaign = { 1000, 1000, 1000, 1000 };
+	std::vector<int> batches_multiples_of_per_campaign = { 1, 1, 1, 1 };
+	std::vector<std::vector<int>> changeover_days = {
+		{ 0,  20, 20, 20 },
+		{ 20,  0, 20, 20 },
+		{ 20, 20,  0, 20 },
+		{ 20, 20, 20,  0 }
+	};
+
+
+	stochastic::SingleSiteSimpleInputData input_data(
+		mc_seed,
+		num_mc_sims,
+
+		objectives,
+		days_per_period,
+
+		kg_demand_min,
+		kg_demand_mode,
+		kg_demand_max,
+
+		kg_yield_per_batch_min,
+		kg_yield_per_batch_mode,
+		kg_yield_per_batch_max,
+
+		kg_opening_stock,
+		kg_storage_limits,
+
+		inventory_penalty_per_kg,
+		backlog_penalty_per_kg,
+		production_cost_per_kg,
+		storage_cost_per_kg,
+		waste_cost_per_kg,
+		sell_price_per_kg,		
+
+		inoculation_days,
+		seed_days,
+		production_days,
+		usp_days,
+		dsp_days,
+		approval_days,
+		shelf_life_days,
+		min_batches_per_campaign,
+		max_batches_per_campaign,
+		batches_multiples_of_per_campaign,
+		changeover_days,
+
+		&kg_inventory_target,
+		&constraints
+	);
+
+	stochastic::SingleSiteSimpleModel single_site_simple_model(input_data);
+	
+	GIVEN("Known solution.")
+	{
+		WHEN("The solution has 8 genes and is known to correspond to a schedule with 8 different " +
+		"campaigns with a total throughput of 570 kg, inventory deficit of 34 kg, and 0 kg backlog.")
+		{
+			types::NSGAChromosome<types::SingleSiteSimpleGene> known_solution;
+
+			known_solution.genes.resize(7);
+
+			known_solution.genes[0].product_num = 3;
+			known_solution.genes[0].num_batches = 10;
+			known_solution.genes[1].product_num = 1;
+			known_solution.genes[1].num_batches = 21;
+			known_solution.genes[2].product_num = 2;
+			known_solution.genes[2].num_batches = 3;
+			known_solution.genes[3].product_num = 4;
+			known_solution.genes[3].num_batches = 20;
+			known_solution.genes[4].product_num = 1;
+			known_solution.genes[4].num_batches = 16;
+			known_solution.genes[5].product_num = 3;
+			known_solution.genes[5].num_batches = 16;
+			known_solution.genes[6].product_num = 1;
+			known_solution.genes[6].num_batches = 45;
+
+			types::SingleSiteSimpleSchedule schedule;
+			single_site_simple_model.CreateSchedule(known_solution, schedule);
+
+			THEN("CreateSchedule creates a schedule with 8 different campaigns and the correct total kg throughput, inventory deficit, and backlog.")
+			{
+				for (size_t i = 0; i < known_solution.genes.size(); ++i) {
+					REQUIRE( schedule.campaigns[i].product_num == known_solution.genes[i].product_num );
+					REQUIRE( schedule.campaigns[i].num_batches == known_solution.genes[i].num_batches );
+				}
+
+				REQUIRE( schedule.campaigns.size() == known_solution.genes.size() );
+				REQUIRE( schedule.objectives[stochastic::TOTAL_KG_THROUGHPUT_MEAN] == utils::Approx(510.2) );
+				REQUIRE( schedule.objectives[stochastic::TOTAL_KG_INVENTORY_DEFICIT_MEAN] == utils::Approx(14.2) );
+				REQUIRE( schedule.objectives[stochastic::TOTAL_KG_BACKLOG_MEAN] == utils::Approx(0.0) );
+			}
+		}		
+	}
+}

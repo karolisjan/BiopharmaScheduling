@@ -35,10 +35,12 @@ if __name__ == "__main__":
 
         ext_modules = cythonize([
             Extension(
-                '*',
-                [
-                    'biopharma_scheduling/deterministic/single_site.pyx'
-                ],
+                '*', [ 'biopharma_scheduling/single_site/deterministic.pyx' ],
+                language='c++',
+                extra_compile_args=extra_compile_args
+            ),
+            Extension(
+                '*', [ 'biopharma_scheduling/single_site/stochastic.pyx' ],
                 language='c++',
                 extra_compile_args=extra_compile_args
             )
@@ -50,7 +52,7 @@ if __name__ == "__main__":
         name='biopharma-scheduling',
         packages=[
             'biopharma_scheduling', 
-            'biopharma_scheduling/deterministic'
+            'biopharma_scheduling/single_site'
         ],
         version='1.0',
         description='''
@@ -58,7 +60,7 @@ if __name__ == "__main__":
             ''',
         author='Karolis Jankauskas',
         author_email='karolis.jankauskas@gmail.com',
-        url='https://github.com/karolisjan/ContinuousTimeCapacityPlanning',
+        url='https://github.com/karolisjan/Project',
         keywords = ['genetic algorithmn', 'biopharmaceutical', 'capacity planning', 'scheduling'], 
         classifiers=[
             'Programming Language :: Python',

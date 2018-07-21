@@ -19,28 +19,8 @@ namespace stochastic
 {
     enum OBJECTIVES 
     {
-        TOTAL_MEAN_KG_INVENTORY_DEFICIT,
-        TOTAL_MEAN_KG_THROUGHPUT,
-        TOTAL_MEAN_KG_BACKLOG,
-        TOTAL_MEAN_KG_SUPPLY,
-        TOTAL_MEAN_KG_WASTE,
-
-		TOTAL_KG_INVENTORY_DEFICIT_STD,
-		TOTAL_KG_THROUGHPUT_STD,
-		TOTAL_KG_BACKLOG_STD,
-		TOTAL_KG_SUPPLY_STD,
-		TOTAL_KG_WASTE_STD,
-
-		TOTAL_INVENTORY_PENALTY_STD,
-		TOTAL_BACKLOG_PENALTY_STD,
-		TOTAL_PRODUCTION_COST_STD,
-		TOTAL_STORAGE_COST_STD,
-		TOTAL_WASTE_COST_STD,
-		TOTAL_REVENUE_STD,
-		TOTAL_PROFIT_STD,
-		TOTAL_COST_STD,
-
-		TOTAL_KG_INVENTORY_DEFICIT_MEAN,
+		MEAN_OBJECTIVES_START,
+		TOTAL_KG_INVENTORY_DEFICIT_MEAN = MEAN_OBJECTIVES_START,
 		TOTAL_KG_THROUGHPUT_MEAN,
 		TOTAL_KG_BACKLOG_MEAN,
 		TOTAL_KG_SUPPLY_MEAN,
@@ -54,10 +34,11 @@ namespace stochastic
 		TOTAL_REVENUE_MEAN,
 		TOTAL_PROFIT_MEAN,
 		TOTAL_COST_MEAN,
+		MEAN_OBJECTIVES_END = TOTAL_COST_MEAN + 1,
 
 		TOTAL_CHANGEOVER_COST,
 
-        NUM_OBJECTIVES = TOTAL_COST_MEAN + 1
+        NUM_OBJECTIVES = TOTAL_CHANGEOVER_COST + 1
     };
 
     struct SingleSiteSimpleInputData
@@ -69,7 +50,6 @@ namespace stochastic
 			int num_mc_sims, 
 			
 			std::unordered_map<OBJECTIVES, int> objectives,
-
 			std::vector<int> days_per_period,
 
 			std::vector< std::vector<double>> kg_demand_min,
@@ -80,8 +60,8 @@ namespace stochastic
 			std::vector<double> kg_yield_per_batch_mode,
 			std::vector<double> kg_yield_per_batch_max,
 
-			std::vector<double> kg_storage_limits,
 			std::vector<double> kg_opening_stock,
+			std::vector<double> kg_storage_limits,
 			
 			std::vector<double> inventory_penalty_per_kg,
 			std::vector<double> backlog_penalty_per_kg,
@@ -164,7 +144,13 @@ namespace stochastic
 				}
 			}
 
-			rng.init();
+			if (mc_seed != -1) {
+				std::vector<int> seed = { mc_seed };
+				rng.init(seed);
+			}
+			else {
+				rng.init();
+			}
 		}
 
 		std::vector<std::pair<OBJECTIVES, int>> objectives;
