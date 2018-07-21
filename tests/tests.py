@@ -229,8 +229,8 @@ class DetSingleSiteSimpleTest(unittest.TestCase):
             
             # Solution X
             solution_x = min(model.schedules, key=lambda s: s.objectives.total_kg_throughput[0])
-            self.assertAlmostEqual(solution_x.objectives.total_kg_throughput[0], 586.1)
-            self.assertAlmostEqual(solution_x.objectives.total_kg_inventory_deficit[0], 242.7)
+            self.assertAlmostEqual(solution_x.objectives.total_kg_throughput[0], 574.4)
+            self.assertAlmostEqual(solution_x.objectives.total_kg_inventory_deficit[0], 194.6)
             self.assertAlmostEqual(solution_x.objectives.total_kg_backlog[0], 0.0)
             self.assertAlmostEqual(solution_x.objectives.total_kg_waste[0], 0.0)
 
