@@ -18,7 +18,7 @@ jobs:
           name: merge to master
           command: |
             git fetch
-            git config --global user.email "circle@aiden.ai"
+            git config --global user.email "circle@kjankauskas.com"
             git config --global user.name "Circle CI"
             git checkout origin/master
             git merge --no-edit $CIRCLE_BRANCH
