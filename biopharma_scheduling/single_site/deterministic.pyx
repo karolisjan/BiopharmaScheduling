@@ -1100,8 +1100,9 @@ cdef class DetSingleSiteMultiSuite:
     def __run_nsgaii(self):
         cdef:
             SingleSiteMultiSuiteSchedule schedule
+            vector[NSGAChromosome[SingleSiteMultiSuiteGene]] solutions
+            vector[NSGAChromosome[SingleSiteMultiSuiteGene]] top_front
             vector[vector[NSGAChromosome[SingleSiteMultiSuiteGene]]] history
-            vector[NSGAChromosome[SingleSiteMultiSuiteGene]] solutions, top_front
             
             NSGAII[NSGAChromosome[SingleSiteMultiSuiteGene], SingleSiteMultiSuiteModel] nsgaii = \
             NSGAII[NSGAChromosome[SingleSiteMultiSuiteGene], SingleSiteMultiSuiteModel](

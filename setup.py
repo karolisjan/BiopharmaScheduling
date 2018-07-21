@@ -44,7 +44,13 @@ if __name__ == "__main__":
                 language='c++',
                 extra_compile_args=extra_compile_args
             )
-        ])
+        ], compiler_directives={
+            'overflowcheck': True,
+            'cdivision_warnings': True,
+            'nonecheck': True,
+            'optimize.use_switch': False,
+            'optimize.unpack_method_calls': False
+        })
     except ImportError as e:
         raise ImportError("Cython v0.26 is required. Install it with `pip install Cython==0.26`.")
 

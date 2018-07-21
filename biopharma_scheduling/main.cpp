@@ -530,11 +530,17 @@ void Det_SingleSiteSimple_MultiObjective_Test()
 	num_gens = 100;
 	popsize = 100;
 
-	p_xo = 0.130878;
-	p_product_mut = 0.017718;
-	p_plus_batch_mut = 0.707202;
-	p_minus_batch_mut = 0.834735;
-	p_gene_swap = 0.531073;
+	// p_xo = 0.130878;
+	// p_product_mut = 0.017718;
+	// p_plus_batch_mut = 0.707202;
+	// p_minus_batch_mut = 0.834735;
+	// p_gene_swap = 0.531073;
+
+	p_xo = 0.223077;
+	p_product_mut = 0.010324;
+	p_plus_batch_mut = 0.800127;
+	p_minus_batch_mut = 0.787252;
+	p_gene_swap = 0.322800;
 
 	std::unordered_map<deterministic::OBJECTIVES, int> objectives;
 	objectives.emplace(deterministic::TOTAL_KG_INVENTORY_DEFICIT, -1);
