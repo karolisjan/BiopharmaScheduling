@@ -678,25 +678,25 @@ void Det_SingleSiteSimple_MultiObjective_Test()
 		deterministic_fitness.CreateSchedule(top_front[0], schedule_x);
 		deterministic_fitness.CreateSchedule(top_front.back(), schedule_y);
 
-		std::cout << "\n######################## Run: " << run + 1 << ", #solutions: " << top_front.size() << ", elapsed time: " << elapsed_time << " ms ########################\n" << std::endl;
+		// std::cout << "\n######################## Run: " << run + 1 << ", #solutions: " << top_front.size() << ", elapsed time: " << elapsed_time << " ms ########################\n" << std::endl;
 
-		printf(
-			"Solution X:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f (%.2f)\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
-			top_front[0].objectives[0], schedule_x.objectives[deterministic::TOTAL_KG_THROUGHPUT],
-			top_front[0].objectives[1], schedule_x.objectives[deterministic::TOTAL_KG_INVENTORY_DEFICIT],
-			schedule_x.objectives[deterministic::TOTAL_KG_BACKLOG],
-			schedule_x.objectives[deterministic::TOTAL_KG_WASTE]
-		);
+		// printf(
+		// 	"Solution X:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f (%.2f)\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
+		// 	top_front[0].objectives[0], schedule_x.objectives[deterministic::TOTAL_KG_THROUGHPUT],
+		// 	top_front[0].objectives[1], schedule_x.objectives[deterministic::TOTAL_KG_INVENTORY_DEFICIT],
+		// 	schedule_x.objectives[deterministic::TOTAL_KG_BACKLOG],
+		// 	schedule_x.objectives[deterministic::TOTAL_KG_WASTE]
+		// );
 
-		printf(
-			"Solution Y:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f (%.2f)\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
-			top_front.back().objectives[0], schedule_y.objectives[deterministic::TOTAL_KG_THROUGHPUT],
-			top_front.back().objectives[1], schedule_y.objectives[deterministic::TOTAL_KG_INVENTORY_DEFICIT],
-			schedule_y.objectives[deterministic::TOTAL_KG_BACKLOG],
-			schedule_y.objectives[deterministic::TOTAL_KG_WASTE]
-		);
+		// printf(
+		// 	"Solution Y:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f (%.2f)\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
+		// 	top_front.back().objectives[0], schedule_y.objectives[deterministic::TOTAL_KG_THROUGHPUT],
+		// 	top_front.back().objectives[1], schedule_y.objectives[deterministic::TOTAL_KG_INVENTORY_DEFICIT],
+		// 	schedule_y.objectives[deterministic::TOTAL_KG_BACKLOG],
+		// 	schedule_y.objectives[deterministic::TOTAL_KG_WASTE]
+		// );
 
-		std::cout << std::flush;
+		// std::cout << std::flush;
 	}
 
 	if (solutions.size()) {

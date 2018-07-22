@@ -172,16 +172,20 @@ namespace algorithms
 
 					double min = I[0].objectives[m], max = I.back().objectives[m], abs_max_min = std::fabs(max - min);
 
-					if (abs_max_min != utils::Approx(0.0)) {
-						for (int k = 1; k != I.size() - 1; ++k) {
-							I[k].d = (std::fabs(I[k + 1].objectives[m] - I[k - 1].objectives[m]) / abs_max_min);
-						}
+					for (int k = 1; k != I.size() - 1; ++k) {
+						I[k].d = (std::fabs(I[k + 1].objectives[m] - I[k - 1].objectives[m]) / abs_max_min);
 					}
-					else {
-						for (int k = 1; k != I.size() - 1; ++k) {
-							I[k].d = std::numeric_limits<int>::infinity();
-						}					
-					}
+
+					// if (abs_max_min != utils::Approx(0.0)) {
+					// 	for (int k = 1; k != I.size() - 1; ++k) {
+					// 		I[k].d = (std::fabs(I[k + 1].objectives[m] - I[k - 1].objectives[m]) / abs_max_min);
+					// 	}
+					// }
+					// else {
+					// 	for (int k = 1; k != I.size() - 1; ++k) {
+					// 		I[k].d = std::numeric_limits<int>::infinity();
+					// 	}					
+					// }
 				}
 			}
 		}
@@ -271,7 +275,7 @@ namespace algorithms
 				top_front.begin(), 
 				top_front.end(), 
 				[](const Chromosome &i1, const Chromosome &i2) {
-					for (size_t m = 0; m < i1.objectives.size(); ++m) {
+					for (int m = 0; m < i1.objectives.size(); ++m) {
 						if (i1.objectives[m] != utils::Approx(i2.objectives[m])) {
 							return false;
 						}

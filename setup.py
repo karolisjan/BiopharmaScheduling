@@ -16,8 +16,7 @@ class BinaryDistribution(Distribution):
 if __name__ == "__main__":
 
     if os.name == 'posix':
-        os.environ['CFLAGS'] = '-std=c++14 -fopenmp -m64 -O2'
-        os.environ['CPPFLAGS'] = os.environ['CFLAGS']
+        os.environ['CPPFLAGS'] = '-std=c++14 -fopenmp -m64'
         extra_compile_args = []
     else:
         extra_compile_args = [

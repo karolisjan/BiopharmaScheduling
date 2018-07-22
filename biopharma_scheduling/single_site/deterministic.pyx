@@ -361,7 +361,7 @@ cdef class DetSingleSiteSimple:
             days_per_period.astype(int),
 
             product_data.kg_opening_stock.fillna(0).values.astype(float),
-            product_data.kg_yield_per_batch.fillna(0).astype(float).values,
+            product_data.kg_yield_per_batch.fillna(0).values.astype(float),
             product_data.kg_storage_limits.fillna(0).values.astype(float),
 
             product_data.inventory_penalty_per_kg.fillna(0).values.astype(float),
@@ -547,8 +547,9 @@ cdef class DetSingleSiteSimple:
     def __run_nsgaii(self):
         cdef:
             SingleSiteSimpleSchedule schedule
+            vector[NSGAChromosome[SingleSiteSimpleGene]] top_front
+            vector[NSGAChromosome[SingleSiteSimpleGene]] solutions
             vector[vector[NSGAChromosome[SingleSiteSimpleGene]]] history
-            vector[NSGAChromosome[SingleSiteSimpleGene]] solutions, top_front
             
             NSGAII[NSGAChromosome[SingleSiteSimpleGene], SingleSiteSimpleModel] nsgaii = \
             NSGAII[NSGAChromosome[SingleSiteSimpleGene], SingleSiteSimpleModel](
