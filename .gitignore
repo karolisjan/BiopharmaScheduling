@@ -293,5 +293,5 @@ __pycache__/
 *plist
 *out
 *so
-sandbox*
 tmp*
+*dSYM
