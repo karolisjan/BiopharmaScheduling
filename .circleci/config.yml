@@ -34,10 +34,15 @@ jobs:
             docker build -t biopharma-scheduling/lab -f ./docker/lab.docker .
 
       - run:
-          name: run C++ tests
+          name: run C++ tests (undefined behaviour and memory leaks checks)
           command: |
-            docker run -it biopharma-scheduling/lab bash -c "g++-8 biopharma_scheduling/tests.cpp -std=c++14 -fopenmp -m64 -O2 -o tests.out && ./tests.out"
+            docker run -it --privileged biopharma-scheduling/lab bash -c "g++-8 -fsanitize=address,undefined -fno-sanitize-recover -fuse-ld=gold -DNDEBUG -g3 -std=c++14 -fopenmp -m64 biopharma_scheduling/tests.cpp -o tests.out && ./tests.out"
     
+      - run:
+          name: run C++ tests (-O2 optimisations check)
+          command: |
+            docker run -it biopharma-scheduling/lab bash -c "g++-8 -O2 -std=c++14 -fopenmp -m64 biopharma_scheduling/tests.cpp -o tests.out && ./tests.out"
+
       - run:
           name: run Python tests
           command: |

@@ -12,11 +12,10 @@ class BinaryDistribution(Distribution):
     def is_pure(self):
         return False
 
-
 if __name__ == "__main__":
 
     if os.name == 'posix':
-        os.environ['CPPFLAGS'] = '-std=c++14 -fopenmp -m64'
+        os.environ['CPPFLAGS'] = '-std=c++14 -fopenmp -m64 -O2'
         extra_compile_args = []
     else:
         extra_compile_args = [

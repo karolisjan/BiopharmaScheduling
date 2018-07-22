@@ -1,6 +1,7 @@
 #include <chrono>
 #include <stdio.h>
 #include <iostream>
+#include <climits>
 
 #include "nsgaii.h"
 #include "scheduling_models.h"
@@ -525,6 +526,7 @@ void Det_SingleSiteSimple_SingleObjective_Test()
 void Det_SingleSiteSimple_MultiObjective_Test()
 {
 	seed = 7;
+	num_threads = 1;
 
 	num_runs = 20;
 	num_gens = 100;
@@ -644,6 +646,8 @@ void Det_SingleSiteSimple_MultiObjective_Test()
 
 	std::vector<types::NSGAChromosome<types::SingleSiteSimpleGene>> solutions;
 
+	double mean_time = 0.0;
+
 	for (int run = 0; run < num_runs; ++run) {
 
 		auto start = std::chrono::steady_clock::now();
@@ -667,9 +671,8 @@ void Det_SingleSiteSimple_MultiObjective_Test()
 			nsgaii.Update();
 		}			
 
-		auto elapsed_time = std::chrono::duration_cast<
-			std::chrono::milliseconds
-		>(std::chrono::steady_clock::now() - start).count();
+		auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count();
+		mean_time += elapsed_time;
 
 		auto top_front = nsgaii.TopFront();
 		solutions.insert(solutions.end(), top_front.begin(), top_front.end());
@@ -678,7 +681,7 @@ void Det_SingleSiteSimple_MultiObjective_Test()
 		deterministic_fitness.CreateSchedule(top_front[0], schedule_x);
 		deterministic_fitness.CreateSchedule(top_front.back(), schedule_y);
 
-		// std::cout << "\n######################## Run: " << run + 1 << ", #solutions: " << top_front.size() << ", elapsed time: " << elapsed_time << " ms ########################\n" << std::endl;
+		// std::cout << "\n######################## Run: " << run + 1 << ", no. solutions: " << top_front.size() << ", elapsed time: " << elapsed_time << " ms ########################\n" << std::endl;
 
 		// printf(
 		// 	"Solution X:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f (%.2f)\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
@@ -705,7 +708,7 @@ void Det_SingleSiteSimple_MultiObjective_Test()
 		deterministic_fitness.CreateSchedule(solutions[0], schedule_x);
 		deterministic_fitness.CreateSchedule(solutions.back(), schedule_y);
 
-		std::cout << "\n######################## After " << num_runs << " num_runs, #best solutions: " << solutions.size() << " ########################\n" << std::endl;
+		std::cout << "\n######################## After " << num_runs << " num_runs, no. best solutions: " << solutions.size() << ", mean elapsed time: " << mean_time / num_runs << " ms ########################\n" << std::endl;
 
 		printf(
 			"Solution X:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f (%.2f)\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
@@ -823,7 +826,6 @@ void Stoch_SingleSiteSimple_Test()
 		{ 16, 10,  0, 20 },
 		{ 18, 10, 18,  0 }
 	};
-
 
 	stochastic::SingleSiteSimpleInputData input_data(
 		mc_seed,
@@ -971,7 +973,9 @@ int main()
 	// Det_SingleSiteSimple_SingleObjective_Test();	
 
 	printf("\nDeterministic SingleSiteSimple Multi-Objective GA test\n\n");
-	Det_SingleSiteSimple_MultiObjective_Test();	
+	for (int i = 0; i != 10; ++i) {
+		Det_SingleSiteSimple_MultiObjective_Test();	
+	}
 
 	// printf("\nStochastic SingleSiteSimple GA test\n\n");
 	// Stoch_SingleSiteSimple_Test();
