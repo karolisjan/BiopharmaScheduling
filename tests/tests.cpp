@@ -4,10 +4,10 @@
 
 #include <unordered_map>
 
-#include "gene.h"
-#include "nsgaii.h"
-#include "single_objective_ga.h"
-#include "scheduling_models.h"
+#include "../biopharma_scheduling/gene.h"
+#include "../biopharma_scheduling/nsgaii.h"
+#include "../biopharma_scheduling/single_objective_ga.h"
+#include "../biopharma_scheduling/scheduling_models.h"
 
 
 struct Chromosome
