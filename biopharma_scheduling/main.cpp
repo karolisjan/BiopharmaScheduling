@@ -79,8 +79,8 @@ void DisplaySchedule(types::SingleSiteMultiSuiteSchedule &schedule)
 }
 
  void Det_SingleSiteMultiSuite_BaseCaseTest()
- {
- 	std::unordered_map<deterministic::OBJECTIVES, int> objectives;
+{
+	std::unordered_map<deterministic::OBJECTIVES, int> objectives;
  	objectives.emplace(deterministic::TOTAL_PROFIT, 1);
 	
  	std::unordered_map<deterministic::OBJECTIVES, std::pair<int, double>> constraints;
@@ -210,140 +210,6 @@ void DisplaySchedule(types::SingleSiteMultiSuiteSchedule &schedule)
  			DisplaySchedule(schedule);
  		}
  	}
- }
-
- void Det_SingleSiteMultiSuite_IncreasedDemandTest()
- {
- 	std::unordered_map<deterministic::OBJECTIVES, int> objectives;
- 	objectives.emplace(deterministic::TOTAL_PROFIT, 1);
-	
- 	std::unordered_map<deterministic::OBJECTIVES, std::pair<int, double>> constraints;
- 	constraints.emplace(deterministic::TOTAL_KG_BACKLOG, std::make_pair(-1, 0));
-
- 	std::vector<std::vector<int>> demand =
- 	{
- 		{ 0, 0, 0, 6, 0, 9 },
- 		{ 0, 0, 6, 0, 0, 0 },
- 		{ 0, 8, 0, 0, 8, 0 }
- 	};
-
- 	std::vector<int> days_per_period = { 60, 60, 60, 60, 60, 60 };
-
-     int num_usp_suites = 2, num_dsp_suites = 2, num_products = demand.size();
-
- 	std::vector<double> sales_price = { 20, 20, 20 };
- 	std::vector<double> usp_production_cost = { 2, 2, 2 };
-    std::vector<double> dsp_production_cost = { 2, 2, 2 };
-	std::vector<double> waste_disposal_cost = { 1, 1, 1 };
-	std::vector<double> storage_cost = { 1, 1, 1 };
-	std::vector<double> backlog_penalty = { 20, 20, 20 };
-	std::vector<double> usp_changeover_cost = { 1, 1, 1 };
-    std::vector<double> dsp_changeover_cost = { 1, 1, 1 };
- 
-	std::vector<double> usp_days = { 20, 22, 12.5 };
-	std::vector<double> dsp_days = { 10, 10, 10 };
-
-	std::vector<std::vector<double>> usp_changeovers = {
-		{ 10, 10, 10 },
-		{ 10, 10, 10 },
-		{ 10, 10, 10 }
-	};
-
-	std::vector<std::vector<double>> dsp_changeovers = {
-		{ 10,   10,   10   },
-		{ 10,   10,   10   },
-		{ 12.5, 12.5, 12.5 }
-	};
-
-	std::vector<int> shelf_life = { 180, 180, 180 };
-	std::vector<int> storage_cap = { 40, 40, 40 };
-
-     deterministic::SingleSiteMultiSuiteInputData input_data(
- 		objectives, 
-
-        num_usp_suites,
-        num_dsp_suites,
-
-        demand,
-        days_per_period,
-
-        usp_days,
-        dsp_days,
-        
-        shelf_life,
-        storage_cap,
-
-        sales_price,
-        storage_cost,
-        backlog_penalty,
-        waste_disposal_cost,
-        usp_production_cost,
-        dsp_production_cost,
-        usp_changeover_cost,
-        dsp_changeover_cost,
-
-        usp_changeovers,
-        dsp_changeovers,
-
- 		&constraints
-     );
-
- 	deterministic::SingleSiteMultiSuiteModel single_site_multi_suite_model(input_data);
-
- 	algorithms::SingleObjectiveGA<types::SingleObjectiveChromosome<types::SingleSiteMultiSuiteGene>, deterministic::SingleSiteMultiSuiteModel> simple_ga(
- 		single_site_multi_suite_model,
- 		seed,
- 		num_threads
- 	);
-
- 	for (int run = 0; run != num_runs; ++run) {
- 		simple_ga.Init(
- 			popsize,
- 			starting_length,
- 			p_xo,
- 			p_gene_swap,
- 			num_products,
- 			num_usp_suites,
- 			p_product_mut,
- 			p_usp_suite_mut,
- 			p_plus_batch_mut,
- 			p_minus_batch_mut
- 		);
-
- 		for (int gen = 0; gen != num_gens; ++gen) {
- 			simple_ga.Update();
-
- 			printf(
- 				"\rRun %d, Gen: %d, Best: %.1f, Constraint: %.1f, Length: %d",
- 				run + 1, gen + 1, simple_ga.Top().objective, simple_ga.Top().constraints, simple_ga.Top().genes.size()
- 			);
-
- 			std::cout << std::flush;
- 		}
-
- 		auto best = simple_ga.Top();
-
- 		types::SingleSiteMultiSuiteSchedule schedule;
- 		single_site_multi_suite_model.CreateSchedule(best, schedule);
-
- 		int total_num_usp_campaigns = 0;
-
- 		for (int usp_suite = 0; usp_suite != num_usp_suites; ++usp_suite) {
- 			total_num_usp_campaigns += schedule.suites[usp_suite].size();
- 		}
-
- 		printf(
- 			", (%.1f, %.1f, %d)\n", 
- 			schedule.objectives[deterministic::OBJECTIVES::TOTAL_PROFIT], 
- 			schedule.objectives[deterministic::OBJECTIVES::TOTAL_BACKLOG_PENALTY],
- 			total_num_usp_campaigns
- 		);
- 		std::cout << std::flush;
-
- 		if (display_schedules) {
- 			DisplaySchedule(schedule);
- 		}
- 	}
 }
 
 void Det_SingleSiteSimple_SingleObjective_Test()
@@ -354,11 +220,17 @@ void Det_SingleSiteSimple_SingleObjective_Test()
 	num_gens = 100;
 	popsize = 100;
 
-	p_xo = 0.130878;
-	p_product_mut = 0.017718;	
-	p_plus_batch_mut = 0.707202;
-	p_minus_batch_mut = 0.834735;
-	p_gene_swap = 0.531073;
+	// p_xo = 0.130878;
+	// p_product_mut = 0.017718;	
+	// p_plus_batch_mut = 0.707202;
+	// p_minus_batch_mut = 0.834735;
+	// p_gene_swap = 0.531073;
+
+	p_xo = 0.223077;
+	p_product_mut = 0.010324;
+	p_plus_batch_mut = 0.800127;
+	p_minus_batch_mut = 0.787252;
+	p_gene_swap = 0.322800;
 
 	std::unordered_map<deterministic::OBJECTIVES, int> objectives;
 	objectives.emplace(deterministic::TOTAL_KG_THROUGHPUT, 1);
@@ -461,6 +333,8 @@ void Det_SingleSiteSimple_SingleObjective_Test()
 
 	std::vector<types::SingleObjectiveChromosome<types::SingleSiteSimpleGene>> solutions;
 
+	double mean_time = 0.0;
+
 	for (int run = 0; run < num_runs; ++run) {
 
 		auto start = std::chrono::steady_clock::now();
@@ -484,27 +358,14 @@ void Det_SingleSiteSimple_SingleObjective_Test()
 			ga.Update();
 		}			
 
-		auto elapsed_time = std::chrono::duration_cast<
-			std::chrono::milliseconds
-		>(std::chrono::steady_clock::now() - start).count();
+		auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count();
+		mean_time += elapsed_time;
 
 		auto solution = ga.Top();
 		solutions.push_back(solution);
 
 		types::SingleSiteSimpleSchedule schedule;
 		deterministic_fitness.CreateSchedule(solution, schedule);
-
-		std::cout << "\n######################## Run: " << run + 1 << ", elapsed time: " << elapsed_time << " ms ########################\n" << std::endl;
-
-		printf(
-			"Top Solution:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
-			solution.objective, schedule.objectives[deterministic::TOTAL_KG_THROUGHPUT],
-			schedule.objectives[deterministic::TOTAL_KG_INVENTORY_DEFICIT],
-			schedule.objectives[deterministic::TOTAL_KG_BACKLOG],
-			schedule.objectives[deterministic::TOTAL_KG_WASTE]
-		);
-
-		std::cout << std::flush;
 	}
 
 	if (solutions.size()) {
@@ -512,7 +373,7 @@ void Det_SingleSiteSimple_SingleObjective_Test()
 		types::SingleSiteSimpleSchedule schedule;;
 		deterministic_fitness.CreateSchedule(solution, schedule);
 
-		std::cout << "\n######################## After " << num_runs << " num_runs, #best solutions: " << solutions.size() << " ########################\n" << std::endl;
+		std::cout << "\n######################## After " << num_runs << " num_runs, mean elapsed time: " << mean_time / num_runs << " ms ########################\n" << std::endl;
 
 		printf(
 			"Top Solution:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
@@ -732,7 +593,7 @@ void Det_SingleSiteSimple_MultiObjective_Test()
 void Stoch_SingleSiteSimple_Test()
 {
 	int mc_seed = 7;
-	int num_mc_sims = 2;
+	int num_mc_sims = 1;
 
 	seed = 7;
 	num_threads = -1;
@@ -935,14 +796,11 @@ void Stoch_SingleSiteSimple_Test()
 
 int main()
 {
-	// printf("\nDeterministic SingleSiteMultiSuite (base case) GA test...\n\n");
-	// Det_SingleSiteMultiSuite_BaseCaseTest();
+	printf("\nDeterministic SingleSiteMultiSuite (base case) GA test...\n\n");
+	Det_SingleSiteMultiSuite_BaseCaseTest();
 
-	// printf("\nDeterministic SingleSiteMultiSuite (increased demand for p1) GA test...\n\n");
-	// Det_SingleSiteMultiSuite_IncreasedDemandTest();
-
-	// printf("\nDeterministic SingleSiteSimple Single-Objective GA test\n\n");
-	// Det_SingleSiteSimple_SingleObjective_Test();	
+	printf("\nDeterministic SingleSiteSimple Single-Objective GA test\n\n");
+	Det_SingleSiteSimple_SingleObjective_Test();	
 
 	printf("\nDeterministic SingleSiteSimple Multi-Objective GA test\n\n");
 	Det_SingleSiteSimple_MultiObjective_Test();	

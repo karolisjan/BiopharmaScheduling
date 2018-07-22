@@ -131,32 +131,6 @@ namespace utils
 		double m_value;
 	};
 
-    static inline int random_int(int min, int max)
-    {
-        return rand() % (max - min) + min;
-    }
-
-    inline double random()
-    {
-        return rand() / (RAND_MAX + 1.0);
-    }
-    
-    template<typename T>
-    static inline void shuffle(std::vector<T>& v)
-    {
-        size_t i, j;
-        
-        for (i = 0; i < v.size(); ++i) {
-            j = random_int(i, v.size());
-            std::swap(v[j], v[i]);
-        }
-    }
-
-    inline int round(double val) 
-    {
-        return val + 0.5;
-    }
-
     /*
         A hack for accessing the container of the priority queue by access with read and write rights.
     */
@@ -254,6 +228,43 @@ namespace utils
 
 		return min + sqrtf(u * (max - min) * (mode - min));
 	}
+
+	CustomRandom<> rng = CustomRandom<>();
+
+	inline void set_seed(int seed = -1) {
+		if (seed != -1) {
+			rng.init({ seed });
+		}
+		else {
+			rng.init();
+		}
+	}
+
+	inline int random_int(int min, int max)
+    {
+        return (max - min) * rng.uniform_rand_double() + min;
+    }
+
+    inline double random()
+    {
+        return rng.uniform_rand_double();
+    }
+
+	template<typename T>
+    static inline void shuffle(std::vector<T>& v)
+    {
+        size_t i, j;
+        
+        for (i = 0; i < v.size(); ++i) {
+            j = random_int(i, v.size());
+            std::swap(v[j], v[i]);
+        }
+    }
+
+    inline int round(double val) 
+    {
+        return val + 0.5;
+    }
 }
 
 #endif

@@ -84,14 +84,12 @@ namespace algorithms
 		explicit BaseGA() {}
 		explicit BaseGA(
 			FitnessFunction fitness_function,
-			int seed=-1,
-			int num_procs=-1
+			int seed,
+			int num_procs
 		) :
 			fitness_function(fitness_function)
 		{
-			if (seed != -1) {
-				srand(seed);
-			}
+			utils::set_seed(seed);
 
 			int actual_num_threads = omp_get_num_procs();
 
