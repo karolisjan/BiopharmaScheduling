@@ -1108,6 +1108,164 @@ SCENARIO("deterministic::SingleSiteSimpleModel Multi-Objective test")
 	}
 }
 
+SCENARIO("deterministic::SingleSiteSimpleModel known solution test")
+{
+	int seed = 7;
+	int num_threads = -1;
+
+	int num_runs = 20;
+	int num_gens = 100;
+	int popsize = 100;
+	int starting_length = 1;
+
+	double p_xo = 0.130878;
+	double p_product_mut = 0.017718;
+	double p_plus_batch_mut = 0.707202;
+	double p_minus_batch_mut = 0.834735;
+	double p_gene_swap = 0.531073;
+
+	std::unordered_map<deterministic::OBJECTIVES, int> objectives;
+	objectives.emplace(deterministic::TOTAL_KG_INVENTORY_DEFICIT, -1);
+	objectives.emplace(deterministic::TOTAL_KG_THROUGHPUT, 1);
+
+	std::unordered_map<deterministic::OBJECTIVES, std::pair<int, double>> constraints;
+	constraints.emplace(deterministic::TOTAL_KG_BACKLOG, std::make_pair(-1, 0));
+	constraints.emplace(deterministic::TOTAL_KG_WASTE, std::make_pair(-1, 0));
+
+	// Kg demand
+	std::vector<std::vector<double>> kg_demand = { 
+		{ 0.0,0.0,3.1,0.0,0.0,3.1,0.0,3.1,3.1,3.1,0.0,6.2,6.2,3.1,6.2,0.0,3.1,9.3,0.0,6.2,6.2,0.0,6.2,9.3,0.0,9.3,6.2,3.1,6.2,3.1,0.0,9.3,6.2,9.3,6.2,0.0 },
+		{ 0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,6.2,0.0,0.0,0.0,0.0,0.0,6.2,0.0,0.0,0.0,0.0,0.0,0.0,6.2 },
+		{ 0.0,0.0,0.0,0.0,0.0,0.0,4.9,4.9,0.0,0.0,0.0,9.8,4.9,0.0,4.9,0.0,0.0,4.9,9.8,0.0,0.0,0.0,4.9,4.9,0.0,9.8,0.0,0.0,4.9,9.8,9.8,0.0,4.9,9.8,4.9,0.0 },
+		{ 0.0,5.5,5.5,0.0,5.5,5.5,5.5,5.5,5.5,0.0,11.0,5.5,0.0,5.5,5.5,11.0,5.5,5.5,0.0,5.5,5.5,5.5,11.0,5.5,0.0,11.0,0.0,11.0,5.5,5.5,0.0,11.0,11.0,0.0,5.5,5.5 }
+	};
+	
+	int num_products = kg_demand.size();
+
+	// 6-month kg inventoy safety levels
+	std::vector<std::vector<double>> kg_inventory_target = {
+		{ 6.2,6.2,9.3,9.3,12.4,12.4,15.5,21.7,21.7,24.8,21.7,24.8,27.9,21.7,24.8,24.8,24.8,27.9,27.9,27.9,31.0,31.0,34.1,34.1,27.9,27.9,27.9,27.9,34.1,34.1,31.0,31.0,21.7,15.5,6.2,0.0 },
+		{ 0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2 },
+		{ 0.0,4.9,9.8,9.8,9.8,9.8,19.6,19.6,14.7,19.6,19.6,19.6,14.7,19.6,19.6,14.7,14.7,19.6,19.6,9.8,19.6,19.6,19.6,19.6,24.5,34.3,24.5,29.4,39.2,39.2,29.4,19.6,19.6,14.7,4.9,0.0 },
+		{ 22.0,27.5,27.5,27.5,27.5,33.0,33.0,27.5,27.5,27.5,38.5,33.0,33.0,33.0,33.0,33.0,27.5,33.0,33.0,33.0,38.5,33.0,38.5,33.0,33.0,33.0,33.0,44.0,33.0,33.0,33.0,33.0,22.0,11.0,11.0,5.5 },
+	};
+
+	std::vector<int> days_per_period = std::vector<int>{ 
+		31,31,28,31,30,31,30,31,31,30,31,30,31,31,28,31,30,31,30,31,31,30,31,30,31,31,28,31,30,31,30,31,31,30,31,30
+	};
+
+	std::vector<double> kg_yield_per_batch = { 3.1, 6.2, 4.9, 5.5 };
+	std::vector<double> kg_storage_limits = { 250, 250, 250, 250 }; // set high to ignore
+	std::vector<double> kg_opening_stock = { 18.6, 0, 19.6, 32.0 };
+
+	std::vector<double> inventory_penalty_per_kg = { 1, 1, 1, 1 };
+	std::vector<double> backlog_penalty_per_kg = { 1, 1, 1, 1 };
+	std::vector<double> production_cost_per_kg = { 1, 1, 1, 1 };
+	std::vector<double> storage_cost_per_kg = { 1, 1, 1, 1 };
+	std::vector<double> waste_cost_per_kg = { 1, 1, 1, 1 };
+	std::vector<double> sell_price_per_kg = { 1, 1, 1, 1 };
+
+	std::vector<int> inoculation_days = { 20, 15, 20, 26 };
+	std::vector<int> seed_days = { 11, 7, 11, 9 };
+	std::vector<int> production_days = { 14, 14, 14, 14 };
+	std::vector<int> usp_days = { 45, 36, 45, 49 }; //
+	std::vector<int> dsp_days = { 7, 11, 7, 7 };
+	std::vector<int> shelf_life_days = { 730, 730, 730, 730 }; // set high to ignore
+	std::vector<int> approval_days = { 90, 90, 90, 90 };
+	std::vector<int> min_batches_per_campaign = { 2, 2, 2, 3 };
+	std::vector<int> max_batches_per_campaign = { 50, 50, 50, 30 };
+	std::vector<int> batches_multiples_of_per_campaign = { 1, 1, 1, 3 };
+
+	std::vector<std::vector<int>> changeover_days = {
+		{ 0,  10, 16, 20 },
+		{ 16,  0, 16, 20 },
+		{ 16, 10,  0, 20 },
+		{ 18, 10, 18,  0 }
+	};
+
+	deterministic::SingleSiteSimpleInputData input_data(
+		objectives,
+		kg_demand,
+		days_per_period,
+
+		kg_opening_stock,
+		kg_yield_per_batch,
+		kg_storage_limits,
+
+		inventory_penalty_per_kg,
+		backlog_penalty_per_kg,
+		production_cost_per_kg,
+		storage_cost_per_kg,
+		waste_cost_per_kg,
+		sell_price_per_kg,		
+
+		inoculation_days,
+		seed_days,
+		production_days,
+		usp_days,
+		dsp_days,
+		approval_days,
+		shelf_life_days,
+		min_batches_per_campaign,
+		max_batches_per_campaign,
+		batches_multiples_of_per_campaign,
+		changeover_days,
+
+		&kg_inventory_target,
+		&constraints
+	);
+
+	types::NSGAChromosome<types::SingleSiteSimpleGene> i;
+
+	i.genes.resize(11);
+
+	i.genes[0].product_num = 4;
+	i.genes[0].num_batches = 15;
+	
+	i.genes[1].product_num = 3;
+	i.genes[1].num_batches = 9;
+
+	i.genes[2].product_num = 1;
+	i.genes[2].num_batches = 28;
+
+	i.genes[3].product_num = 2;
+	i.genes[3].num_batches = 2;
+
+	i.genes[4].product_num = 4;
+	i.genes[4].num_batches = 15;
+
+	i.genes[5].product_num = 3;
+	i.genes[5].num_batches = 8;
+
+	i.genes[6].product_num = 1;
+	i.genes[6].num_batches = 10;
+
+	i.genes[7].product_num = 3;
+	i.genes[7].num_batches = 3;
+
+	i.genes[8].product_num = 2;
+	i.genes[8].num_batches = 2;
+
+	i.genes[9].product_num = 1;
+	i.genes[9].num_batches = 3;
+
+	i.genes[10].product_num = 4;
+	i.genes[10].num_batches = 29;
+
+	deterministic::SingleSiteSimpleModel deterministic_fitness(input_data);
+	types::SingleSiteSimpleSchedule schedule;
+	
+	deterministic_fitness(i);
+	deterministic_fitness.CreateSchedule(i, schedule);
+
+	REQUIRE( -i.objectives[0] == Approx(schedule.objectives[deterministic::TOTAL_KG_THROUGHPUT]) );
+	REQUIRE( i.objectives[1] == Approx(schedule.objectives[deterministic::TOTAL_KG_INVENTORY_DEFICIT]) );
+	REQUIRE( schedule.objectives[deterministic::TOTAL_KG_THROUGHPUT] == Approx(574.4) );
+	REQUIRE( schedule.objectives[deterministic::TOTAL_KG_INVENTORY_DEFICIT] == Approx(194.6) );
+	REQUIRE( schedule.objectives[deterministic::TOTAL_KG_BACKLOG] == Approx(0.0) );
+	REQUIRE( schedule.objectives[deterministic::TOTAL_KG_WASTE] == Approx(0.0) );
+}
+
 SCENARIO("stochastic::SingleSiteSimpleModel::CreateSchedule test with deterministic input and without additional storage limits and shelf-life constraints.") 
 {
 	int mc_seed = 7;

@@ -1,5 +1,9 @@
+'''
+    Ubuntu tests
+'''
 import unittest
 import pandas as pd
+import platform
 
 from biopharma_scheduling.single_site.deterministic import DetSingleSiteSimple, DetSingleSiteMultiSuite
 
@@ -243,4 +247,5 @@ class DetSingleSiteSimpleTest(unittest.TestCase):
 
             
 if __name__ == '__main__':
+    assert platform.system() == 'Linux', "Only Linux tests are available at the moment."
     unittest.main()
