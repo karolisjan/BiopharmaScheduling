@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <climits>
+#include <cassert>
 
 #include "nsgaii.h"
 #include "scheduling_models.h"
@@ -526,9 +527,9 @@ void Det_SingleSiteSimple_SingleObjective_Test()
 void Det_SingleSiteSimple_MultiObjective_Test()
 {
 	seed = 7;
-	num_threads = 1;
+	num_threads = -1;
 
-	num_runs = 20;
+	num_runs = 10;
 	num_gens = 100;
 	popsize = 100;
 
@@ -731,17 +732,20 @@ void Det_SingleSiteSimple_MultiObjective_Test()
 void Stoch_SingleSiteSimple_Test()
 {
 	int mc_seed = 7;
-	int num_mc_sims = 100;
+	int num_mc_sims = 2;
+
+	seed = 7;
+	num_threads = -1;
 
 	num_runs = 10;
 	num_gens = 100;
 	popsize = 100;
 
-	p_xo = 0.130878;
-	p_product_mut = 0.017718;
-	p_plus_batch_mut = 0.707202;
-	p_minus_batch_mut = 0.834735;
-	p_gene_swap = 0.531073;
+	p_xo = 0.223077;
+	p_product_mut = 0.010324;
+	p_plus_batch_mut = 0.800127;
+	p_minus_batch_mut = 0.787252;
+	p_gene_swap = 0.322800;
 
 	std::unordered_map<stochastic::OBJECTIVES, int> objectives;
 	objectives.emplace(stochastic::TOTAL_KG_INVENTORY_DEFICIT_MEAN, -1);
@@ -749,6 +753,7 @@ void Stoch_SingleSiteSimple_Test()
 
 	std::unordered_map<stochastic::OBJECTIVES, std::pair<int, double>> constraints;
 	constraints.emplace(stochastic::TOTAL_KG_BACKLOG_MEAN, std::make_pair(-1, 0));
+	constraints.emplace(stochastic::TOTAL_KG_WASTE_MEAN, std::make_pair(-1, 0));
 
 	// Kg demand
 	std::vector<std::vector<double>> kg_demand_min = {
@@ -772,25 +777,15 @@ void Stoch_SingleSiteSimple_Test()
 		{ 0,5.5,5.5,0,5.5,5.5,5.5,5.5,5.5,0,11,5.5,0,5.5,5.5,11,5.5,5.5,0,5.5,5.5,5.5,11,5.5,0,11,0,11,5.5,5.5,0,11,11,0,5.5,5.5 },
 	};
 
-	// 6-month kg inventoy safety levels
 	int num_products = kg_demand_mode.size();
-	size_t num_months = 6, p = 0, t;
-	std::vector< std::vector<double> > kg_inventory_target(num_products);
-	for (; p < num_products; ++p) {
-		for (t = 0; t < kg_demand_mode[p].size() - num_months; ++t) {
-			kg_inventory_target[p].push_back(std::accumulate(kg_demand_mode[p].begin() + t, kg_demand_mode[p].begin() + t + num_months, 0.0));
-		}
 
-		for (; t < kg_demand_mode[p].size(); ++t) {
-			kg_inventory_target[p].push_back(std::accumulate(kg_demand_mode[p].begin() + t, kg_demand_mode[p].end(), 0.0));
-		}
-
-		for (t = 1; t < kg_demand_mode[p].size() - num_months; ++t) {
-			if (kg_inventory_target[p][t] == 0) {
-				kg_inventory_target[p][t] = kg_inventory_target[p][t - 1];
-			}
-		}
-	}
+	// 6-month kg inventoy safety levels
+	std::vector<std::vector<double>> kg_inventory_target = {
+		{ 6.2,6.2,9.3,9.3,12.4,12.4,15.5,21.7,21.7,24.8,21.7,24.8,27.9,21.7,24.8,24.8,24.8,27.9,27.9,27.9,31.0,31.0,34.1,34.1,27.9,27.9,27.9,27.9,34.1,34.1,31.0,31.0,21.7,15.5,6.2,0.0 },
+		{ 0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2,6.2 },
+		{ 0.0,4.9,9.8,9.8,9.8,9.8,19.6,19.6,14.7,19.6,19.6,19.6,14.7,19.6,19.6,14.7,14.7,19.6,19.6,9.8,19.6,19.6,19.6,19.6,24.5,34.3,24.5,29.4,39.2,39.2,29.4,19.6,19.6,14.7,4.9,0.0 },
+		{ 22.0,27.5,27.5,27.5,27.5,33.0,33.0,27.5,27.5,27.5,38.5,33.0,33.0,33.0,33.0,33.0,27.5,33.0,33.0,33.0,38.5,33.0,38.5,33.0,33.0,33.0,33.0,44.0,33.0,33.0,33.0,33.0,22.0,11.0,11.0,5.5 },
+	};
 
 	std::vector<int> days_per_period = std::vector<int>{ 
 		31,31,28,31,30,31,30,31,31,30,31,30,31,31,28,31,30,31,30,31,31,30,31,30,31,31,28,31,30,31,30,31,31,30,31,30
@@ -879,6 +874,8 @@ void Stoch_SingleSiteSimple_Test()
 
 	std::vector<types::NSGAChromosome<types::SingleSiteSimpleGene>> solutions;
 
+	double mean_time = 0.0;
+
 	for (int run = 0; run < num_runs; ++run) {
 
 		auto start = std::chrono::steady_clock::now();
@@ -902,36 +899,11 @@ void Stoch_SingleSiteSimple_Test()
 			nsgaii.Update();
 		}			
 
-		auto elapsed_time = std::chrono::duration_cast<
-			std::chrono::milliseconds
-		>(std::chrono::steady_clock::now() - start).count();
+		auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count();
+		mean_time += elapsed_time;
 
 		auto top_front = nsgaii.TopFront();
 		solutions.insert(solutions.end(), top_front.begin(), top_front.end());
-
-		// types::SingleSiteSimpleSchedule schedule_x, schedule_y;
-		// stochastic_fitness.CreateSchedule(top_front[0], schedule_x);
-		// stochastic_fitness.CreateSchedule(top_front.back(), schedule_y);
-
-		// std::cout << "\n######################## Run: " << run + 1 << ", #solutions: " << top_front.size() << ", elapsed time: " << elapsed_time << " ms ########################\n" << std::endl;
-
-		// printf(
-		// 	"Solution X:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f (%.2f)\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
-		// 	top_front[0].objectives[0], schedule_x.objectives[stochastic::TOTAL_KG_THROUGHPUT_MEAN],
-		// 	top_front[0].objectives[1], schedule_x.objectives[stochastic::TOTAL_KG_INVENTORY_DEFICIT_MEAN],
-		// 	schedule_x.objectives[stochastic::TOTAL_KG_BACKLOG_MEAN],
-		// 	schedule_x.objectives[stochastic::TOTAL_KG_WASTE_MEAN]
-		// );
-
-		// printf(
-		// 	"Solution Y:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f (%.2f)\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
-		// 	top_front.back().objectives[0], schedule_y.objectives[stochastic::TOTAL_KG_THROUGHPUT_MEAN],
-		// 	top_front.back().objectives[1], schedule_y.objectives[stochastic::TOTAL_KG_INVENTORY_DEFICIT_MEAN],
-		// 	schedule_y.objectives[stochastic::TOTAL_KG_BACKLOG_MEAN],
-		// 	schedule_y.objectives[stochastic::TOTAL_KG_WASTE_MEAN]
-		// );
-
-		// std::cout << std::flush;
 	}
 
 	if (solutions.size()) {
@@ -940,7 +912,7 @@ void Stoch_SingleSiteSimple_Test()
 		stochastic_fitness.CreateSchedule(solutions[0], schedule_x);
 		stochastic_fitness.CreateSchedule(solutions.back(), schedule_y);
 
-		std::cout << "\n######################## After " << num_runs << " num_runs, #best solutions: " << solutions.size() << " ########################\n" << std::endl;
+		std::cout << "\n######################## After " << num_runs << " num_runs, no. best solutions: " << solutions.size() << ", mean elapsed time: " << mean_time / num_runs << " ms ########################\n" << std::endl;
 
 		printf(
 			"Solution X:\nTotal kg throughput: %.2f (%.2f)\nTotal kg inventory deficit: %.2f (%.2f)\nTotal kg backlog: %.2f\nTotal kg waste: %.2f\n\n",
@@ -973,12 +945,10 @@ int main()
 	// Det_SingleSiteSimple_SingleObjective_Test();	
 
 	printf("\nDeterministic SingleSiteSimple Multi-Objective GA test\n\n");
-	for (int i = 0; i != 10; ++i) {
-		Det_SingleSiteSimple_MultiObjective_Test();	
-	}
+	Det_SingleSiteSimple_MultiObjective_Test();	
 
-	// printf("\nStochastic SingleSiteSimple GA test\n\n");
-	// Stoch_SingleSiteSimple_Test();
+	printf("\nStochastic SingleSiteSimple GA test\n\n");
+	Stoch_SingleSiteSimple_Test();
 
 	printf("\n");
 

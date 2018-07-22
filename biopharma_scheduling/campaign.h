@@ -13,6 +13,7 @@ namespace types
 		Campaign() :
 			product_num(-1),
 			num_batches(0),
+			suite_num(-1),
 			kg(0.0),
 			start(-1),
 			first_harvest(-1),

@@ -102,8 +102,7 @@ namespace utils
 		Approx& epsilon(T const& newEpsilon) {
 			double epsilonAsDouble = static_cast<double>(newEpsilon);
 			if (epsilonAsDouble < 0 || epsilonAsDouble > 1.0) {
-				throw std::domain_error
-				("Invalid Approx::epsilon: Approx::epsilon has to be between 0 and 1");
+				throw std::domain_error("Invalid Approx::epsilon: Approx::epsilon has to be between 0 and 1");
 			}
 			m_epsilon = epsilonAsDouble;
 			return *this;
@@ -113,9 +112,7 @@ namespace utils
 		Approx& margin(T const& newMargin) {
 			double marginAsDouble = static_cast<double>(newMargin);
 			if (marginAsDouble < 0) {
-				throw std::domain_error
-				("Invalid Approx::margin: Approx::Margin has to be non-negative.");
-
+				throw std::domain_error("Invalid Approx::margin: Approx::Margin has to be non-negative.");
 			}
 			m_margin = marginAsDouble;
 			return *this;

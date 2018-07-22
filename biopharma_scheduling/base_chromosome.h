@@ -13,6 +13,7 @@
 #include <utility>
 #include <algorithm>
 #include <functional>
+#include <cassert>
 
 #include "utils.h"
 
@@ -32,9 +33,9 @@ namespace types
 
 		template<class... GeneParams>
 		explicit BaseChromosome(
-			int starting_length = 1,
-			double p_xo = 0.820769,
-			double p_gene_swap = 0.766782,
+			int starting_length,
+			double p_xo,
+			double p_gene_swap,
 			GeneParams... params
 		) :
 			p_xo(p_xo),
@@ -44,6 +45,9 @@ namespace types
 			while (starting_length-- > 0) {
 				genes.push_back(std::move(Gene(params...)));
 			}
+
+			assert(starting_length == -1);
+			assert(genes.size() >= 1);
 		}
 
 		inline void Cross(BaseChromosome &other) 
@@ -108,7 +112,7 @@ namespace types
 				return;
 			}
 
-			int g1, g2;
+			int g1 = 0, g2 = 0;
 
 			do {
 				g1 = utils::random_int(0, genes.size());

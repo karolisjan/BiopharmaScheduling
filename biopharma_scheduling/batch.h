@@ -15,7 +15,7 @@ namespace types
 	{
 		Batch() : 
 			product_num(-1),
-            kg(0),
+            kg(0.0),
 			start(-1),
 			harvested_at(-1),
 			stored_at(-1),

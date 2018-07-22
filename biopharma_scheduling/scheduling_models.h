@@ -493,6 +493,11 @@ namespace stochastic
 			// Monte Carlo simulation loop
 			for (int sim = 0; sim != input_data.num_mc_sims; ++sim) {
 
+				std::vector<std::vector<double>> kg_inventory;
+				std::vector<std::vector<double>> kg_supply;
+				std::vector<std::vector<double>> kg_backlog;
+				std::vector<std::vector<double>> kg_waste;
+
 				schedule.Reset(input_data.num_products, input_data.num_periods);
 
 				for (auto &cmpgn : schedule.campaigns) {
@@ -524,14 +529,14 @@ namespace stochastic
 				schedule.objectives[TOTAL_PROFIT_MEAN] = schedule.objectives[TOTAL_REVENUE_MEAN] - schedule.objectives[TOTAL_COST_MEAN];
 			}
 
+			for (int obj = MEAN_OBJECTIVES_START; obj != MEAN_OBJECTIVES_END; ++obj) {
+				schedule.objectives[obj] /= input_data.num_mc_sims;
+			}
+
 			for (auto &obj : schedule.objectives) {
 				if (obj < utils::EPSILON) {
 					obj = 0.0;
 				}
-			}
-
-			for (int obj = MEAN_OBJECTIVES_START; obj != MEAN_OBJECTIVES_END; ++obj) {
-				schedule.objectives[obj] /= input_data.num_mc_sims;
 			}
 
 			for (cmpgn_num = 0; cmpgn_num != schedule.campaigns.size(); ++cmpgn_num) {

@@ -53,7 +53,7 @@ namespace algorithms
 
 			bool p_dominates = false, q_dominates = false; 
 
-			for (size_t m = 0; m != p.objectives.size(); ++m) {
+			for (int m = 0; m != p.objectives.size(); ++m) {
 				if (p.objectives[m] < q.objectives[m]) {
 					p_dominates = true;
 				}
@@ -172,20 +172,11 @@ namespace algorithms
 
 					double min = I[0].objectives[m], max = I.back().objectives[m], abs_max_min = std::fabs(max - min);
 
-					for (int k = 1; k != I.size() - 1; ++k) {
-						I[k].d = (std::fabs(I[k + 1].objectives[m] - I[k - 1].objectives[m]) / abs_max_min);
+					if (abs_max_min != utils::Approx(0.0)) {
+						for (int k = 1; k != I.size() - 1; ++k) {
+							I[k].d = (std::fabs(I[k + 1].objectives[m] - I[k - 1].objectives[m]) / abs_max_min);
+						}
 					}
-
-					// if (abs_max_min != utils::Approx(0.0)) {
-					// 	for (int k = 1; k != I.size() - 1; ++k) {
-					// 		I[k].d = (std::fabs(I[k + 1].objectives[m] - I[k - 1].objectives[m]) / abs_max_min);
-					// 	}
-					// }
-					// else {
-					// 	for (int k = 1; k != I.size() - 1; ++k) {
-					// 		I[k].d = std::numeric_limits<int>::infinity();
-					// 	}					
-					// }
 				}
 			}
 		}
