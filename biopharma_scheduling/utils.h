@@ -191,18 +191,6 @@ namespace utils
 				uniform_random_double = std::bind(std::uniform_real_distribution<double>(0.0, 1.0), seeded_rng);
 			}
 
-			inline double uniform_rand_double(double max = 0, double min = 0)
-			{ 
-				return (max - min + 1) * uniform_random_double() + min;
-			}
-
-			inline float uniform_rand_float(float max = 0, float min = 0)
-			{ 
-				return (max - min + 1) * uniform_random_float() + min;
-			}
-
-		private:
-
 			std::function<float()> uniform_random_float;
 			std::function<double()> uniform_random_double;
 	};
@@ -214,7 +202,7 @@ namespace utils
 			return max;
 		}
 
-		double u = rng.uniform_rand_double(); 
+		double u = rng.uniform_random_double(); 
 
 		max += 1;
 
@@ -242,12 +230,12 @@ namespace utils
 
 	inline int random_int(int min, int max)
     {
-        return (max - min) * rng.uniform_rand_double() + min;
+        return (max + 1 - min) * rng.uniform_random_double() + min;
     }
 
     inline double random()
     {
-        return rng.uniform_rand_double();
+        return rng.uniform_random_double();
     }
 
 	template<typename T>
@@ -256,7 +244,7 @@ namespace utils
         size_t i, j;
         
         for (i = 0; i < v.size(); ++i) {
-            j = random_int(i, v.size());
+            j = random_int(i, v.size() - 1);
             std::swap(v[j], v[i]);
         }
     }

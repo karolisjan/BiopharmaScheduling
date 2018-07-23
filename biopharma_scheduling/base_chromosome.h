@@ -115,8 +115,8 @@ namespace types
 			int g1 = 0, g2 = 0;
 
 			do {
-				g1 = utils::random_int(0, genes.size());
-				g2 = utils::random_int(0, genes.size());
+				g1 = utils::random_int(0, genes.size() - 1);
+				g2 = utils::random_int(0, genes.size() - 1);
 			} while (g1 == g2);
 
 			std::swap(genes[g1], genes[g2]);

@@ -35,8 +35,8 @@ namespace types
 			p_minus_batch_mut(p_minus_batch_mut),
 			num_batches(1)
 		{
-			product_num = utils::random_int(1, num_products + 1);
-			usp_suite_num = utils::random_int(1, num_usp_suites + 1);
+			product_num = utils::random_int(1, num_products);
+			usp_suite_num = utils::random_int(1, num_usp_suites);
 		}
 
 		SingleSiteMultiSuiteGene make_new()
@@ -72,7 +72,7 @@ namespace types
 			}
 
 			int random_product_num = 0;
-			do { random_product_num = utils::random_int(1, num_products + 1); }
+			do { random_product_num = utils::random_int(1, num_products); }
 			while (product_num == random_product_num);
 			product_num = random_product_num;
 		}
@@ -84,7 +84,7 @@ namespace types
 			}
 
 			int random_usp_suite_num = 0;
-			do { random_usp_suite_num = utils::random_int(1, num_usp_suites + 1); } 
+			do { random_usp_suite_num = utils::random_int(1, num_usp_suites); } 
 			while (usp_suite_num == random_usp_suite_num);
 			usp_suite_num = random_usp_suite_num;
 		}
@@ -125,7 +125,7 @@ namespace types
 			p_plus_batch_mut(p_plus_batch_mut),
 			p_minus_batch_mut(p_minus_batch_mut)
 		{
-			product_num = utils::random_int(1, num_products + 1);
+			product_num = utils::random_int(1, num_products);
 		}
 
 		SingleSiteSimpleGene make_new()
@@ -157,7 +157,7 @@ namespace types
 			}
 
 			int random_product_num = 0;
-			do { random_product_num = utils::random_int(1, num_products + 1); }
+			do { random_product_num = utils::random_int(1, num_products); }
 			while (product_num == random_product_num);
 			product_num = random_product_num;
 		}

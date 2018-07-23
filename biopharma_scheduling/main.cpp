@@ -793,7 +793,6 @@ void Stoch_SingleSiteSimple_Test()
 	}
 }
 
-
 int main()
 {
 	printf("\nDeterministic SingleSiteMultiSuite (base case) GA test...\n\n");
