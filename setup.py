@@ -15,6 +15,7 @@ class BinaryDistribution(Distribution):
 if __name__ == "__main__":
 
     if os.name == 'posix':
+        # os.environ['CPPFLAGS'] = '-fsanitize=address,undefined -fno-sanitize-recover -fuse-ld=gold -g3 -std=c++14 -fopenmp -m64' # LD_PRELOAD=/usr/lib/gcc/x86_64-linux-gnu/8/libasan.so
         os.environ['CPPFLAGS'] = '-std=c++14 -fopenmp -m64 -O2'
         extra_compile_args = []
     else:
@@ -31,24 +32,28 @@ if __name__ == "__main__":
 
         from Cython.Build import cythonize
 
-        ext_modules = cythonize([
-            Extension(
-                '*', [ 'biopharma_scheduling/single_site/deterministic.pyx' ],
-                language='c++',
-                extra_compile_args=extra_compile_args
-            ),
-            Extension(
-                '*', [ 'biopharma_scheduling/single_site/stochastic.pyx' ],
-                language='c++',
-                extra_compile_args=extra_compile_args
-            )
-        ], compiler_directives={
-            'overflowcheck': True,
-            'cdivision_warnings': True,
-            'nonecheck': True,
-            'optimize.use_switch': False,
-            'optimize.unpack_method_calls': False
-        })
+        ext_modules = cythonize(
+            [
+                Extension(
+                    '*', [ 'biopharma_scheduling/single_site/deterministic.pyx' ],
+                    language='c++',
+                    extra_compile_args=extra_compile_args
+                ),
+                # Extension(
+                #     '*', [ 'biopharma_scheduling/single_site/stochastic.pyx' ],
+                #     language='c++',
+                #     extra_compile_args=extra_compile_args
+                # )
+            ],
+            # gdb_debug=True, 
+            # compiler_directives={
+            #     'overflowcheck': True,
+            #     'cdivision_warnings': True,
+            #     'nonecheck': True,
+            #     'optimize.use_switch': False,
+            #     'optimize.unpack_method_calls': False
+            # }
+        )
     except ImportError as e:
         raise ImportError("Cython v0.26 is required. Install it with `pip install Cython==0.26`.")
 
@@ -84,3 +89,4 @@ if __name__ == "__main__":
         include_package_data=True,
         distclass=BinaryDistribution
     )
+    

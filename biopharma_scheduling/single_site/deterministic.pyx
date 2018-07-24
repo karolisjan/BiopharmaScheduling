@@ -614,6 +614,24 @@ cdef class DetSingleSiteSimple:
             pbar.set_description('Done')
             pbar.close()
 
+    def create_schedule(self, campaigns: pd.core.frame.DataFrame):
+        cdef:
+            SingleSiteSimpleSchedule schedule
+            NSGAChromosome[SingleSiteSimpleGene] solution
+
+        product_label_index_pairs = { label: index + 1 for index, label in enumerate(self.product_labels) }
+        campaigns.reset_index(inplace=True, drop=True)
+
+        solution.genes.resize(len(campaigns))
+
+        for i in range(len(campaigns)):
+            solution.genes[i].product_num = product_label_index_pairs[campaigns.Product[i]]
+            solution.genes[i].num_batches = campaigns.Batches[i]
+
+        schedule = SingleSiteSimpleSchedule()
+        self.single_site_simple.CreateSchedule(solution, schedule)
+        return self.__make_pyschedule(schedule)
+        
     cdef __make_pyschedule(self, SingleSiteSimpleSchedule &schedule):
         def get_date_of(delta):
             return pd.Timedelta('%d days' % delta) + pd.to_datetime(self.start_date).date()

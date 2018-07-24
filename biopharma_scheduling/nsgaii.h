@@ -1,5 +1,7 @@
 #if defined(__posix) || defined(__unix) || defined(__linux) || defined(__APPLE__)
-    #pragma GCC diagnostic ignored "-Wreorder"
+ 	// #pragma GCC diagnostic ignored "-Wreorder"
+	// #pragma GCC diagnostic ignored "-Wunused-variable"
+	#pragma GCC diagnostic ignored "-Wformat="
 	#pragma GCC diagnostic ignored "-Wsign-compare"
 #endif 
 
@@ -109,7 +111,7 @@ namespace algorithms
 			// First front
 			F.resize(1);
 
-			for (int p = 0; p != R.size(); ++p) {
+			for (int p = 0; p < R.size(); ++p) {
 				for (int q = p + 1; q != R.size(); ++q) {
 					auto domination_flag = CheckDominance(R[p], R[q]);
 
@@ -167,13 +169,13 @@ namespace algorithms
 			I.back().d = std::numeric_limits<int>::infinity();
 
 			if (I.size() > 2) {
-				for (int m = 0; m != I[0].objectives.size(); ++m) {
+				for (int m = 0; m < I[0].objectives.size(); ++m) {
 					std::sort(I.begin(), I.end(), [&m](const auto &i1, const auto &i2) { return i1.objectives[m] < i2.objectives[m]; });
 
 					double min = I[0].objectives[m], max = I.back().objectives[m], abs_max_min = std::fabs(max - min);
 
 					if (abs_max_min != utils::Approx(0.0)) {
-						for (int k = 1; k != I.size() - 1; ++k) {
+						for (int k = 1; k < I.size() - 1; ++k) {
 							I[k].d = (std::fabs(I[k + 1].objectives[m] - I[k - 1].objectives[m]) / abs_max_min);
 						}
 					}
@@ -197,7 +199,7 @@ namespace algorithms
 			parents.resize(0);
 			int i = 0;
 
-			for (; i != F.size(); ++i) {
+			for (; i < F.size(); ++i) {
 				CalculateCrowdingDistance(F[i]);
 
 				if (parents.size() + F[i].size() > popsize) {

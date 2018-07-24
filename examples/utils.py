@@ -243,7 +243,8 @@ def plot_2D_pareto_front(
             linewidth=1.0
         )
 
-    
+    return fig
+
 # def product_profiles(num, model):
 
 #     model.schedules[num].kg_inventory.to_csv('tmp1.csv')

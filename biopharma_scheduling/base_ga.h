@@ -1,8 +1,8 @@
 #if defined(__posix) || defined(__unix) || defined(__linux) || defined(__APPLE__)
-    #pragma GCC diagnostic ignored "-Wreorder"
-	#pragma GCC diagnostic ignored "-Wsign-compare"
-	#pragma GCC diagnostic ignored "-Wunused-variable"
+ 	// #pragma GCC diagnostic ignored "-Wreorder"
+	// #pragma GCC diagnostic ignored "-Wunused-variable"
 	#pragma GCC diagnostic ignored "-Wformat="
+	#pragma GCC diagnostic ignored "-Wsign-compare"
 #endif 
 
 #ifndef __BASE_GA_H__
@@ -43,7 +43,7 @@ namespace algorithms
 			offspring.resize(0);
 			utils::shuffle(indices);
 			
-			for (p = 0; p != parents.size(); p += 2) {
+			for (p = 0; p < parents.size(); p += 2) {
 				if (Tournament(parents[indices[p]], parents[indices[p + 1]])) {
 					offspring.push_back(parents[indices[p]]);
 				}
@@ -54,7 +54,7 @@ namespace algorithms
 
 			utils::shuffle(indices);
 			
-			for (p = 0; p != parents.size(); p += 2) {
+			for (p = 0; p < parents.size(); p += 2) {
 				if (Tournament(parents[indices[p]], parents[indices[p + 1]])) {
 					offspring.push_back(parents[indices[p]]);
 				}
@@ -70,11 +70,11 @@ namespace algorithms
 
 			int p = 0;
 
-			for (p = 0; p != offspring.size(); p += 2) {
+			for (p = 0; p < offspring.size(); p += 2) {
 				offspring[p].Cross(offspring[p + 1]);
 			}
 
-			for (p = 0; p != offspring.size(); p += 2) {
+			for (p = 0; p < offspring.size(); p += 2) {
 				offspring[p].Mutate();
 				offspring[p + 1].Mutate();
 			}

@@ -6,3 +6,4 @@ cdef extern from "nsga_chromosome.h" namespace "types":
         NSGAChromosome()
         vector[double] objectives
         double constraints
+        vector[Gene] genes

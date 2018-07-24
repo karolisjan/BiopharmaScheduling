@@ -1,9 +1,9 @@
 #if defined(__posix) || defined(__unix) || defined(__linux) || defined(__APPLE__)
-    #pragma GCC diagnostic ignored "-Wreorder"
-	#pragma GCC diagnostic ignored "-Wsign-compare"
-	#pragma GCC diagnostic ignored "-Wunused-variable"
+ 	// #pragma GCC diagnostic ignored "-Wreorder"
+	// #pragma GCC diagnostic ignored "-Wunused-variable"
 	#pragma GCC diagnostic ignored "-Wformat="
-#endif 
+	#pragma GCC diagnostic ignored "-Wsign-compare"
+#endif  
 
 #ifndef __SCHEDULE_H__
 #define __SCHEDULE_H__

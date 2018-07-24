@@ -1,8 +1,8 @@
 #if defined(__posix) || defined(__unix) || defined(__linux) || defined(__APPLE__)
-    #pragma GCC diagnostic ignored "-Wreorder"
-	#pragma GCC diagnostic ignored "-Wsign-compare"
-	#pragma GCC diagnostic ignored "-Wunused-variable"
+ 	// #pragma GCC diagnostic ignored "-Wreorder"
+	// #pragma GCC diagnostic ignored "-Wunused-variable"
 	#pragma GCC diagnostic ignored "-Wformat="
+	#pragma GCC diagnostic ignored "-Wsign-compare"
 #endif 
 
 #ifndef  __GENE_H__
@@ -26,17 +26,25 @@ namespace types
 			double p_usp_suite_mut,
 			double p_plus_batch_mut,
 			double p_minus_batch_mut
-		) :
-			num_products(num_products),
-			num_usp_suites(num_usp_suites),
-			p_product_mut(p_product_mut),
-			p_usp_suite_mut(p_usp_suite_mut),
-			p_plus_batch_mut(p_plus_batch_mut),
-			p_minus_batch_mut(p_minus_batch_mut),
-			num_batches(1)
+		) 
+		// :
+		// 	num_products(num_products),
+		// 	num_usp_suites(num_usp_suites),
+		// 	p_product_mut(p_product_mut),
+		// 	p_usp_suite_mut(p_usp_suite_mut),
+		// 	p_plus_batch_mut(p_plus_batch_mut),
+		// 	p_minus_batch_mut(p_minus_batch_mut),
+		// 	num_batches(1)
 		{
-			product_num = utils::random_int(1, num_products);
-			usp_suite_num = utils::random_int(1, num_usp_suites);
+			this->num_products = num_products,
+			this->num_usp_suites = num_usp_suites,
+			this->p_product_mut = p_product_mut,
+			this->p_usp_suite_mut = p_usp_suite_mut,
+			this->p_plus_batch_mut = p_plus_batch_mut,
+			this->p_minus_batch_mut = p_minus_batch_mut,
+			this->num_batches = 1;
+			this->product_num = utils::random_int(1, num_products);
+			this->usp_suite_num = utils::random_int(1, num_usp_suites);
 		}
 
 		SingleSiteMultiSuiteGene make_new()
@@ -61,8 +69,8 @@ namespace types
 		}
 
 		int product_num;
-		int num_batches;
 		int usp_suite_num;
+		int num_batches;
 
 	private:
 		inline void mutate_product_num()
@@ -118,14 +126,20 @@ namespace types
 			double p_product_mut,
 			double p_plus_batch_mut,
 			double p_minus_batch_mut
-		) :
-			num_products(num_products),
-			num_batches(1),
-			p_product_mut(p_product_mut),
-			p_plus_batch_mut(p_plus_batch_mut),
-			p_minus_batch_mut(p_minus_batch_mut)
+		) 
+		// :
+		// 	num_products(num_products),
+		// 	num_batches(1),
+		// 	p_product_mut(p_product_mut),
+		// 	p_plus_batch_mut(p_plus_batch_mut),
+		// 	p_minus_batch_mut(p_minus_batch_mut)
 		{
-			product_num = utils::random_int(1, num_products);
+			this->num_products = num_products;
+			this->num_batches = 1;
+			this->p_product_mut = p_product_mut;
+			this->p_plus_batch_mut = p_plus_batch_mut;
+			this->p_minus_batch_mut = p_minus_batch_mut;
+			this->product_num = utils::random_int(1, num_products);
 		}
 
 		SingleSiteSimpleGene make_new()

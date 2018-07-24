@@ -1,8 +1,8 @@
 #if defined(__posix) || defined(__unix) || defined(__linux) || defined(__APPLE__)
-    #pragma GCC diagnostic ignored "-Wreorder"
-	#pragma GCC diagnostic ignored "-Wsign-compare"
-	#pragma GCC diagnostic ignored "-Wunused-variable"
+ 	// #pragma GCC diagnostic ignored "-Wreorder"
+	// #pragma GCC diagnostic ignored "-Wunused-variable"
 	#pragma GCC diagnostic ignored "-Wformat="
+	#pragma GCC diagnostic ignored "-Wsign-compare"
 #endif 
 
 #ifndef __SCHEDULING_MODELS_H__
@@ -403,12 +403,10 @@ namespace stochastic
 
 		inline void CheckInventoryTarget(types::SingleSiteSimpleSchedule &schedule, int product_num, int period_num)
 		{
-			if (input_data.kg_inventory_target) {
-				double kg_inventory_target_ = (*input_data.kg_inventory_target)[product_num][period_num];
-
-				if (schedule.kg_inventory[product_num][period_num] < kg_inventory_target_) {
-					schedule.objectives[TOTAL_KG_INVENTORY_DEFICIT_MEAN] += kg_inventory_target_ - schedule.kg_inventory[product_num][period_num];
-					schedule.objectives[TOTAL_INVENTORY_PENALTY_MEAN] += (kg_inventory_target_ - schedule.kg_inventory[product_num][period_num]) * input_data.inventory_penalty_per_kg[product_num];
+			if (input_data.kg_inventory_target.size()) {
+				if (schedule.kg_inventory[product_num][period_num] < input_data.kg_inventory_target[product_num][period_num]) {
+					schedule.objectives[TOTAL_KG_INVENTORY_DEFICIT_MEAN] += input_data.kg_inventory_target[product_num][period_num] - schedule.kg_inventory[product_num][period_num];
+					schedule.objectives[TOTAL_INVENTORY_PENALTY_MEAN] += (input_data.kg_inventory_target[product_num][period_num] - schedule.kg_inventory[product_num][period_num]) * input_data.inventory_penalty_per_kg[product_num];
 				}
 			}
 		}
@@ -475,7 +473,7 @@ namespace stochastic
 
 			if (AddFirstCampaign(individual, schedule)) {
 				// Add remaining campaigns. Break early if the schedule is at/over the horizon.
-				for (cmpgn_num = 1; cmpgn_num != individual.genes.size(); ++cmpgn_num) {	
+				for (cmpgn_num = 1; cmpgn_num < individual.genes.size(); ++cmpgn_num) {	
 					// Product-dependent changeover.	
 					if (individual.genes[cmpgn_num].product_num != individual.genes[cmpgn_num - 1].product_num) {
 						if (!AddNewCampaign(cmpgn_num, individual, schedule)) {
@@ -491,7 +489,7 @@ namespace stochastic
 			}
 
 			// Monte Carlo simulation loop
-			for (int sim = 0; sim != input_data.num_mc_sims; ++sim) {
+			for (int sim = 0; sim < input_data.num_mc_sims; ++sim) {
 
 				std::vector<std::vector<double>> kg_inventory;
 				std::vector<std::vector<double>> kg_supply;
@@ -624,7 +622,7 @@ namespace deterministic
 
 			int period_num = -1;
 
-			for (int t = 0; t != input_data.due_dates.size(); ++t) {
+			for (int t = 0; t < input_data.due_dates.size(); ++t) {
 				if (new_batch.stored_at <= input_data.due_dates[t]) {
 					period_num = t;
 					break;
@@ -718,9 +716,9 @@ namespace deterministic
 
 			for (cmpgn_num = 1; cmpgn_num != individual.genes.size(); ++cmpgn_num) {
 				if (
-					individual.genes[cmpgn_num].product_num == individual.genes[cmpgn_num - 1].product_num && // different product
+					individual.genes[cmpgn_num].product_num == individual.genes[cmpgn_num - 1].product_num && // same product
 					individual.genes[cmpgn_num].usp_suite_num == individual.genes[cmpgn_num - 1].usp_suite_num && // same suite
-					schedule.suites[individual.genes[cmpgn_num].usp_suite_num - 1].size()
+					schedule.suites[individual.genes[cmpgn_num].usp_suite_num - 1].size() // not the first campaign
 				) {
 					ContinuePreviousUSPCampaign(cmpgn_num, individual, schedule);
 				}
@@ -814,7 +812,6 @@ namespace deterministic
 		)
 		{
 			int dsp_suite = 1;
-			bool over_horizon = false;
 
 			// Priority queue for usp campaigns with the earliest start dates
 			auto earlier_usp_cmpgn_start = [](const auto &a, const auto &b) { return a.start > b.start; };
@@ -1523,12 +1520,10 @@ namespace deterministic
 
 		inline void CheckInventoryTarget(types::SingleSiteSimpleSchedule &schedule, int product_num, int period_num)
 		{
-			if (input_data.kg_inventory_target) {
-				double kg_inventory_target_ = (*input_data.kg_inventory_target)[product_num][period_num];
-
-				if (schedule.kg_inventory[product_num][period_num] < kg_inventory_target_) {
-					schedule.objectives[TOTAL_KG_INVENTORY_DEFICIT] += kg_inventory_target_ - schedule.kg_inventory[product_num][period_num];
-					schedule.objectives[TOTAL_INVENTORY_PENALTY] += (kg_inventory_target_ - schedule.kg_inventory[product_num][period_num]) * input_data.inventory_penalty_per_kg[product_num];
+			if (input_data.kg_inventory_target.size()) {
+				if (schedule.kg_inventory[product_num][period_num] < input_data.kg_inventory_target[product_num][period_num]) {
+					schedule.objectives[TOTAL_KG_INVENTORY_DEFICIT] += input_data.kg_inventory_target[product_num][period_num] - schedule.kg_inventory[product_num][period_num];
+					schedule.objectives[TOTAL_INVENTORY_PENALTY] += (input_data.kg_inventory_target[product_num][period_num] - schedule.kg_inventory[product_num][period_num]) * input_data.inventory_penalty_per_kg[product_num];
 				}
 			}
 		}

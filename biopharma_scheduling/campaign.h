@@ -1,3 +1,10 @@
+#if defined(__posix) || defined(__unix) || defined(__linux) || defined(__APPLE__)
+ 	// #pragma GCC diagnostic ignored "-Wreorder"
+	// #pragma GCC diagnostic ignored "-Wunused-variable"
+	#pragma GCC diagnostic ignored "-Wformat="
+	#pragma GCC diagnostic ignored "-Wsign-compare"
+#endif 
+
 #ifndef __CAMPAIGN_H__
 #define __CAMPAIGN_H__
 
