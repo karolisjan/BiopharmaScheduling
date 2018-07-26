@@ -1100,11 +1100,11 @@ void Stoch_SingleSiteSimple_MultiObjective_Test()
 
 int main()
 {
-	printf("\nDeterministic SingleSiteMultiSuite Example 1 Single-Objective GA test...\n\n");
-	Det_SingleSiteMultiSuite_Example1_Test();
+	// printf("\nDeterministic SingleSiteMultiSuite Example 1 Single-Objective GA test...\n\n");
+	// Det_SingleSiteMultiSuite_Example1_Test();
 
-	printf("\nDeterministic SingleSiteMultiSuite Example 2 Single-Objective GA test...\n\n");
-	Det_SingleSiteMultiSuite_Example2_Test();
+	// printf("\nDeterministic SingleSiteMultiSuite Example 2 Single-Objective GA test...\n\n");
+	// Det_SingleSiteMultiSuite_Example2_Test();
 
 	printf("\nDeterministic SingleSiteSimple Single-Objective GA test\n\n");
 	Det_SingleSiteSimple_SingleObjective_Test();	
