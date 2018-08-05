@@ -106,7 +106,7 @@ class DetSingleSiteMultiSuiteTest(unittest.TestCase):
                 constraints
             )
 
-            self.assertAlmostEqual(model.schedules[0].objectives.total_profit[0], 795.0)
+            self.assertAlmostEqual(model.schedules[0].objectives.total_profit[0], 793.0)
             self.assertAlmostEqual(model.schedules[0].objectives.total_backlog_penalty[0], 0.0)
 
 
