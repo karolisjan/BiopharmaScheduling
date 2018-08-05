@@ -27,14 +27,6 @@ namespace types
 			double p_plus_batch_mut,
 			double p_minus_batch_mut
 		) 
-		// :
-		// 	num_products(num_products),
-		// 	num_usp_suites(num_usp_suites),
-		// 	p_product_mut(p_product_mut),
-		// 	p_usp_suite_mut(p_usp_suite_mut),
-		// 	p_plus_batch_mut(p_plus_batch_mut),
-		// 	p_minus_batch_mut(p_minus_batch_mut),
-		// 	num_batches(1)
 		{
 			this->num_products = num_products,
 			this->num_usp_suites = num_usp_suites,

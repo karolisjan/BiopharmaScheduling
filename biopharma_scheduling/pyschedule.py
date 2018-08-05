@@ -340,15 +340,6 @@ class PySingleSiteMultiSuiteSchedule:
             showgrid_x=True, 
             showgrid_y=True
         )
-        
-        gantt = ff.create_gantt(
-            df, 
-            colors=colors, 
-            index_col='Resource', 
-            group_tasks=True,
-            showgrid_x=True, 
-            showgrid_y=True
-        )
 
         for gantt_row, campaign in zip(gantt['data'], df):
             text = '<br>'.join([

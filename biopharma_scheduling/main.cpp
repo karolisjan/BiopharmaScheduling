@@ -234,8 +234,8 @@ void DisplaySchedule(types::SingleSiteMultiSuiteSchedule &schedule)
  	{
 		{  0,0,0,6,0,4,0,0,4  },
 		{  0,4,0,0,0,0,4,0,0  },
-		{  0,0,0,0,10,0,0,0,0  },
-		{  0,6,0,8,0,0,0,0,10  },
+		{  0,0,0,0,10,0,0,0,10  },
+		{  0,6,0,8,0,0,0,0,0  },
  	};
 
  	std::vector<int> days_per_period = { 60, 60, 60, 60, 60, 60, 60, 60, 60 };
@@ -1103,14 +1103,14 @@ int main()
 	// printf("\nDeterministic SingleSiteMultiSuite Example 1 Single-Objective GA test...\n\n");
 	// Det_SingleSiteMultiSuite_Example1_Test();
 
-	// printf("\nDeterministic SingleSiteMultiSuite Example 2 Single-Objective GA test...\n\n");
-	// Det_SingleSiteMultiSuite_Example2_Test();
+	printf("\nDeterministic SingleSiteMultiSuite Example 2 Single-Objective GA test...\n\n");
+	Det_SingleSiteMultiSuite_Example2_Test();
 
-	printf("\nDeterministic SingleSiteSimple Single-Objective GA test\n\n");
-	Det_SingleSiteSimple_SingleObjective_Test();	
+	// printf("\nDeterministic SingleSiteSimple Single-Objective GA test\n\n");
+	// Det_SingleSiteSimple_SingleObjective_Test();	
 
-	printf("\nDeterministic SingleSiteSimple Multi-Objective GA test\n\n");
-	Det_SingleSiteSimple_MultiObjective_Test();	
+	// printf("\nDeterministic SingleSiteSimple Multi-Objective GA test\n\n");
+	// Det_SingleSiteSimple_MultiObjective_Test();	
 
 	// printf("\nStochastic SingleSiteSimple Single-Objective GA test\n\n");
 	// Stoch_SingleSiteSimple_SingleObjective_Test();

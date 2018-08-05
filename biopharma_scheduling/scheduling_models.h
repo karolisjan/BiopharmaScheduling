@@ -938,12 +938,6 @@ namespace deterministic
 		{
 			int batches_available = schedule.inventory[product_num][period_num].size();
 
-			// No demand and backlog orders -> exit early
-			if (period_num && !input_data.demand[product_num][period_num] && !schedule.batch_backlog[product_num][period_num - 1]) {
-				schedule.batch_inventory[product_num][period_num] = batches_available;
-				return;
-			}
-
 			// Check that there is indeed a demand for a given product
 			if (input_data.demand[product_num][period_num]) {
 				if (batches_available >= input_data.demand[product_num][period_num]) {
@@ -954,22 +948,24 @@ namespace deterministic
 					schedule.batch_supply[product_num][period_num] = batches_available;
 					schedule.batch_backlog[product_num][period_num] = input_data.demand[product_num][period_num] - batches_available;
 					batches_available = 0;
-
-					if (period_num) {
-						schedule.batch_backlog[product_num][period_num] += schedule.batch_backlog[product_num][period_num - 1];
-					}	
 				}
 			}
 
+			if (period_num) {
+				schedule.batch_backlog[product_num][period_num] += schedule.batch_backlog[product_num][period_num - 1];
+			}	
+
 			// Check if there are any backlog orders that can be filled
-			if (period_num && schedule.batch_backlog[product_num][period_num - 1] > 0 && batches_available) {
-				if (batches_available >= schedule.batch_backlog[product_num][period_num - 1]) {
-					schedule.batch_backlog[product_num][period_num] += schedule.batch_backlog[product_num][period_num - 1];
+			if (schedule.batch_backlog[product_num][period_num] > 0 && batches_available > 0) {
+				if (batches_available >= schedule.batch_backlog[product_num][period_num]) {
+					schedule.batch_backlog[product_num][period_num] = 0;
+					schedule.batch_supply[product_num][period_num] += schedule.batch_backlog[product_num][period_num];
 					batches_available -= schedule.batch_backlog[product_num][period_num - 1];
 				}
 				else {
+					schedule.batch_backlog[product_num][period_num] -= batches_available;
 					schedule.batch_supply[product_num][period_num] += batches_available;
-					schedule.batch_backlog[product_num][period_num] += schedule.batch_backlog[product_num][period_num - 1];
+					batches_available = 0;
 				}
 			}
 
