@@ -643,7 +643,7 @@ SCENARIO("deterministic::SingleSiteMultiSuiteModel Single-Objective Example 2 te
 	types::SingleSiteMultiSuiteSchedule schedule;
 	single_site_multi_suite_model.CreateSchedule(solution, schedule);
 
-	REQUIRE( schedule.objectives[deterministic::TOTAL_PROFIT] == Approx(795.0) );
+	REQUIRE( schedule.objectives[deterministic::TOTAL_PROFIT] == Approx(793.0) );
 	REQUIRE( schedule.objectives[deterministic::TOTAL_BATCH_BACKLOG] == Approx(0.0) );
 	REQUIRE( schedule.objectives[deterministic::TOTAL_BATCH_WASTE] == Approx(0.0) );
 }
