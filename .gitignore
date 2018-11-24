@@ -295,3 +295,7 @@ __pycache__/
 *so
 tmp*
 *dSYM
+build
+dist
+*egg-info
+__pycache__
