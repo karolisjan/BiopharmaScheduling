@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 
-from IPython.core.display import display, HTML
+from IPython.display import display, HTML
 
 # from rpy2.robjects import r, pandas2ri
 # pandas2ri.activate()

@@ -1,9 +1,9 @@
 #if defined(__posix) || defined(__unix) || defined(__linux) || defined(__APPLE__)
  	// #pragma GCC diagnostic ignored "-Wreorder"
 	// #pragma GCC diagnostic ignored "-Wunused-variable"
-	#pragma GCC diagnostic ignored "-Wformat="
+	#pragma GCC diagnostic ignored "-Wformat"
 	#pragma GCC diagnostic ignored "-Wsign-compare"
-#endif 
+#endif
 
 #ifndef __SINGLE_OBJECTIVE_GA_H__
 #define __SINGLE_OBJECTIVE_GA_H__
@@ -95,7 +95,9 @@ namespace algorithms
 				parents.push_back(std::move(Chromosome(params...)));
 			}
 
+#ifdef _OPENMP
 			#pragma omp parallel for
+#endif
 			for (int i = 0; i < parents.size(); ++i) {
 				fitness_function(parents[i]);
 			}
@@ -120,7 +122,9 @@ namespace algorithms
 			Select();
 			Reproduce();
 
-			#pragma omp parallel for 
+#ifdef _OPENMP
+			#pragma omp parallel for
+#endif
 			for (int i = 0; i < offspring.size(); ++i) {
 				fitness_function(offspring[i]);
             }
@@ -154,4 +158,4 @@ namespace algorithms
 	};
 }
 
-#endif 
+#endif

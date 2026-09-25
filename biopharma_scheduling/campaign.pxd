@@ -1,6 +1,6 @@
 from libcpp.vector cimport vector
 
-from batch cimport Batch
+from .batch cimport Batch
 
 
 cdef extern from "campaign.h" namespace "types":

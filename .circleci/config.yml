@@ -6,7 +6,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/python:3.6
+      - image: cimg/python:3.12
       
     working_directory: ~/BiopharmaScheduling
 
@@ -33,15 +33,10 @@ jobs:
           command: |
             docker build -t biopharma-scheduling/lab -f ./docker/lab.docker .
 
-      # - run:
-      #     name: run C++ tests (undefined behaviour and memory leaks checks)
-      #     command: |
-      #       docker run -it --privileged biopharma-scheduling/lab bash -c "g++-8 -fsanitize=address,undefined -fno-sanitize-recover -fuse-ld=gold -g3 -std=c++14 -fopenmp -m64 tests/tests.cpp -o tests.out && ./tests.out"
-    
       - run:
           name: run C++ tests (-O2 optimisations check)
           command: |
-            docker run -it biopharma-scheduling/lab bash -c "g++-8 -O2 -std=c++14 -fopenmp -m64 tests/tests.cpp -o tests.out && ./tests.out"
+            docker run -it biopharma-scheduling/lab bash -c "g++ -O2 -std=c++14 tests/tests.cpp -o tests.out && ./tests.out"
 
       - run:
           name: run Python tests

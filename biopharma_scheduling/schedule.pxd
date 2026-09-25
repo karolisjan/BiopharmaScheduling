@@ -2,7 +2,7 @@ from libcpp.string cimport string
 from libcpp.vector cimport vector
 from libcpp.unordered_map cimport unordered_map
 
-from campaign cimport Campaign
+from .campaign cimport Campaign
 
 
 cdef extern from "schedule.h" namespace "types":

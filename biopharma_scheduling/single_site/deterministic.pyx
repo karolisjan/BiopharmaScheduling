@@ -17,7 +17,7 @@ from ..gene cimport SingleSiteSimpleGene, SingleSiteMultiSuiteGene
 
 from ..pyschedule import PySingleSiteSimpleSchedule, PySingleSiteMultiSuiteSchedule
 
-from deterministic cimport (
+from .deterministic cimport (
     OBJECTIVES, 
     SingleSiteSimpleInputData, 
     SingleSiteMultiSuiteInputData,
@@ -335,7 +335,7 @@ cdef class DetSingleSiteSimple:
             changeover_days
         )
 
-        days_per_period = self.__count_days(start_date, kg_demand.index.values)
+        days_per_period = self.__count_days(start_date, kg_demand.index.values.tolist())
 
         cdef:
             pair[int, double] p
@@ -469,16 +469,16 @@ cdef class DetSingleSiteSimple:
         assert len(self.product_labels) == len(changeover_days_product_columns) and set(self.product_labels) == set(changeover_days_product_columns), \
                "Product labels in 'product' column do not match with the actual product columns in 'changeover_days_product_columns'."
 
-    def __count_days(self, start_date: str, due_dates: list):
+    def __count_days(self, start_date, due_dates):
         self.start_date = start_date
-        self.due_dates = due_dates
+        self.due_dates = list(due_dates)
 
-        start_date = pd.to_datetime(start_date)
-        due_dates = pd.to_datetime(due_dates)
-        days_per_period = [(due_dates[0] - start_date).days]
+        start_date_dt = pd.to_datetime(start_date)
+        due_dates_dt = pd.to_datetime(self.due_dates)
+        days_per_period = [(due_dates_dt[0] - start_date_dt).days]
 
-        for i in range(1, len(due_dates), 1):
-            days_per_period.append((due_dates[i] - due_dates[i - 1]).days)
+        for i in range(1, len(due_dates_dt), 1):
+            days_per_period.append((due_dates_dt[i] - due_dates_dt[i - 1]).days)
 
         return np.array(days_per_period)
 
@@ -1039,16 +1039,16 @@ cdef class DetSingleSiteMultiSuite:
                "Product labels in 'product' column do not match with the actual product columns in 'dsp_changeover_days_product_columns'."
 
 
-    def __count_days(self, start_date: str, due_dates: list):
+    def __count_days(self, start_date, due_dates):
         self.start_date = start_date
-        self.due_dates = due_dates
+        self.due_dates = list(due_dates)
 
-        start_date = pd.to_datetime(start_date)
-        due_dates = pd.to_datetime(due_dates)
-        days_per_period = [(due_dates[0] - start_date).days]
+        start_date_dt = pd.to_datetime(start_date)
+        due_dates_dt = pd.to_datetime(self.due_dates)
+        days_per_period = [(due_dates_dt[0] - start_date_dt).days]
 
-        for i in range(1, len(due_dates), 1):
-            days_per_period.append((due_dates[i] - due_dates[i - 1]).days)
+        for i in range(1, len(due_dates_dt), 1):
+            days_per_period.append((due_dates_dt[i] - due_dates_dt[i - 1]).days)
 
         return np.array(days_per_period)
 
@@ -1264,4 +1264,4 @@ cdef class DetSingleSiteMultiSuite:
 
     @property
     def history(self):
-        return self.history     
+        return self.history

@@ -2,7 +2,6 @@
     Ubuntu tests
 '''
 import unittest
-import platform
 
 import pandas as pd
 from biopharma_scheduling.single_site.deterministic import DetSingleSiteSimple, DetSingleSiteMultiSuite
@@ -56,8 +55,8 @@ class DetSingleSiteMultiSuiteTest(unittest.TestCase):
                 constraints
             )
 
-            self.assertAlmostEqual(model.schedules[0].objectives.total_profit[0], 518)
-            self.assertAlmostEqual(model.schedules[0].objectives.total_backlog_penalty[0], 0.0)
+            self.assertAlmostEqual(model.schedules[0].objectives.total_profit.iloc[0], 518)
+            self.assertAlmostEqual(model.schedules[0].objectives.total_backlog_penalty.iloc[0], 0.0)
 
     def test_single_objective_problem2(self):
         '''
@@ -106,8 +105,8 @@ class DetSingleSiteMultiSuiteTest(unittest.TestCase):
                 constraints
             )
 
-            self.assertAlmostEqual(model.schedules[0].objectives.total_profit[0], 793.0)
-            self.assertAlmostEqual(model.schedules[0].objectives.total_backlog_penalty[0], 0.0)
+            self.assertAlmostEqual(model.schedules[0].objectives.total_profit.iloc[0], 793.0)
+            self.assertAlmostEqual(model.schedules[0].objectives.total_backlog_penalty.iloc[0], 0.0)
 
 
 class DetSingleSiteSimpleTest(unittest.TestCase):
@@ -146,10 +145,10 @@ class DetSingleSiteSimpleTest(unittest.TestCase):
 
         schedule = model.create_schedule(known_solution)
 
-        self.assertAlmostEqual(schedule.objectives.total_kg_throughput[0], 574.4)
-        self.assertAlmostEqual(schedule.objectives.total_kg_inventory_deficit[0], 194.6)
-        self.assertAlmostEqual(schedule.objectives.total_kg_backlog[0], 0.0)
-        self.assertAlmostEqual(schedule.objectives.total_kg_waste[0], 0.0)
+        self.assertAlmostEqual(schedule.objectives.total_kg_throughput.iloc[0], 574.4)
+        self.assertAlmostEqual(schedule.objectives.total_kg_inventory_deficit.iloc[0], 194.6)
+        self.assertAlmostEqual(schedule.objectives.total_kg_backlog.iloc[0], 0.0)
+        self.assertAlmostEqual(schedule.objectives.total_kg_waste.iloc[0], 0.0)
 
     def test_single_objective_problem1(self):
         '''
@@ -189,10 +188,10 @@ class DetSingleSiteSimpleTest(unittest.TestCase):
                 constraints
             )
 
-            self.assertAlmostEqual(model.schedules[0].objectives.total_kg_throughput[0], 630.4)
-            self.assertAlmostEqual(model.schedules[0].objectives.total_kg_inventory_deficit[0], 472.2)
-            self.assertAlmostEqual(model.schedules[0].objectives.total_kg_backlog[0], 0.0)
-            self.assertAlmostEqual(model.schedules[0].objectives.total_kg_waste[0], 0.0)
+            self.assertAlmostEqual(model.schedules[0].objectives.total_kg_throughput.iloc[0], 630.4)
+            self.assertAlmostEqual(model.schedules[0].objectives.total_kg_inventory_deficit.iloc[0], 472.2)
+            self.assertAlmostEqual(model.schedules[0].objectives.total_kg_backlog.iloc[0], 0.0)
+            self.assertAlmostEqual(model.schedules[0].objectives.total_kg_waste.iloc[0], 0.0)
 
     def test_single_objective_problem2(self):
         '''
@@ -232,10 +231,10 @@ class DetSingleSiteSimpleTest(unittest.TestCase):
                 constraints
             )
 
-            self.assertAlmostEqual(model.schedules[0].objectives.total_kg_throughput[0], 503.2)
-            self.assertAlmostEqual(model.schedules[0].objectives.total_kg_inventory_deficit[0], 192.5)
-            self.assertAlmostEqual(model.schedules[0].objectives.total_kg_backlog[0], 0.0)
-            self.assertAlmostEqual(model.schedules[0].objectives.total_kg_waste[0], 0.0)
+            self.assertAlmostEqual(model.schedules[0].objectives.total_kg_throughput.iloc[0], 503.2)
+            self.assertAlmostEqual(model.schedules[0].objectives.total_kg_inventory_deficit.iloc[0], 192.5)
+            self.assertAlmostEqual(model.schedules[0].objectives.total_kg_backlog.iloc[0], 0.0)
+            self.assertAlmostEqual(model.schedules[0].objectives.total_kg_waste.iloc[0], 0.0)
     
     def test_multi_objective_problem1(self):
         '''
@@ -278,20 +277,19 @@ class DetSingleSiteSimpleTest(unittest.TestCase):
             )
             
             # Solution X
-            solution_x = min(model.schedules, key=lambda s: s.objectives.total_kg_throughput[0])
-            self.assertAlmostEqual(solution_x.objectives.total_kg_throughput[0], 577.9)
-            self.assertAlmostEqual(solution_x.objectives.total_kg_inventory_deficit[0], 193.4)
-            self.assertAlmostEqual(solution_x.objectives.total_kg_backlog[0], 0.0)
-            self.assertAlmostEqual(solution_x.objectives.total_kg_waste[0], 0.0)
+            solution_x = min(model.schedules, key=lambda s: s.objectives.total_kg_throughput.iloc[0])
+            self.assertAlmostEqual(solution_x.objectives.total_kg_throughput.iloc[0], 577.9)
+            self.assertAlmostEqual(solution_x.objectives.total_kg_inventory_deficit.iloc[0], 193.4)
+            self.assertAlmostEqual(solution_x.objectives.total_kg_backlog.iloc[0], 0.0)
+            self.assertAlmostEqual(solution_x.objectives.total_kg_waste.iloc[0], 0.0)
 
             # Solution Y
-            solution_y = max(model.schedules, key=lambda s: s.objectives.total_kg_throughput[0])
-            self.assertAlmostEqual(solution_y.objectives.total_kg_throughput[0], 630.4)
-            self.assertAlmostEqual(solution_y.objectives.total_kg_inventory_deficit[0], 469.3)
-            self.assertAlmostEqual(solution_y.objectives.total_kg_backlog[0], 0.0)
-            self.assertAlmostEqual(solution_y.objectives.total_kg_waste[0], 0.0)
+            solution_y = max(model.schedules, key=lambda s: s.objectives.total_kg_throughput.iloc[0])
+            self.assertAlmostEqual(solution_y.objectives.total_kg_throughput.iloc[0], 630.4)
+            self.assertAlmostEqual(solution_y.objectives.total_kg_inventory_deficit.iloc[0], 469.3)
+            self.assertAlmostEqual(solution_y.objectives.total_kg_backlog.iloc[0], 0.0)
+            self.assertAlmostEqual(solution_y.objectives.total_kg_waste.iloc[0], 0.0)
 
             
 if __name__ == '__main__':
-    assert platform.system() == 'Linux', "Only Linux tests are available at the moment."
     unittest.main()

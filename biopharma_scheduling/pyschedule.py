@@ -5,8 +5,37 @@ import numpy as np
 import pandas as pd
 
 import plotly.offline as opy
-import plotly.graph_objs as go
-import plotly.figure_factory as ff
+import plotly.express as px
+
+
+def _timeline_figure(df, colors, hover_exclude, layout=None, show_legend=False):
+    """Build a Gantt-style timeline using Plotly's supported timeline API."""
+    hover_columns = [
+        column for column in df.columns
+        if column not in hover_exclude
+    ]
+    figure = px.timeline(
+        df,
+        x_start='Start',
+        x_end='Finish',
+        y='Resource',
+        color='Resource',
+        color_discrete_map=colors,
+        custom_data=hover_columns,
+    )
+    hover_lines = [
+        f'{column}: %{{customdata[{index}]}}'
+        for index, column in enumerate(hover_columns)
+    ]
+    figure.update_traces(
+        hovertemplate='<br>'.join(hover_lines) + '<extra></extra>'
+    )
+    figure.update_yaxes(autorange='reversed', showgrid=True)
+    figure.update_xaxes(showgrid=True, tickangle=-30, side='bottom')
+    figure.update_layout(title='', showlegend=show_legend)
+    if layout is not None:
+        figure.update_layout(layout)
+    return figure
 
 
 class PySingleSiteSimpleSchedule:
@@ -175,36 +204,9 @@ class PySingleSiteSimpleSchedule:
         df['Finish'] = df['Last Batch']
         df['Resource'] = df['Product']
         df['Task'] = df['Product']
-        df = df.to_dict('records')
-        
-        gantt = ff.create_gantt(
-            df, 
-            colors=colors, 
-            index_col='Resource', 
-            group_tasks=True,
-            showgrid_x=True, 
-            showgrid_y=True
+        gantt = _timeline_figure(
+            df, colors, {'index', 'Finish', 'Resource', 'Task'}, layout
         )
-
-        for gantt_row, campaign in zip(gantt['data'], df):
-            text = '<br>'.join([
-                '{}: {}'.format(key, val) 
-                for key, val in campaign.items() 
-                if key not in { 'index', 'Finish', 'Resource', 'Task' }
-            ])
-            gantt_row.update({'text': text})
-
-        if layout is None:
-            gantt['layout'].update({
-                'title': '',
-                'xaxis': {
-                    'tickangle': -30,
-                    'side': 'bottom'
-                }
-            })
-        else:
-            gantt['layout'].update(layout)
-    
         return opy.iplot(gantt)
 
     def tasks_gantt(self, colors: dict=None, layout: dict=None):
@@ -229,37 +231,9 @@ class PySingleSiteSimpleSchedule:
         df = self.__tasks.reset_index()
 
         df['Resource'] = df['Product']
-        df = df.to_dict('records')
-        
-        gantt = ff.create_gantt(
-            df, 
-            colors=colors, 
-            index_col='Resource', 
-            group_tasks=True,
-            showgrid_x=True, 
-            showgrid_y=True,
-            show_colorbar=True
+        gantt = _timeline_figure(
+            df, colors, {'index', 'Resource'}, layout, show_legend=True
         )
-
-        for gantt_row, campaign in zip(gantt['data'], df):
-            text = '<br>'.join([
-                '{}: {}'.format(key, val) 
-                for key, val in campaign.items() 
-                if key not in {'index', 'Resource'}
-            ])
-            gantt_row.update({'text': text})
-
-        if layout is None:
-            gantt['layout'].update({
-                'title': '',
-                'xaxis': {
-                    'tickangle': -30,
-                    'side': 'bottom'
-                }
-            })
-        else:
-            gantt['layout'].update(layout)
-    
         return opy.iplot(gantt)
 
     @property
@@ -330,36 +304,9 @@ class PySingleSiteMultiSuiteSchedule:
         df['Finish'] = df['End']
         df['Resource'] = df['Product']
         df['Task'] = df['Suite']
-        df = df.to_dict('records')
-        
-        gantt = ff.create_gantt(
-            df, 
-            colors=colors, 
-            index_col='Resource', 
-            group_tasks=True,
-            showgrid_x=True, 
-            showgrid_y=True
+        gantt = _timeline_figure(
+            df, colors, {'index', 'Finish', 'Resource', 'Task'}, layout
         )
-
-        for gantt_row, campaign in zip(gantt['data'], df):
-            text = '<br>'.join([
-                '{}: {}'.format(key, val) 
-                for key, val in campaign.items() 
-                    if key not in {'index', 'Finish', 'Resource', 'Task'}
-            ])
-            gantt_row.update({'text': text})
-
-        if layout is None:
-            gantt['layout'].update({
-                'title': '',
-                'xaxis': {
-                    'tickangle': -30,
-                    'side': 'bottom'
-                }
-            })
-        else:
-            gantt['layout'].update(layout)
-    
         return opy.iplot(gantt)
 
     @property

@@ -1,11 +1,4 @@
 FROM biopharma-scheduling/base
 
-# Copy the codebase
-COPY . /BiopharmaScheduling 
-
-# Install additional libs 
-RUN pip install -r requirements.txt
-
-RUN export CC=g++-8 && export CXX=g++-8 && python /BiopharmaScheduling/setup.py && pip install /BiopharmaScheduling/dist/*cp36*linux*
-
-EXPOSE 8888
+COPY . /BiopharmaScheduling
+RUN python -m pip install --no-cache-dir '.[notebooks]'
