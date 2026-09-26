@@ -18,7 +18,7 @@ from ..gene cimport SingleSiteSimpleGene, SingleSiteMultiSuiteGene
 from ..utils import hypervolume
 from ..pyschedule import PySingleSiteSimpleSchedule, PySingleSiteMultiSuiteSchedule
 
-from stochastic cimport (
+from .stochastic cimport (
     OBJECTIVES, 
     SingleSiteSimpleInputData, 
     SingleSiteSimpleModel,
@@ -433,14 +433,14 @@ cdef class StochSingleSiteSimple:
                set(self.product_labels) == set(changeover_days_product_columns), \
                "Product labels in 'product' column do not match with the actual product columns in 'changeover_days_product_columns'."
 
-    def __count_days(self, start_date: str, due_dates: list):
+    def __count_days(self, start_date, due_dates):
         self.start_date = start_date
-        self.due_dates = due_dates
-        start_date = pd.to_datetime(start_date)
-        due_dates = pd.to_datetime(due_dates)
-        days_per_period = [(due_dates[0] - start_date).days]
-        for i in range(1, len(due_dates), 1):
-            days_per_period.append((due_dates[i] - due_dates[i - 1]).days)
+        self.due_dates = list(due_dates)
+        start_date_dt = pd.to_datetime(start_date)
+        due_dates_dt = pd.to_datetime(self.due_dates)
+        days_per_period = [(due_dates_dt[0] - start_date_dt).days]
+        for i in range(1, len(due_dates_dt), 1):
+            days_per_period.append((due_dates_dt[i] - due_dates_dt[i - 1]).days)
         return days_per_period
 
     def __run_single_objective_ga(self):

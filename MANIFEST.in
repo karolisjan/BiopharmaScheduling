@@ -1,0 +1,2 @@
+include LICENSE README.md
+recursive-include biopharma_scheduling *.h *.pxd *.pyx

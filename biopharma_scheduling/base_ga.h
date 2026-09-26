@@ -1,14 +1,16 @@
 #if defined(__posix) || defined(__unix) || defined(__linux) || defined(__APPLE__)
  	// #pragma GCC diagnostic ignored "-Wreorder"
 	// #pragma GCC diagnostic ignored "-Wunused-variable"
-	#pragma GCC diagnostic ignored "-Wformat="
+	#pragma GCC diagnostic ignored "-Wformat"
 	#pragma GCC diagnostic ignored "-Wsign-compare"
 #endif 
 
 #ifndef __BASE_GA_H__
 #define __BASE_GA_H__
 
+#ifdef _OPENMP
 #include <omp.h>
+#endif
 #include <limits>
 #include <vector>
 #include <numeric>
@@ -91,12 +93,16 @@ namespace algorithms
 		{
 			utils::set_seed(seed);
 
+#ifdef _OPENMP
 			int actual_num_threads = omp_get_num_procs();
 
 			if (num_procs >= 1 && num_procs <= actual_num_threads) {
 				omp_set_dynamic(0);
 				omp_set_num_threads(num_procs);
 			}
+#else
+			(void)num_procs;
+#endif
 		}
 	};
 }

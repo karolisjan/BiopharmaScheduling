@@ -1,134 +1,87 @@
-<a id='index'></a>
 # Biopharma Scheduling
 
-[![CircleCI](https://circleci.com/gh/karolisjan/BiopharmaScheduling.svg?style=svg)](https://circleci.com/gh/karolisjan/BiopharmaScheduling)
+Biopharma Scheduling is a genetic algorithm based tool for medium-term capacity planning and scheduling of multi-product biopharmaceutical facilities.
 
-> Work in progress...
+The continuous-time scheduling model was presented at the 27th European Symposium on Computer Aided Process Engineering:
 
-* [Introduction](#intro)
-* [Setup](#setup)
-    * [Docker](#docker)
-    * [macOS](#macos)
-    * [Ubuntu 16.04 LTS](#ubuntu)
-* [Examples](#demo)
+> Jankauskas, K., Papageorgiou, L. G., & Farid, S. S. (2017). Continuous-Time Heuristic Model for Medium-Term Capacity Planning of a Multi-Suite, Multi-Product Biopharmaceutical Facility. In *Computer Aided Chemical Engineering* (Vol. 40, pp. 1303-1308). Elsevier. [DOI: 10.1016/B978-0-444-63965-3.50219-1](https://doi.org/10.1016/B978-0-444-63965-3.50219-1).
 
-<a id='intro'></a>
-## Introduction
+## Requirements
 
-This is a genetic algorithm (GA) based optimisation approach for medium-term capacity planning and scheduling of multi-product biopharmaceutical facilities using a continuous-time representation. The continuous-time model is implemented by utilising a variable-length chromosome structure capable of adapting to the problem by growing in length from a single gene corresponding to a production campaign in a manufacturing schedule.
+- Python 3.9 or later
+- A C++14 compiler
 
-This approach has been presented during a keynote lecture at the 27th European Symposium on Computer Aided Process Engineering (ESCAPE):
+On Apple Silicon, the system Clang compiler works out of the box. The extension uses a serial implementation by default, so installing OpenMP is optional.
 
-> Jankauskas, K., Papageorgiou, L. G., & Farid, S. S. (2017). Continuous-Time Heuristic Model for Medium-Term Capacity Planning of a Multi-Suite, Multi-Product Biopharmaceutical Facility. In *Computer Aided Chemical Engineering* (Vol. 40, pp. 1303-1308). Elsevier. **DOI:** [10.1016/B978-0-444-63965-3.50219-1](https://doi.org/10.1016/B978-0-444-63965-3.50219-1).
+## Install on macOS or Linux
 
-<a id='setup'></a>
-## Setup 
+Create and activate a virtual environment, then install the project and its notebook dependencies:
 
-<a id='docker'></a>
-### Docker (recommended option)
+```sh
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -e '.[notebooks]'
+```
 
-* Download and install [docker](https://www.docker.com/community-edition) >= `docker version 17.12.0`
-* For Windows 10 users:
-    * `docker` supports only Windows 10 Professional and Enterprise editions. Also, [switch to using Linux containers](https://docs.microsoft.com/en-us/virtualization/windowscontainers/quick-start/quick-start-windows-10)
-    * For other Windows 10 editions, a [Linux Subsystem](https://docs.microsoft.com/en-us/windows/wsl/install-win10) can be installed to either install a Linux version of `docker` or build `biopharma-scheduling` from source (see [below](#ubuntu)). 
-* Run the following in the terminal
-    ```
-    git clone https://github.com/UCL-Biochemical-Engineering/BiopharmaScheduling
-    cd BiopharmaScheduling
-    docker build -t biopharma-scheduling/base -f ./docker/base.docker .
-    docker build -t biopharma-scheduling/lab -f ./docker/lab.docker .
-    ```
+For a minimal runtime installation, use `python -m pip install -e .`. The editable install compiles the Cython/C++ extension for the active Python interpreter and machine architecture.
 
-<a id='macos'></a>
-### macOS
+Docker is optional for local development. A virtual environment keeps the compiled extension and Jupyter kernel tied to the same Python interpreter, avoiding imports from a different Conda environment or machine architecture.
 
-* Install [`brew`](https://brew.sh/)
+To enable parallel evaluation on macOS, install GCC with Homebrew and build using its compiler (replace the version with the installed one):
 
-* Install the necessary build tools
-    ```
-    brew update && brew install coreutils && brew install gcc --without-multilib
-    ```
-* Install [`anaconda`](https://www.anaconda.com/download/#linux)
-* Create and activate virtual Python environment
-    ```
-    conda create -n <environment-name> python=3.5
-    source activate <environement-name>
-    ```
-* Install Python libraries
-    ```
-    python -m pip install -r requirements.txt
-    ```
-* Find the path to the `g++` binary with `brew ls gcc | grep g++`. It should be in       
-    ```
-    /usr/local/Cellar/gcc/<version>/bin/g++-<version>
-    ```
-* Export the path to the `g++` binary 
-    ```
-    export CC=<path to g++ binary> && export CXX=<path to g++ binary>
-    ```
-* Compile and install the `biopharma-scheduling`
-    ```
-    git clone https://github.com/karolisjan/BiopharmaScheduling.git
-    cd BiopharmaScheduling
-    python setup.py
-    pip install dist/*whl
-    ```
+```sh
+brew install gcc
+CC=/opt/homebrew/bin/gcc-15 CXX=/opt/homebrew/bin/g++-15 BIOPHARMA_OPENMP=1 \
+  python -m pip install -e '.[notebooks]'
+```
 
-[back to top](#index)
+Without `BIOPHARMA_OPENMP=1`, the extension builds without OpenMP and uses one thread. Linux builds can opt into OpenMP the same way when GCC is installed.
 
-<a id='ubuntu'></a>
-### Ubuntu 16.04 LTS
+## Docker
 
-* Install the essentials first
-    ```
-    sudo apt-get update && sudo apt-get install build-essential software-properties-common -y 
-    sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y 
-    sudo apt-get update && sudo apt-get install gcc-snapshot -y 
-    sudo apt-get update && sudo apt-get install gcc-8 g++-8 -y
-    sudo apt-get install git python-dev python3-dev python-pip python3-pip python-wheel python3-wheel python-virtualenv 
-    ```
-* Create and activate virtual Python environment
-    ```
-    virtualenv -p python3 ~/<environment-name>
-    echo "alias <environment-name>='source ~/<environment-name>/bin/activate'" >> ~/.bash_aliases
-    source ~/.bash_aliases
-    <environment-name>
-    ```
-* Install Python libraries
-    ```
-    python -m pip install -r requirements.txt
-    ```
-* Export the path to the `g++` binary 
-    ```
-    export CC=g++-8 && export CXX=g++-8
-    ```
-* Compile and install the `biopharma-scheduling`
-    ```
-    git clone https://github.com/UCL-Biochemical-Engineering/BiopharmaScheduling
-    cd BiopharmaScheduling
-    python setup.py
-    pip install dist/biopharma_scheduling-1.0-cp35-cp35m-linux_x86_64.whl
-    ```
+Build and start the JupyterLab image from the repository root:
 
-[back to top](#index)
+```sh
+docker build -t biopharma-scheduling/lab -f docker/lab.docker .
+docker run --rm -it -p 8888:8888 -v "$PWD":/BiopharmaScheduling \
+  biopharma-scheduling/lab \
+  jupyter lab --ip 0.0.0.0 --no-browser --allow-root
+```
 
-<a id='examples'></a>
+Open the URL and token printed by JupyterLab, then browse the `examples` directory.
+
 ## Examples
 
-* Using `docker`
-    ```
-    docker run -it -p 8888:8888 -v <absolute path to BiopharmaScheduling folder>:/BiopharmaScheduling biopharma-scheduling/lab bash -c "jupyter lab --ip 0.0.0.0 --no-browser --allow-root"
-    ```
-    * Go to `localhost::8888/?token=<token ID>`and navigate to `examples` folder
-* Using [Jupyter Lab](https://blog.jupyter.org/jupyterlab-is-ready-for-users-5a6f039b8906) 
+The `examples` directory contains Jupyter notebooks for deterministic and stochastic single-site and multi-suite scheduling models. Activate the environment used for installation and launch JupyterLab from the repository root:
 
-    * Setup the `ipykernel` for the environment created earlier
-        ```
-        python -m ipykernel install --user --name <environment-name> --display-name "<display-name>"
-        ```
-    * Create and activate a separate Python enviroment, and run `pip install jupyter jupyterlab` inside it
-    * Install [Node.js](https://nodejs.org/en/)
-    * Setup [Plotly extension](https://github.com/jupyterlab/jupyter-renderers/tree/master/packages/plotly-extension) with `jupyter labextension install @jupyterlab/plotly-extension`
-    * Launch `jupyter lab` and navigate to `examples` folder
+```sh
+jupyter lab
+```
 
-[back to top](#index)
+If JupyterLab is installed in a different environment, register the project environment as a kernel and select it in the notebook:
+
+```sh
+source .venv/bin/activate
+python -m ipykernel install --user --name biopharma-scheduling \
+  --display-name "Biopharma Scheduling (Python)"
+```
+
+Restart the notebook kernel after reinstalling the package or changing compiled code. Campaign and task Gantt charts use Plotly timelines. Stochastic objectives and constraints use names ending in `_mean` (for example, `total_kg_inventory_deficit_mean`).
+
+## Tests
+
+With the project environment active, run the Python tests with:
+
+```sh
+python -m unittest discover -s tests -p 'tests.py'
+```
+
+The C++ test suite can be compiled and run with a C++14 compiler:
+
+```sh
+c++ -O2 -std=c++14 tests/tests.cpp -o /tmp/biopharma-scheduling-tests
+/tmp/biopharma-scheduling-tests
+```
+
+Seeded genetic algorithm runs can produce different schedules across C++ standard-library implementations. Tests that assert a particular optimizer outcome may therefore differ across platforms, while schedule validity and objective calculations can be checked independently.

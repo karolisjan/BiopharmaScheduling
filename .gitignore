@@ -297,6 +297,8 @@ tmp*
 *dSYM
 build
 dist
+.venv/
 *egg-info
 __pycache__
 biopharma_scheduling/single_site/deterministic.cpp
+biopharma_scheduling/single_site/stochastic.cpp

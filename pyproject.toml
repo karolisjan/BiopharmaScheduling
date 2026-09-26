@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68", "wheel", "Cython>=3.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "biopharma-scheduling"
+version = "1.1.0"
+description = "Genetic algorithm tools for biopharmaceutical capacity planning and scheduling"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+authors = [{ name = "Karolis Jankauskas" }]
+dependencies = [
+    "numpy>=1.23",
+    "pandas>=1.5",
+    "plotly>=5.0",
+    "tqdm>=4.60",
+]
+
+[project.optional-dependencies]
+notebooks = [
+    "ipykernel>=6.0",
+    "jupyterlab>=4.0",
+    "matplotlib>=3.6",
+    "openpyxl>=3.1",
+]
+
+[tool.setuptools.packages.find]
+include = ["biopharma_scheduling*"]
+
+[tool.setuptools.package-data]
+biopharma_scheduling = ["*.h", "*.pxd", "single_site/*.pyx", "single_site/*.pxd"]
